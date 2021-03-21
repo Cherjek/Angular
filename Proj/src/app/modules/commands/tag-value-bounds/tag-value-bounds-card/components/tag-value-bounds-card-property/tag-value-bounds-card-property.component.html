@@ -1,0 +1,197 @@
+<message-popup [(messages)]="errors"></message-popup>
+<loader-ro5 [(loading)]="loadingContent"></loader-ro5>
+<ahm-shared-properties
+    #propControl
+    permission="CFG_TAG_BOUNDS_EDIT"
+    [isNew]="isNew"    
+    [properties]="properties"
+    [template]="templates"
+    (save)="save($event, propControl)"
+    (optionControlDropDown)="optionControlDropDown($event)"
+    [errorLoadEntity]="errorLoadEntity">
+</ahm-shared-properties>
+<ng-template #templates let-edit="edit">
+  
+  <section class="section-body-content section-panel-two-columns-settings"
+           *ngIf="typeBound != null && tagValueBound != null">
+    <ng-container [ngSwitch]="typeBound.Id">
+      
+        <ng-container *ngSwitchCase="1">        
+          <div class="row no-gutters-2 border-bottom-1">
+            <div class="col-2">
+                Состояние нормы
+            </div>
+            <div class="col" *ngIf="propControl.isPropEdit">
+              <toggle-switch
+                [checked]="tagValueBound.NormalState"
+                [checkedRunnerColorClass]="'runner-color-checked-green'"
+                [checkedSliderColorClass]="'slider-color-checked-green'"
+                (onCheck)="tagValueBound.NormalState = $event"></toggle-switch>
+            </div>
+            <div class="col" *ngIf="!propControl.isPropEdit">{{ tagValueBound.NormalState ? 'Да' : 'Нет' }}</div>
+          </div>
+          <div class="row no-gutters-2 border-bottom-1">
+            <div class="col-2">
+                Сообщение нормы
+            </div>
+            <div class="col" *ngIf="propControl.isPropEdit">
+                <input-box [placeholder]="'Сообщение нормы'" [(value)]="tagValueBound.NormalMessage">
+                </input-box>
+            </div>
+            <div class="col" *ngIf="!propControl.isPropEdit">{{ tagValueBound.NormalMessage }}</div>
+          </div>
+          <div class="row no-gutters-2 border-bottom-1">
+            <div class="col-2">
+                Сообщение аварии
+            </div>
+            <div class="col" *ngIf="propControl.isPropEdit">
+                <input-box [placeholder]="'Сообщение аварии'" [(value)]="tagValueBound.AlertMessage">
+                </input-box>
+            </div>
+            <div class="col" *ngIf="!propControl.isPropEdit">{{ tagValueBound.AlertMessage }}</div>
+          </div>
+        </ng-container>  
+
+        <ng-container *ngSwitchCase="2">
+          <div class="row no-gutters-2 border-bottom-1">
+            <div class="col-2">
+                Сообщение нормы
+            </div>
+            <div class="col" *ngIf="propControl.isPropEdit">
+                <input-box [placeholder]="'Сообщение нормы'" [(value)]="tagValueBound.NormalMessage">
+                </input-box>
+            </div>
+            <div class="col" *ngIf="!propControl.isPropEdit">{{ tagValueBound.NormalMessage }}</div>
+          </div>
+          <div class="row no-gutters-2 border-bottom-1">
+            <div class="col-2">
+              Аварийные границы
+            </div>
+            <div class="col" *ngIf="propControl.isPropEdit">
+              <div class="row align-items-center">
+                <div class="col-1">Верхняя</div>
+                <div class="col-3">
+                  <input-box [type]="'float'" [placeholder]="'Верхняя'" [(value)]="tagValueBound.TopBound">
+                  </input-box>
+                </div>
+                <div class="col-1">Сообщение</div>
+                <div class="col">
+                  <input-box [placeholder]="'Сообщение'" [(value)]="tagValueBound.TopBoundMessage">
+                  </input-box>
+                </div>
+              </div>
+              <br>
+              <div class="row align-items-center">
+                <div class="col-1">Нижняя</div>
+                <div class="col-3">
+                  <input-box [type]="'float'" [placeholder]="'Верхняя'" [(value)]="tagValueBound.BottomBound">
+                  </input-box>
+                </div>
+                <div class="col-1">Сообщение</div>
+                <div class="col">
+                  <input-box [placeholder]="'Сообщение'" [(value)]="tagValueBound.BottomBoundMessage">
+                  </input-box>
+                </div>
+              </div>
+            </div>
+            <div class="col" *ngIf="!propControl.isPropEdit">
+              <div class="row align-items-center">
+                <div class="col-1">Верхняя:</div>
+                <div class="col-3">
+                  {{ tagValueBound.TopBound }}
+                </div>
+                <div class="col-1">Сообщение:</div>
+                <div class="col">
+                  {{ tagValueBound.TopBoundMessage }}
+                </div>
+              </div>
+              <br>
+              <div class="row align-items-center">
+                <div class="col-1">Нижняя:</div>
+                <div class="col-3">
+                  {{ tagValueBound.BottomBound }}
+                </div>
+                <div class="col-1">Сообщение:</div>
+                <div class="col">
+                  {{ tagValueBound.BottomBoundMessage }}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row no-gutters-2 border-bottom-1">
+            <div class="col-2">
+                Использовать предварительные границы
+            </div>
+            <div class="col" *ngIf="propControl.isPropEdit">
+              <toggle-switch
+                [checked]="tagValueBound.UsePreviewBounds"
+                [checkedRunnerColorClass]="'runner-color-checked-green'"
+                [checkedSliderColorClass]="'slider-color-checked-green'"
+                (onCheck)="tagValueBound.UsePreviewBounds = $event"></toggle-switch>
+            </div>
+            <div class="col" *ngIf="!propControl.isPropEdit">{{ tagValueBound.UsePreviewBounds ? 'Да' : 'Нет' }}</div>
+          </div>
+          <div class="row no-gutters-2 border-bottom-1">
+            <div class="col-2">
+              Предварительные границы
+            </div>
+            <div class="col" *ngIf="propControl.isPropEdit" [ngStyle]="{ 'cursor': !tagValueBound.UsePreviewBounds ? 'not-allowed' : 'default' }">
+              <div [ngClass]="{ 'item-display-disabled' : !tagValueBound.UsePreviewBounds }">
+                <div class="col" *ngIf="propControl.isPropEdit">
+                  <div class="row align-items-center">
+                    <div class="col-1">Верхняя</div>
+                    <div class="col-3">
+                      <input-box [type]="'float'" [placeholder]="'Верхняя'" [(value)]="tagValueBound.PreviewTopBound">
+                      </input-box>
+                    </div>
+                    <div class="col-1">Сообщение</div>
+                    <div class="col">
+                      <input-box [placeholder]="'Сообщение'" [(value)]="tagValueBound.PreviewTopBoundMessage">
+                      </input-box>
+                    </div>
+                  </div>
+                  <br>
+                  <div class="row align-items-center">
+                    <div class="col-1">Нижняя</div>
+                    <div class="col-3">
+                      <input-box [type]="'float'" [placeholder]="'Верхняя'" [(value)]="tagValueBound.PreviewBottomBound">
+                      </input-box>
+                    </div>
+                    <div class="col-1">Сообщение</div>
+                    <div class="col">
+                      <input-box [placeholder]="'Сообщение'" [(value)]="tagValueBound.PreviewBottomBoundMessage">
+                      </input-box>
+                    </div>
+                  </div>
+                </div>
+              </div>                
+            </div>
+            <div class="col" *ngIf="!propControl.isPropEdit">
+              <div class="row align-items-center">
+                <div class="col-1">Верхняя:</div>
+                <div class="col-3">
+                  {{tagValueBound.PreviewTopBound}}
+                </div>
+                <div class="col-1">Сообщение:</div>
+                <div class="col">
+                  {{tagValueBound.PreviewTopBoundMessage}}
+                </div>
+              </div>
+              <br>
+              <div class="row align-items-center">
+                <div class="col-1">Нижняя:</div>
+                <div class="col-3">
+                  {{tagValueBound.PreviewBottomBound}}
+                </div>
+                <div class="col-1">Сообщение:</div>
+                <div class="col">
+                  {{tagValueBound.PreviewBottomBoundMessage}}
+                </div>
+              </div>
+            </div>
+          </div>          
+        </ng-container>      
+
+    </ng-container>
+  </section>        
+</ng-template>

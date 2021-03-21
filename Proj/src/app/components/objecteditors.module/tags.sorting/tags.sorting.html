@@ -1,0 +1,84 @@
+<header class="main-content-header row">
+    <div class="col-auto">
+        <backward-button></backward-button>
+    </div>
+    <div class="col main-header-text">
+        <h3> Порядок сортировки тегов </h3>
+    </div>
+</header>
+<div class="main-view-content">
+    <div class="col">
+        <div class="main-view-content height-auto main-view-result">
+            <div class="col col-content-ro5">
+                <div class="col-content-flex-column">
+                    <message-popup [(messages)]="DGErrors"></message-popup>
+                    <loader-ro5 [(loading)]="loadingContentPanel"></loader-ro5>
+
+                    <section #parentContainer class="section-body-content settings-container" style="overflow-y: hidden;">
+                        <data-grid-ro5 #Ro5DataGrid
+                                       [ParentElementRef]="parentContainer"
+                                       [DataGridOptions]="{isSearchVisibility: false}"
+                                       [DragAndDropRow]="true"
+                                       (onDragAndDrop)="onDragAndDrop($event)">
+                            <ng-template #NumberColumnTemplate let-item="item" let-id="id">
+                                <div [ngStyle]="{'cursor': item['InputDisable'] ? 'not-allowed' : 'default'}">
+                                    <div [ngClass]="{'item-display-disabled': item['InputDisable']}">
+                                        <input-box #InputBox
+                                                   (valueChange)="disableLeftInputs(item)"
+                                                   [type]="'number'"
+                                                   [(value)]="item['Number']"
+                                                   [min]="1"
+                                                   [max]="dataGrid.getItemsLength()"
+                                                   (onCursorBlur)="recountOrders($event, item)">
+                                        </input-box> {{ allRowsInputsDisable }}
+                                    </div>
+                                </div>
+                            </ng-template>
+
+                            <ng-template #LogicTagTypeColumnTemplate let-item="item">
+                                <span [innerHtml]="item['LogicTagType']['Code'] + ' ' | markerText:Ro5DataGrid.SearchFilter"></span>
+                                <span class="text-info-additional" [innerHtml]="item['LogicTagType']['Name'] | markerText:Ro5DataGrid.SearchFilter"></span>
+                                <span class="text-info-additional" [innerHtml]="(item['LogicTagType']['ValueName'] ? (', ' + item['LogicTagType']['ValueName']) : '') | markerText:Ro5DataGrid.SearchFilter"></span>
+                            </ng-template>
+
+                            <ng-template #TagTypeColumnTemplate let-item="item">
+                                <span [innerHtml]="item['TagType']['Name'] | markerText:Ro5DataGrid.SearchFilter"></span>
+                            </ng-template>
+
+                            <ng-template #MeasureChannelColumnTemplate let-item="item">
+                                <span [innerHtml]="item['MeasureChannel']['Name'] | markerText:Ro5DataGrid.SearchFilter"></span>
+                            </ng-template>
+
+                            <ng-template #SourceColumnTemplate let-item="item">
+                                <span [innerHTML]="item['Source']['Name']"></span>
+                            </ng-template>
+
+                            <ng-template #ThresholdColumnTemplate let-item="item">
+                                <span [innerHTML]="item['Threshold']['Name']"></span>
+                            </ng-template>
+                        </data-grid-ro5>
+                    </section>
+
+                    <footer class="section-footer-content">
+                        <div class="row no-gutters-2 align-items-center">
+                            <div class="col">
+                                <div class="row no-gutters col-wrappanel align-items-center">
+                                    <div class="col-auto">
+                                        <button type="button" class="btn btn-primary" [ngClass]="{'item-display-disabled' : !DGRowsOrderChange}" (click)="saveSort()">
+                                            Сохранить
+                                        </button>
+                                    </div>
+                                    <div class="col-auto">
+                                        <button type="button" class="btn btn-outline-secondary" (click)="back()">
+                                            Отмена
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </footer>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

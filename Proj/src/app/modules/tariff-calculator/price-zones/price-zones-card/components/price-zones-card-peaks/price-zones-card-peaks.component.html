@@ -1,0 +1,32 @@
+<message-popup [(messages)]="errors"></message-popup>
+<loader-ro5 [(loading)]="loadingContent"></loader-ro5>
+<div class="main-view-content">
+
+    <div class="col col-content-ro5 border-right-1">
+        <header class="section-header-content row">
+            <div class="col-auto">
+                <h5>Часы плановой пиковой нагрузки</h5>
+            </div>
+            <div class="col"></div>
+            <div class="col-auto" *appCanAccess="'TC_PLAN_PEAK_HOURS_ADD'">
+                <button-ro5 [class]="'btn btn-primary'" (onclick)="addNewItem()">
+                    + Добавить
+                </button-ro5>
+            </div>
+        </header>
+
+        <data-grid-ro5 #Ro5DataGrid (onActionButtonClicked)="onActionButtonClicked($event)">            
+            <ng-template #dateColumnTemplate let-item="item">
+                <a [routerLink]="[
+                        '../../' + peakId + '/peak-hours/' + item.Id
+                    ]" [innerHTML]="item.Date | dateFormat | slice:0:-3 | markerText: dataGrid.SearchFilter">
+                </a>
+            </ng-template>
+            <ng-template #peakHourColumnTemplate let-item="item">
+                <span *ngFor="let hour of item?.PeakHours; let i=index" 
+                [innerHTML] = "(hour + (i != (item?.PeakHours?.length - 1) ? ', ' : '')) | markerText: dataGrid.SearchFilter">
+                </span>
+            </ng-template>
+        </data-grid-ro5>
+    </div>
+</div>

@@ -1,0 +1,79 @@
+<message-popup [(messages)]="errors"></message-popup>
+<loader-ro5 [(loading)]="loadingContent"></loader-ro5>
+<div class="main-view-content">
+  <div class="col col-content-ro5 border-right-1">
+    <header class="section-header-content row">
+      <div class="col-auto">
+        <h5>Адресаты</h5>
+      </div>
+      <div class="col"></div>
+      <div class="col-auto rom-notif-address-actions">
+        <ng-container *ngIf="isDelete">
+          <div class="rom-notif-address-actions__delete" (click)="$event.stopPropagation();" *ngIf="Ro5DataGrid.getSelectRows().length">
+            <button-ro5 class="btn-outline-secondary btn-remove" data-container="body" data-placement="bottom"
+              triggers="manual" [autoClose]="true" [ngbPopover]="removeItems" #popUpFormActionButton="ngbPopover"
+              (onclick)="popUpFormActionButton.open({ p: popUpFormActionButton });">
+              Удалить
+            </button-ro5>
+            <ng-template #removeItems let-p="p">
+              <div class="row no-gutters confirm-remove">
+                <div class="col confirm-remove-panel">
+                  <div class="row no-gutters confirm-remove-text">
+                    <div class="col rom-notif-address-actions__delete-confirm">
+                      Вы уверены, что хотите удалить?
+                    </div>
+                  </div>
+                  <div class="row no-gutters col-wrappanel align-items-center">
+                    <div class="col-auto">
+                      <button type="button" class="btn btn-primary" (click)="onActionButtonClicked(Ro5DataGrid.getSelectRows())">
+                        Удалить </button>
+                    </div>
+                    <div class="col-auto">
+                      <button type="button" class="btn btn-outline-secondary confirm-revove-cancel"> Отмена </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-template>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="isAdd">
+          <dropdown-box-ro5 #dropdownBox 
+            [keyField]="'Id'" 
+            valueField="Name"
+            additionalField="EMail"
+            [isSelected]="true"
+            [itemsInput]="addressFilter" 
+            [footerTemplate]="footerTemplate" 
+            [buttonText]="'Добавить адрес'"
+            [BttnColorClass]="'btn-primary'">
+            <ng-template #footerTemplate>
+              <footer class="section-footer-content">
+                <div class="row no-gutters-2 align-items-center">
+                  <div class="col">
+                    <div class="row no-gutters align-items-center col-wrappanel rom-notif-address__dropdown">
+                      <div class="col-auto">
+                        <button-ro5 [class]="'btn btn-primary'"
+                          (onclick)="addFilterItem(dropdownBox.getSelectedRows());dropdownBox.close()">
+                          Добавить
+                        </button-ro5>
+                      </div>
+                      <div class="col-auto">
+                        <button-ro5 [class]="'btn btn-outline-secondary'" (onclick)="dropdownBox.close()">
+                          Отмена
+                        </button-ro5>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </footer>
+            </ng-template>
+          </dropdown-box-ro5>
+        </ng-container>
+      </div>
+    </header>
+
+    <data-grid-ro5 #Ro5DataGrid (onActionButtonClicked)="onActionButtonClicked($event)">
+    </data-grid-ro5>
+  </div>
+</div>

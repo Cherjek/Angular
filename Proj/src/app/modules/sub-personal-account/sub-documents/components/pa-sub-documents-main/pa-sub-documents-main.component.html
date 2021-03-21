@@ -1,0 +1,68 @@
+<message-popup [(messages)]="errors"></message-popup>
+<loader-ro5 [(loading)]="loadingContent"></loader-ro5>
+<header class="main-content-header row">
+    <div class="col">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3>{{ 'DocumentList' | transloco }}</h3>
+            </div>
+        </div>
+    </div>
+</header>
+<div class="main-view-content">
+    <div class="col-filter-ro5 border-right-1">
+        <frame-filters-custompanel 
+            (onApplyFilter)="onApplyFilter($event)"
+            [service]="subPersonalDocsFilterContainerService"
+            [isAsyncCallbackStart]="loadingContent">
+        </frame-filters-custompanel>
+    </div>
+
+    <div class="col col-content-ro5 border-right-1">
+        <header class="section-header-content row">
+            <div class="col-auto">
+                <h5>{{ 'DocumentList' | transloco }}</h5>
+            </div>
+            <div class="col"></div>
+            <div class="col-auto" *appCanAccess="'CPA_CREATE_DOCUMENT'">
+                <button-ro5 [class]="'btn btn-primary'" (onclick)="addNewItem()">
+                    + {{ 'AddDocument' | transloco }}
+                </button-ro5>
+            </div>
+        </header>
+
+        <data-grid-ro5 #Ro5DataGrid>
+            <ng-template #cellColumnTemplate let-item="item" let-column="column">
+                <a [routerLink]="[
+                        '../../sub-personal-account/apps/' + item?.Application?.Id
+                    ]" [innerHTML]="item?.Application?.Name | pipeNoName | markerText: dataGrid.SearchFilter">
+                </a>
+            </ng-template>
+            <ng-template #nameColumnTemplate let-item="item" let-column="column">
+                <a *appCanAccess="'CPA_VIEW_DOCUMENT'; else disabledUnitLink" 
+                  [routerLink]="[
+                        '../../sub-personal-account/documents/' + item.Id
+                    ]" [innerHTML]="item?.Name | pipeNoName | markerText: dataGrid.SearchFilter">
+                </a>
+                <ng-template #disabledUnitLink>
+                  <a [innerHTML]="item?.Name | pipeNoName | markerText:dataGrid.SearchFilter"></a>
+                </ng-template>
+            </ng-template>
+            <ng-template #statusColumnTemplate let-item="item" let-column="column">
+                <span [innerHTML]="item?.Status?.Name | markerText: dataGrid.SearchFilter"></span>
+            </ng-template>
+            <ng-template #docTypeColumnTemplate let-item="item" let-column="column">
+                <span [innerHTML]="item?.Type?.Name | markerText: dataGrid.SearchFilter"></span>
+            </ng-template>
+            <ng-template #directionColumnTemplate let-item="item" let-column="column">
+                <span [innerHTML]="item?.Direction?.Name | markerText: dataGrid.SearchFilter"></span>
+            </ng-template>
+            <ng-template #viewedColumnTemplate let-item="item" let-column="column">
+                <span [innerHTML]="(item?.Viewed ? 'Да' : 'Нет') | markerText: dataGrid.SearchFilter"></span>
+            </ng-template>
+            <ng-template #surnameColumnTemplate let-item="item" let-column="column">
+                <span [innerHTML]="(item?.Customer?.Surname + ' ' + item?.Customer?.FirstName + ' ' + item?.Customer?.MiddleName) | markerText: dataGrid.SearchFilter"></span>
+            </ng-template>
+        </data-grid-ro5>
+    </div>
+</div>

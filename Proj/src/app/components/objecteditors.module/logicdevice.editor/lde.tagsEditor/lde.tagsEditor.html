@@ -1,0 +1,154 @@
+<header class="main-content-header row" *ngIf="modeForm == null">
+    <div class="col-auto">
+        <backward-button></backward-button>
+    </div>
+    <div class="col main-header-text" [ngSwitch]="isNew">
+        <h3 *ngSwitchCase="false"> Редактирование тегов </h3>
+        <h3 *ngSwitchCase="true"> Новые теги </h3>
+    </div>
+</header>
+<div class="main-view-content" [ngClass]="{'height-auto':modeForm != null&&!isPropEdit}">
+    <div class="col col-content-ro5">
+        <loader-ro5 [(loading)]="loadingContent"></loader-ro5>
+        <message-popup [(messages)]="errorsContent"></message-popup>
+        <header class="section-header-content row no-gutters" *ngIf="modeForm != null">
+          <div class="col">
+              <h5> Свойства тега </h5>
+          </div>
+          <div class="col-auto">
+              <button class="btn btn-outline-secondary" *ngIf="isPropEdit" (click)="rollbackPropertyChanges()"> Отменить изменения </button>
+
+              <ng-container>
+                  <button class="btn btn-primary" *ngIf="!isPropEdit" (click)="changeProperties()"> Изменить </button>
+              </ng-container>
+
+          </div>
+        </header>
+        <div class="col-content-flex-column">
+          <section class="section-body-content edit-panel-display-none"
+            [ngClass]="{'show': modeForm == null || (modeForm != null && isPropEdit)}" [ngSwitch]="modeForm != null" #sectionTableTag>
+
+            <ng-container *ngSwitchDefault>
+              <tags-editor 
+              (init)="tagsEditorComponent = $event"
+              [IdLogicDevice]="ldId" 
+              [parentContainer]="sectionTableTag"
+              [initGridDataSource]="tags"></tags-editor>
+            </ng-container>
+            <ng-container *ngSwitchCase="true">
+              <header class="section-header-grouppanel-expander row no-gutters border-bottom-1">
+                <div class="col">
+                    <h5>Свойства</h5>
+                </div>
+                <div class="col-auto">                        
+                    <button data-toggle="collapse"
+                            data-target="#propertySectionEdit"
+                            aria-controls="propertySectionEdit"
+                            class="btn-outline-circle transform-rotate-show btn-circle-size-32">
+                        <i class="zmdi zmdi-chevron-right"></i>
+                    </button>
+                </div>
+              </header>
+              <section id="propertySectionEdit" class="show" #sectionTagParams style="height: 405px;">
+                <tags-editor
+                (init)="tagsEditorComponent = $event"
+                [IdLogicDevice]="ldId" 
+                [parentContainer]="sectionTagParams"
+                [initGridDataSource]="tags"
+                [isRowTemplateEdit]="true"
+                (changeTagColumn)="changeTagColumn($event)"></tags-editor>
+              </section>
+              <div class="edit-panel-display-none" [ngClass]="{'show': tagType > 0}">
+                <header class="section-header-grouppanel-expander row no-gutters border-bottom-1">
+                  <div class="col">
+                      <h5>Параметры</h5>
+                  </div>
+                  <div class="col-auto">                        
+                      <button data-toggle="collapse"
+                              data-target="#parametersSectionEdit"
+                              aria-controls="parametersSectionEdit"
+                              class="btn-outline-circle transform-rotate-show btn-circle-size-32">
+                          <i class="zmdi zmdi-chevron-right"></i>
+                      </button>
+                  </div>
+                </header>
+                <section id="parametersSectionEdit" class="show">
+                  <app-tags-params
+                    (init)="appTagsParams = $event"
+                    (saveComplete)="save(tagsEditorComponent.getTagViewItems(), appTagsParams)"
+                    [isPropEdit]="isPropEdit"
+                    [rollback]="rollBackChangeDetect"
+                    [tagId]="ids"
+                    [scriptEdit]="script"
+                    [unitId]="unitId"></app-tags-params>
+                </section>
+              </div>              
+            </ng-container>
+          </section>
+          <footer class="section-footer-content edit-panel-display-none"
+            [ngClass]="{'show': modeForm == null || (modeForm != null && isPropEdit)}">
+            <div class="row no-gutters-2 align-items-center">
+              <div class="col">
+                <div class="row no-gutters col-wrappanel align-items-center">
+                  <div class="col-auto">
+                    <button type="button" class="btn btn-primary" (click)="modeForm != null ? appTagsParams.saveObject(appTagsParams.propertiesEditorPanel.getEditProperties()) : save(tagsEditorComponent.getTagViewItems())">
+                      Сохранить
+                    </button>
+                  </div>
+                  <div class="col-auto">
+                    <button type="button" class="btn btn-outline-secondary" (click)="cancel();">
+                      Отмена
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </footer>
+        
+          <ng-container *ngIf="modeForm != null && !isPropEdit">
+            <header class="section-header-grouppanel-expander row no-gutters border-bottom-1">
+              <div class="col">
+                  <h5>Свойства</h5>
+              </div>
+              <div class="col-auto">                        
+                  <button data-toggle="collapse"
+                          data-target="#propertySection"
+                          aria-controls="propertySection"
+                          class="btn-outline-circle transform-rotate-show btn-circle-size-32">
+                      <i class="zmdi zmdi-chevron-right"></i>
+                  </button>
+              </div>
+            </header>
+            <section id="propertySection" class="section-panel-two-columns-settings show">
+              <div class="row no-gutters-2 border-bottom-1" *ngFor="let tag of viewTags">
+                  <div class="col-2"><h6>{{ tag.Caption }}</h6></div>
+                  <div class="col">
+                    {{ tag.Value }}
+                  </div>
+              </div>
+            </section>
+            <header class="section-header-grouppanel-expander row no-gutters border-bottom-1">
+              <div class="col">
+                  <h5>Параметры</h5>
+              </div>
+              <div class="col-auto">                        
+                  <button data-toggle="collapse"
+                          data-target="#parametersSection"
+                          aria-controls="parametersSection"
+                          class="btn-outline-circle transform-rotate-show btn-circle-size-32">
+                      <i class="zmdi zmdi-chevron-right"></i>
+                  </button>
+              </div>
+            </header>
+            <section id="parametersSection" class="show">
+              <app-tags-params
+                [tagId]="ids"
+                [unitId]="unitId"></app-tags-params>
+            </section>
+          </ng-container>
+          
+        </div>
+            
+    </div>
+</div>
+

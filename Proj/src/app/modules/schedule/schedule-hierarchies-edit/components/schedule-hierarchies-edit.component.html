@@ -1,0 +1,160 @@
+<div class="main-view-component">
+
+    <div class="col border-right-1">
+
+        <header class="main-content-header row">
+            <div class="col-auto">
+                <backward-button></backward-button>
+            </div>
+            <div class="col">
+                <div *ngIf="!hierarchyEmty; else hierarchyEmptyHeaderTemplate"
+                    class="row align-items-center justify-content-between">
+                    <div class="col-auto">
+                        <h3 mat-button
+                        [ngClass]="{ 'mat-dropdown--disabled' :hierarchies?.length < 2}" 
+                        [matMenuTriggerFor]="unitMenu" class="border-dashed-white-bottom-1">
+                            {{ hierarchySelect?.Name }}&nbsp;&nbsp;<i class="zmdi zmdi-caret-down"
+                                *ngIf="hierarchies?.length > 1"></i>
+                        </h3>
+                        <mat-menu #unitMenu="matMenu">
+                            <ng-template [ngTemplateOutlet]="unitMenuTemplate"></ng-template>
+                        </mat-menu>
+                        <ng-template #unitMenuTemplate>
+                            <ng-container *ngFor="let hierarchy of hierarchies">
+                                <button *ngIf="hierarchy.Id !== hierarchySelect.Id" mat-menu-item
+                                    (click)="hierarchySelect = hierarchy;basketItems = [];changeHierarchy();" class="outline-none">
+                                    {{ hierarchy.Name | pipeNoName }}
+                                </button>
+                            </ng-container>
+                        </ng-template>
+                    </div>
+                </div>
+                <ng-template #hierarchyEmptyHeaderTemplate>
+                    <h3>Иерархии не заведены</h3>
+                </ng-template>
+            </div>
+        </header>
+
+        <ng-container *ngIf="!hierarchyEmty; else hierarchyEmtyTemplate">
+            <div *ngIf="changeHierarchyComplete; else templateLoadStart" class="main-view-content">
+                <div class="col-filter-ro5 border-right-1">
+                    <frame-filters-custompanel 
+                        (onApplyFilter)="onApplyFilter($event)"
+                        [service]="hierarchyFilterContainerService"
+                        [isAsyncCallbackStart]="loadingContentPanel">
+                    </frame-filters-custompanel>
+                </div>
+
+                <div class="col col-content-ro5">
+                    <message-popup [(messages)]="errorsContentForm"></message-popup>
+                    <loader-ro5 [(loading)]="loadingContentPanel"></loader-ro5>
+                    <data-grid-ro5 #Ro5DataGrid 
+                        class="unitsEditVS"
+                        KeyField="Id"
+                        [HeaderTemplate]="GridHeaderTemplate" 
+                        [RowsTemplate]="GridRowTemplate"
+                        [SelectionRowMode]="DGSelectionRowMode.Multiple">
+                        <ng-template #GridRowTemplate let-item>
+                            <div class="row">
+                                <div class="col-auto">
+
+                                    <ng-template #disabledUnitLink>
+                                        <a [innerHTML]="item.DisplayName | pipeNoName | markerText:dataGrid.SearchFilter"></a>
+                                    </ng-template>
+
+                                    <a *appCanAccess="'HH_NODE_VIEW'; else disabledUnitLink"
+                                            [routerLink]="['../../../hierarchies-module/node-card', item.Id]"
+                                            [queryParams]="{ idHierarchy: hierarchySelect.Id }"
+                                            [innerHTML]="item.DisplayName | pipeNoName | markerText:dataGrid.SearchFilter"></a>                                    
+                                </div>
+                            </div>
+                        </ng-template>
+
+                        <ng-template #GridHeaderTemplate>
+                            <header class="row no-gutters align-items-center">
+                                <div class="col-auto" *ngIf="Ro5DataGrid.SelectionRow.isItemsSelect">
+                                    <button-ro5 class="btn-orange" (onclick)="toObjectsPanel()">
+                                        В корзину
+                                    </button-ro5>
+                                </div>
+                            </header>
+                        </ng-template>
+                    </data-grid-ro5>
+
+                    <footer class="section-footer-content">
+                        <div class="row no-gutters col-wrappanel align-items-center margin-left-5">
+                            <div class="col-auto">
+                                <button-ro5 [class]="'btn-primary'" (onclick)="save()" [disabled]="loadingBasket">
+                                    Сохранить
+                                </button-ro5>
+                            </div>
+                            <div class="col-auto">
+                                <button-ro5 [class]="'btn-outline-secondary'" (onclick)="cancel()" [disabled]="loadingBasket">
+                                    Отмeна
+                                </button-ro5>
+                            </div>
+                        </div>
+                    </footer>
+                </div>
+
+            </div>
+
+            <ng-template #templateLoadStart>
+                <loader-ro5 [loading]="true"></loader-ro5>
+                <div class="main-view-content load-panel"></div>
+            </ng-template>
+        </ng-container>
+
+        <ng-template #hierarchyEmtyTemplate>
+            <div class="main-view-content">
+                <div class="col col-content-ro5">
+                    <div class="row no-gutters-2 justify-content-center message-margin__top_bottom">
+                        <div class="col-auto">
+                            <h4>Иерархии не заведены</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+    </div>
+
+    <div *ngIf="changeHierarchyComplete" class="col-auto col-basket" [ngClass]="{'show' : (basketItems || []).length }">
+
+        <header class="main-content-header row">
+            <div class="col">
+                <h4>Корзина</h4>
+            </div>
+            <div class="col-auto">
+                <button-ro5 (onclick)="clearAllBasket()" [class]="'btn-outline-secondary button-main-header'">
+                    Сброс
+                </button-ro5>
+            </div>
+        </header>
+
+        <div class="col-objects-ro5">
+
+            <loader-ro5 [(loading)]="loadingBasket"></loader-ro5>
+            <message-popup [(messages)]="errorsBasketForm"></message-popup>
+            
+            <list-view-ro5 #listView
+                           KeyField="Id"
+                           DisplayField="DisplayName"
+                           [DataSource]="basketItems"
+                           [IsSelected]="true"
+                           [IsRemoved]="true" 
+                           [RowTemplate]="rowListTemplate"                              
+                           (OnRemoveListItem)="clearItemsBasket($event)"></list-view-ro5> 
+
+                           <ng-template #rowListTemplate let-item="item" let-listView="listView">
+                                <div class="row">
+                                    <div class="col">
+                                        <a [innerHtml]="item.Data[listView.DisplayField] | pipeNoName | markerText:listView.SearchFilter"></a>
+                                    </div>
+                                </div>
+                            </ng-template>
+            
+        </div>
+
+    </div>
+
+</div>

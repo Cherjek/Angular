@@ -1,0 +1,90 @@
+<message-popup [(messages)]="errorsResponseToView"></message-popup>
+<div class="main-view-content">
+  <loader-ro5 [(loading)]="loadingContentPanel"></loader-ro5>
+  <div class="col col-content-ro5 col-content-flex-column">
+
+    <section *ngIf="logicDeviceData as logic" class="section-body-content section-panel-two-columns-settings validate-create">
+      <div class="row no-gutters-2 border-bottom-1" *ngIf="logic.DateTimeRange != null">
+        <div class="col-2">
+          <h6>Период</h6>
+        </div>
+        <div class="col">
+          <table>
+            <tr>
+              <ng-container *ngIf="logic.DateTimeRange.Start != null">
+                <td>{{logic.DateTimeRange.Start | dateTimeFormat }}</td>
+              </ng-container>
+              <ng-container *ngIf="logic.DateTimeRange.End != null">
+                <td>&nbsp;-&nbsp;</td>  
+                <td >{{logic.DateTimeRange.End | dateTimeFormat}}</td>
+              </ng-container>              
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="row no-gutters-2 border-bottom-1">
+        <div class="col-2">
+          <h6>Название запроса</h6>
+        </div>
+        <div class="col">{{logic.Name | pipeNoName}}</div>
+      </div>
+      <div *ngFor="let query of (logic?.QueryTypeTags)" class="row no-gutters-2 border-bottom-1">
+        <div class="col-2">
+          <h6>{{query.QueryType?.Name}}</h6>
+        </div>
+        <div class="col">
+          <!--Tags-->
+          <table class="view-tag-panel">
+            <tbody>
+              <tr *ngFor="let tag of query?.TagCodes" class="item-row-checkbox">
+                <td>
+                  <span class="tag-info-label">
+                    {{tag.Code}}
+                  </span>
+                  <span class="text-info-additional">
+                    {{ tag.Name }}
+                  </span>
+                </td>
+
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="row no-gutters-2 border-bottom-1" *ngIf="data == null">
+        <div class="col-2">
+          <h6>Представление данных</h6>
+        </div>
+        <div class="col-10">
+          <button *ngIf="!isDataPresentation" (click)="isDataPresentation = true" class="btn btn-primary">Сформировать</button>
+            <date-picker-ro5 *ngIf="isDataPresentation" 
+                  [(fromDate)]="fromDate"
+          [(toDate)]="toDate"
+          [fastPanel]="true"
+          [isDefFast]="false"></date-picker-ro5>
+        </div>
+      </div>
+      <div *ngIf="isDataPresentation" class="row no-gutters-2 border-bottom-1">
+        <div class="col-2" style=" display: flex; align-items: center">
+        </div>
+        <div class="col-10">
+          <chips-ro5 #chipsTagsControl [itemsInput]="getItemsInput()"></chips-ro5>
+        </div>
+      </div>
+          
+            <div *ngIf="isDataPresentation" class="row no-gutters-2">
+                <div class="col-2"></div>
+                <div class="col-10">
+                    <div class="row no-gutters col-wrappanel">
+                      <div class="col-auto">
+                        <button-ro5 [disabled]="!chipsTagsControl?.chips.length" class="button-apply" (onclick)="clickResponseToView()">Перейти в представление</button-ro5>
+                      </div>
+                      <div class="col-auto">
+                        <button-ro5 (click)="isDataPresentation = false" class="btn-outline-secondary">Отменить</button-ro5>
+                      </div>
+                    </div>
+                </div>
+            </div>
+    </section>
+  </div>
+</div>

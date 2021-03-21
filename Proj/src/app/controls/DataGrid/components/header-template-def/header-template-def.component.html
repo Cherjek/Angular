@@ -1,0 +1,63 @@
+<ng-container *ngIf="dataGrid?.SelectionRow?.isItemsSelect; else defButtonAction">
+    <div class="row no-gutters col-wrappanel">
+        <div class="col-auto">
+            <button-ro5 class="btn-outline-secondary" (onclick)="dataGrid.exportToExcel()">
+                Экспорт выбранных
+            </button-ro5>
+        </div>
+        
+        <div class="col-auto">
+            <ng-container *ngIf="permissionDelete != null; else notPermissionTemplate">
+                <ng-container *appCanAccess="permissionDelete">
+                    <ng-template [ngTemplateOutlet]="buttonTemplate"></ng-template>
+                </ng-container>                
+            </ng-container>
+            <ng-template #buttonTemplate>
+                <button-ro5 
+                    class="btn-outline-secondary btn-remove" 
+                    data-container="body" 
+                    data-placement="bottom"
+                    triggers="manual"
+                    [autoClose]="false"
+                    [ngbPopover]="popFormContent" 
+                    #popUpFormActionButton="ngbPopover"
+                    (onclick)="popUpFormActionButton.open({ p: popUpFormActionButton })">
+                    Удалить
+                </button-ro5>
+            </ng-template>
+            <ng-template #notPermissionTemplate>
+                <ng-template [ngTemplateOutlet]="buttonTemplate"></ng-template>
+            </ng-template>
+            <ng-template #popFormContent let-p="p">
+                <div class="popover-body">
+                    <div class="row no-gutters popup-body__margin">
+                        <div class="col">
+                            Вы уверены, что хотите удалить все выбранные значения?
+                        </div>
+                    </div>
+                    <div class="row no-gutters col-wrappanel">
+                        <div class="col-auto">
+                            <button-ro5 class="btn-primary" (onclick)="deleteRows();p.close()">
+                                Удалить
+                            </button-ro5>
+                        </div>
+                        <div class="col-auto">
+                            <button-ro5 class="btn-outline-secondary" (onclick)="p.close()">
+                                Отмена
+                            </button-ro5>
+                        </div>
+                    </div>
+                </div>
+            </ng-template>
+        </div>
+    </div>
+</ng-container>
+<ng-template #defButtonAction>
+    <div class="row no-gutters justify-content-end">
+        <div class="col-auto">
+            <button-ro5 [class]="'btn-outline-secondary'" (onclick)="dataGrid.exportToExcel()">
+                Экспорт
+            </button-ro5>
+        </div>
+    </div>
+</ng-template>

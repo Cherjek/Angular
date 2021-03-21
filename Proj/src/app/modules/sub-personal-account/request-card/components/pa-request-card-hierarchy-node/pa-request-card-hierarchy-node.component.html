@@ -1,0 +1,19 @@
+<message-popup [(messages)]="errors"></message-popup>
+<loader-ro5 [(loading)]="loadingContent"></loader-ro5>
+<div class="main-view-content">
+
+    <div class="col col-content-ro5 border-right-1">
+        <header class="section-header-content row">
+            <div class="col">
+                <h5>{{'HierarchyNodes' | transloco}}</h5>
+            </div>
+        </header>
+
+        <data-grid-ro5 #Ro5DataGrid>
+          <ng-template #nodeTypeCellTemplate let-item="item" let-column="column">
+            <span [title]="item?.NodeType?.Name" [innerHTML]="item?.NodeType?.Name | markerText: dataGrid.SearchFilter">
+            </span>
+          </ng-template>
+        </data-grid-ro5>
+    </div>
+</div>

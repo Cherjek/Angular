@@ -1,0 +1,215 @@
+﻿<!--
+    
+Info:
+    
+public enum PropertyType
+{
+//
+// Summary:
+//     System.Single
+Float = 1,
+//
+// Summary:
+//     System.Int64
+Integer = 2,
+//
+// Summary:
+//     System.Boolean
+Bool = 3,
+//
+// Summary:
+//     System.String
+String = 4,
+//
+Interval = 5,
+//
+// Summary:
+//     System.DateTime
+Datetime = 7,
+//
+// Summary:
+//     RMon.Data.Provider.Units.PropertyGrid.OptionValueView
+Option = 15,
+//
+// Summary:
+//     RMon.Data.Provider.Units.PropertyGrid.OptionValueView RMon.Data.Provider.Units.PropertyGrid.TreeNodeView
+//     при запросе доступных значений
+OptionTree = 16
+}
+    
+public class IntervalValueView
+{
+/// <summary>Тип интервала</summary>
+public IntervalType IntervalType { get; set; }
+
+/// <summary>День</summary>
+public int Day { get; set; }
+
+/// <summary>Час</summary>
+public int Hour { get; set; }
+
+/// <summary>Минута</summary>
+public int Minute { get; set; }
+}
+
+-->
+<section class="section-body-content section-panel-two-columns-settings">
+    <div class="row no-gutters-2 border-bottom-1" *ngFor="let prop of _propertiesEdit; let i=index;">
+        <div class="col-2">
+            <span>{{ prop.Name }}</span><span *ngIf="prop.IsRequired" class="error-required-color">&nbsp;*</span>
+        </div>
+        <div class="col-10">
+            <div class="row no-gutters align-items-center" [ngSwitch]="isEdit && !prop.ReadOnly">
+                <div *ngSwitchCase="false" class="col">
+                    <ng-container [ngSwitch]="prop.Type">
+                        <div *ngSwitchCase="15">{{ (prop.Value || {}).Text }}</div>
+                        <div *ngSwitchCase="5">
+                            
+                            <ng-container [ngSwitch]="prop.Value != null">
+                                <ng-container *ngSwitchCase="true">
+                                    
+                                    <ng-container [ngSwitch]="prop.Value.IntervalType">
+
+                                        <!--Тип интервала:-->
+                                        <!--Off - Отключено-->
+                                        <ng-container *ngSwitchCase="0">
+                                            <span> Откл. </span>
+                                        </ng-container>
+                                        <!--IntervalOnTime - Через-->
+                                        <ng-container *ngSwitchCase="1">
+                                            <span> {{ 'Через: ' + prop.Value.Hour + 'ч ' + prop.Value.Minute + 'мин' }} </span>
+                                        </ng-container>
+                                        <!--EveryDay - Ежедневно-->
+                                        <ng-container *ngSwitchCase="2">
+                                            <span> {{ 'Ежедневно: ' + prop.Value.Hour + 'ч ' + prop.Value.Minute + 'мин' }} </span>
+                                        </ng-container>
+                                        <!--Monthly - Ежемесячно-->
+                                        <ng-container *ngSwitchCase="3">
+                                            <span> {{ 'Ежемесячно: ' + prop.Value.Day + 'д ' + prop.Value.Hour + 'ч ' + prop.Value.Minute + 'мин' }} </span>
+                                        </ng-container>
+
+                                    </ng-container>
+
+                                </ng-container>
+                                <ng-container *ngSwitchCase="false">
+                                    <span> Нет значения </span>
+                                </ng-container>
+                            </ng-container>
+
+                        </div>
+                        <div *ngSwitchDefault>{{ prop.Value }}</div>
+                    </ng-container>
+                </div>
+                <div *ngSwitchCase="true" class="col-5">
+
+                    <ng-container [ngSwitch]="getPropType(prop.Type)">
+
+                        <input-box *ngSwitchCase="1" [placeholder]="'Значение...'" [type]="'float'" [(value)]="prop.Value"></input-box>
+                        <input-box *ngSwitchCase="2" [placeholder]="'Значение...'" [min]="-2147483647" [max]="2147483647" [type]="'number'" [(value)]="prop.Value"></input-box>
+                        <input-box *ngSwitchCase="4" [placeholder]="'Значение...'" [(value)]="prop.Value" [maxlength]="50"></input-box>
+                        <ng-container *ngSwitchCase="3">
+                            <check-box-ro5 [checked]="prop.Value"
+                                           (onClick)="prop.Value = $event.checked">
+                            </check-box-ro5>
+                        </ng-container>
+
+                        <date-picker-ro5 *ngSwitchCase="7"
+                                         [(fromDate)]="prop.Value"
+                                         [(toDate)]="prop.Value"
+                                         [isDefFast]="false"
+                                         [isIntervalMode]="false"></date-picker-ro5>
+
+                        <ng-container *ngSwitchCase="15">
+
+                            <combo-box-ro5 [keyField]="'Code'"
+                                           [valueField]="'Text'"
+                                           [value]="prop.Value"
+                                           [itemsInput]="prop.arrayValues"
+                                           (onSelected)="prop.Value = $event; cascadePropertyChange(prop)"
+                                           (event)="eventDropDown($event, prop)"></combo-box-ro5>
+
+                        </ng-container>
+
+                        <div *ngSwitchCase="5">
+                            
+                            <div class="row no-gutters col-wrappanel align-items-center">
+                                
+                                <div class="col-auto input-interval-type__padding-bottom" style="width: 160px">
+                                    <combo-box-ro5 [keyField]="'Code'"
+                                                   [valueField]="'Text'"
+                                                   [value]="prop.Value == null ? null : getIntervalType(prop.Value.IntervalType)"
+                                                   [itemsInput]="getIntervalTypes()"
+                                                   (onSelected)="$event == null ? prop.Value = null : updateIntervalValue($event.Code, prop)">
+                                    </combo-box-ro5>
+                                </div>
+
+                                <ng-container *ngIf="prop.Value != null">
+
+                                    <ng-container *ngIf="prop.Value.IntervalType > 0">
+                                        
+                                        <div class="col-auto input-interval-type__padding-bottom" *ngIf="prop.Value.IntervalType === 3">
+                                            <div class="row no-gutters align-items-center row-no-wrap">
+                                                <div class="col-auto input-interval-type__width">
+                                                    <input-box [placeholder]="'0'" [type]="'number'" [min]="0" max="31" [(value)]="prop.Value.Day"></input-box>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <span>&nbsp;д&nbsp;&nbsp;</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-auto input-interval-type__padding-bottom">
+                                            <div class="row no-gutters align-items-center row-no-wrap">
+                                                <div class="col-auto input-interval-type__width">
+                                                    <input-box [placeholder]="'0'" [type]="'number'" [min]="0" max="23" [(value)]="prop.Value.Hour"></input-box>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <span>&nbsp;ч&nbsp;&nbsp;</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    
+                                        <div class="col-auto input-interval-type__padding-bottom">
+                                            <div class="row no-gutters align-items-center row-no-wrap">
+                                                <div class="col-auto input-interval-type__width">
+                                                    <input-box [placeholder]="'0'" [type]="'number'" [min]="0" max="59" [(value)]="prop.Value.Minute"></input-box>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <span>&nbsp;м&nbsp;&nbsp;</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </ng-container>
+                                    
+                                </ng-container>
+
+                            </div>
+
+                        </div>
+
+                    </ng-container>
+
+                </div>
+                <div *ngIf="isEdit && !prop.IsRequired" class="col-auto margin-left-10">
+                    <button class="btn-outline-circle btn-circle-size-32" container="body" ngbTooltip="Удалить" placement="top" type="button" (click)="deleteProperty(prop)">
+                        <i class="zmdi zmdi-delete"></i>
+                    </button>
+                </div>
+                <div *ngIf="prop.error" class="col-auto margin-left-10">
+                    <span style="color: red">{{ prop.error }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row no-gutters-2" *ngIf="isEdit">
+        <div class="col-2">
+            <combo-box-ro5 #cbAllProps
+                [keyField]="'Code'"
+                [valueField]="'Name'"
+                [itemsInput]="_notRequiredProps"
+                [placeholder]="'Добавить свойство'"
+                (onSelected)="addProperty($event);clearCombobox(cbAllProps);"></combo-box-ro5>
+        </div>
+    </div>
+</section>

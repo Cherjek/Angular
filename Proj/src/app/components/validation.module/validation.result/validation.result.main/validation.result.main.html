@@ -1,0 +1,127 @@
+﻿<div class="main-view-content height-auto main-view-result">
+    
+    <div class="row no-gutters align-items-baseline issues-notfound-label" *ngIf="issuesNotFound">
+        <div class="col">
+            <div class="row justify-content-center">
+                <div class="col-auto">
+                    <i class="zmdi zmdi-check-circle zmdi-hc-5x"></i>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-auto">
+                    <h4>Инциденты не найдены</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-filter-ro5 border-right-1" [ngClass]="{ 'ct-state-invisible' : selectedIssue == null }">
+        <loader-ro5 [(loading)]="loadingFilterPanel"></loader-ro5>
+        <message-popup [(messages)]="errorsFilterValidationForms"></message-popup>
+        <div class="col-content-flex-column">
+            <section *ngIf="(Job.Issues || []).length > 2" class="section-issue">
+                <ul class="nav list-box-vertical">
+                    <li class="border-bottom-1 background-gray" *ngFor="let item of Job.Issues; let i = index;"
+                        [ngClass]="{ 'active' : item.Id === (selectedIssue||{}).Id }"
+                        (click)="onIssueItemClick(item)">
+                        <a class="nav-link" [style.color]="item.Id===(selectedIssue||{}).Id?'#000':''">{{item.Name}}</a>
+                    </li>
+                </ul>
+            </section>
+            <section class="section-body-content">
+                <frame-filters-panel #Ro5FiltersPanel 
+                                     [isCollapsePanel]="false"
+                                     (onApplyFilter)="onApplyFilter($event)" 
+                                     [isAsyncCallbackStart]="loadingContentPanel"
+                                     *ngIf="!((selectedIssue||{}).Id === 11)"></frame-filters-panel>
+            </section>
+        </div>
+    </div>
+    <div class="col col-content-ro5" [ngClass]="{ 'ct-state-invisible' : issuesNotFound }">
+
+        <header class="section-header-content row">
+            <div class="col">
+                <h5>{{ (selectedIssue||{}).Name }}</h5>
+            </div>
+            <div class="col-auto">
+                <button type="button" class="btn btn-outline-secondary" (click)="dataGrid.exportToExcel()">Экспорт</button>
+            </div>
+            <ng-container *appCanAccess="'DA_START_CORRECTION'">
+                <div class="col-auto" *ngIf="solveMethods.length === 1">                
+                    <button  type="button" class="btn btn-outline-secondary" (click)="fixErrorGap(solveMethods[0].Id)">Исправить ошибки</button>                
+                </div>
+                <div class="col-auto" *ngIf="solveMethods.length > 1">
+                    <button type="button"
+                            class="btn btn-outline-secondary"
+                            placement="bottom"
+                            container="body"
+                            triggers="manual"
+                            [autoClose]="'outside'"
+                            #popupSolveButton="ngbPopover"
+                            [ngbPopover]="contextMenuSolveMethods"
+                            (click)="popupSolveButton.open()">
+                        Исправить ошибки
+                        <i class="zmdi zmdi-caret-down"></i>
+                    </button>
+                    <ng-template #contextMenuSolveMethods>
+                        <ul class="nav list-box-vertical" style="font-size: 14px;">
+                            <li class="background-gray" *ngFor="let method of solveMethods"
+                                style="background-image: none; padding-bottom: 5px">
+                                <div class="row no-gutters-2 align-items-baseline">
+                                    <a class="col nav-link" [innerHTML]="method.Name" (click)="fixErrorGap(method.Id)"></a>
+                                </div>
+                            </li>
+                        </ul>
+                    </ng-template>
+                </div>
+            </ng-container>
+        </header>
+
+        <loader-ro5 [(loading)]="loadingContentPanel"></loader-ro5>
+        <message-popup [(messages)]="errorsContentValidationForms"></message-popup>
+        <data-grid-ro5 #Ro5DataGrid>
+
+            <ng-template #colLogicDevice let-item="item">
+                <div class="row no-gutters">
+                    <div class="col">
+                        <div [innerHtml]="item.LogicDeviceName | markerText:dataGrid.SearchFilter"></div>
+                    </div>
+                </div>
+                <div class="row no-gutters">
+                    <div class="col">
+                        <div class="text-info-additional" [innerHtml]="item.UnitName | markerText:dataGrid.SearchFilter"></div>
+                    </div>
+                </div>
+
+            </ng-template>
+            <ng-template #colTagsName>
+                <div class="row no-gutters">
+                    <div class="col">
+                        Тег
+                    </div>
+                    <div class="col-3">
+                        Показание
+                    </div>
+                </div>
+            </ng-template>
+            <ng-template #cellTagsName let-item="item">
+                <ng-template ngFor let-tag let-i="index" let-c="count" [ngForOf]="item.Tags">
+                    <div class="row no-gutters align-items-center" [ngStyle]="{'margin-bottom':i<c-1?'1rem':'0'}">
+                        <div class="col">
+                            <p style="margin: 0; text-align: start; margin-right: 35px;">
+                                <span [innerHtml]="tag.Code + ' ' | markerText:dataGrid.SearchFilter"></span>&nbsp;
+                                <span class="text-info-additional" [innerHtml]="tag.Name | markerText:dataGrid.SearchFilter"></span>
+                                
+                            </p>
+                        </div>
+                        <div class="col-3">
+                            <span [innerHtml]="tag.Value | markerText:dataGrid.SearchFilter"></span>&nbsp;
+                            <span *ngIf="tag.Value != null" [innerHtml]="tag.UnitName"></span>
+                        </div>
+                    </div>
+                </ng-template>
+            </ng-template>            
+            
+        </data-grid-ro5>
+    </div>
+</div>

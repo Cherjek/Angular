@@ -1,0 +1,6 @@
+<ng-container *appCanAccess="navItem.access">
+    <ng-container [ngSwitch]="isTabView">
+        <navigate-tab-item *ngSwitchCase="true" [navItem]="navItem" [isActive]="navItem.code === activeTab"></navigate-tab-item>
+        <navigate-route-item *ngSwitchDefault [navItem]="navItem"></navigate-route-item>        
+    </ng-container>    
+</ng-container>

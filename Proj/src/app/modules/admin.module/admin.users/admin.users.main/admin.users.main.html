@@ -1,0 +1,87 @@
+<div class="main-view-content height-auto">
+    <div class="col-filter-ro5 border-right-1">
+        <frame-filters-custompanel #ObjRo5FiltersPanel
+                                   (onApplyFilter)="onApplyFilter($event)"
+                                   [service]="filterContainerService"
+                                   [isAsyncCallbackStart]="loadingContentPanel"
+        ></frame-filters-custompanel>
+    </div>
+    <div class="col col-content-ro5 border-right-1">
+        <header class="section-header-content row">
+            <div class="col-auto"> <h5> Пользователи </h5> </div>
+            <div class="col"></div>
+            <div class="col-auto" *appCanAccess="'ADM_CREATE_USER'">
+                <button-ro5 [class]="'btn btn-primary'"
+                            (onclick)="createUser()">
+                    Добавить пользователя
+                </button-ro5>
+            </div>
+        </header>
+
+        <message-popup [(messages)]="errors"></message-popup>
+        <loader-ro5 [(loading)]="loadingContentPanel"></loader-ro5>
+        <div *ngIf="alert" class="popup-alert">
+            <ngb-alert [type]="alert.type" [dismissible]="true" (close)="closeAlert()">
+              {{alert.msg}}
+            </ngb-alert>
+        </div>
+
+        <data-grid-ro5 #Ro5DataGrid
+                       [HeaderActionTemplate]="headerActionTemplate"
+                       (onActionButtonClicked)="onDGRowActionBttnClick($event)">
+            <ng-template #headerActionTemplate>
+                
+                <div class="row no-gutters-2">                        
+                    <div class="col">
+                        <datagrid-header-temp-def 
+                            [permissionDelete]="deletePermissions"
+                            [dataGrid]="dataGrid" 
+                            (deletedRows)="deleteDGRows(Ro5DataGrid.getSelectDataRows())">
+                        </datagrid-header-temp-def>
+                    </div>
+                    <div class="col-auto" *ngIf="Ro5DataGrid.SelectionRow?.isItemsSelect">
+                        <ng-container *appCanAccess="'ADM_ADD_GROUPS_TO_USERS'">
+                            <dropdown-box-ro5 #dropdownBox
+                                              [keyField]="'Id'"
+                                              [valueField]="'Name'"
+                                              [isSelected]="true"
+                                              [itemsInput]="allGroups"
+                                              [footerTemplate]="footerTemplate"
+                                              [buttonText]="'Добавить в группу'"
+                                              [BttnColorClass]="'btn-primary'">
+                                <ng-template #footerTemplate>
+                                    <footer class="section-footer-content">
+                                        <div class="row no-gutters-2 align-items-center">
+                                            <div class="col">
+                                                <div class="row no-gutters align-items-center col-wrappanel" style="flex-wrap: nowrap">
+                                                    <div class="col-auto">
+                                                        <button-ro5 [class]="'btn btn-primary'"
+                                                                    (onclick)="addUsersToGroups(Ro5DataGrid.getSelectDataRows(), dropdownBox.getSelectedRows());dropdownBox.close()">
+                                                            Добавить
+                                                        </button-ro5>
+                                                    </div>
+                                                    <div class="col-auto">
+                                                        <button-ro5 [class]="'btn btn-outline-secondary'"
+                                                                    (onclick)="dropdownBox.close()">
+                                                            Отмена
+                                                        </button-ro5>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </footer>
+                                </ng-template>
+                            </dropdown-box-ro5>
+                        </ng-container>            
+                    </div>
+                </div>
+            </ng-template>
+
+            <ng-template #LoginColumnTemplate let-item="item">
+                <a [routerLink]="['/admin/user/' + item['Id']]"
+                   (click)="dataGridCurrentItemService.setCurrentItem(item)"
+                   [innerHTML]="item['Login'] | markerText:dataGrid.SearchFilter"></a>
+            </ng-template>
+        </data-grid-ro5>
+    </div>
+</div>

@@ -1,0 +1,26 @@
+﻿<div [attr.id]="controlId" class="input-group main-chips-container d-flex flex-wrap align-items-center" tabindex="1">
+    <!--тут чипсы-->
+    <div class="chips-item" *ngFor="let item of chips; index as i;" [ngClass]="{'chips-item-active' : selectIndex[i]}">
+        <div class="row no-gutters-2" (click)="chipsItemClick(i, $event)">
+            <div class="col word-break-all">{{item}}</div>
+            <div class="col-auto" (click)="chipsItemRemove(i, $event)"><i class="zmdi zmdi-close"></i></div>
+        </div>
+    </div>
+
+    <input id="typeahead-focus"
+           type="text"
+           class="form-control"
+           tabindex="2"
+           container="body"
+           [(ngModel)]="model"
+           [ngbTypeahead]="search"
+           (focus)="focus$.next($event.target.value); focus();"
+           (click)="click$.next($event.target.value)"
+           (selectItem)="selectItem($event, instance)"
+           (keydown)="inputKeydown($event)"
+           #instance="ngbTypeahead" />
+
+    <button class="btn-outline-circle btn-circle-size-24" (click)="allChipsRemove()">
+        <i class="zmdi zmdi-close"></i>
+    </button>
+</div>

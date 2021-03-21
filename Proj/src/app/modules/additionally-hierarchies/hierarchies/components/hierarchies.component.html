@@ -1,0 +1,54 @@
+<message-popup [(messages)]="errors"></message-popup>
+<loader-ro5 [(loading)]="loadingContent"></loader-ro5>
+<header class="main-content-header row">
+    <div class="col">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3>Список иерархий</h3>
+            </div>
+            <div>
+                <navigate-menu-ro5 #NavigateMenu [items]="navigateMenuTabs" [isTabView]="true"
+                    (onNavSelectChanged)="onNavSelectChanged($event)"></navigate-menu-ro5>
+            </div>
+        </div>
+    </div>
+</header>
+<div class="main-view-content height-auto">
+    <div class="col col-content-ro5 border-right-1">
+        <header class="section-header-content row">
+            <div class="col-auto">
+                <h5>Иерархии</h5>
+            </div>
+            <div class="col"></div>
+            <div class="col-auto" *appCanAccess="'HH_CREATE'">
+                <button-ro5 [class]="'btn btn-primary'" (onclick)="addNewHierarchy()">
+                    + Добавить новую иерархию
+                </button-ro5>
+            </div>
+        </header>
+
+        <data-grid-ro5 #Ro5DataGrid 
+            [HeaderActionTemplate]="GridHeaderTemplate"
+            (onActionButtonClicked)="onDGRowActionBttnClick($event)">
+            
+            <ng-template #GridHeaderTemplate>
+                <div class="row no-gutters-2">                        
+                    <div class="col">
+                        <datagrid-header-temp-def 
+                            permissionDelete="HH_DELETE"
+                            [dataGrid]="dataGrid" 
+                            (deletedRows)="deleteDGRows()">
+                        </datagrid-header-temp-def>
+                    </div>
+                </div>                
+            </ng-template>
+
+            <ng-template #HierarchyColumnTemplate let-item="item">
+                <a [routerLink]="[
+                        '../../hierarchies-module/hierarchy-card/' + item['Id']
+                    ]" [innerHTML]="item['Name'] | markerText: dataGrid.SearchFilter">
+                </a>
+            </ng-template>
+        </data-grid-ro5>
+    </div>
+</div>

@@ -1,0 +1,36 @@
+﻿<div *ngIf="!IsEmbedded" class="main-view-content height-auto main-view-result">
+    <div class="col col-content-ro5">
+        <message-popup [(messages)]="errorsTagsLoad"></message-popup>
+        <loader-ro5 [(loading)]="loadingContentPanel"></loader-ro5>
+        <datapresentation-create *ngIf="objectUnitTags != null"
+                                 [objectUnitTags]="objectUnitTags"
+                                 [templateHeader]="templateHeader"
+                                 [PropertyFormBasket]="{ IsHeaderWhiteStyle: true, IsCompareData: true }"></datapresentation-create>
+
+        <ng-template #templateHeader>
+            <header class="row align-items-center" style="background-color: #fff; color: inherit;">
+                <div class="col-auto">
+                    <h3>Все теги</h3>
+                </div>
+            </header>
+        </ng-template>
+    </div>
+</div>
+
+<div *ngIf="IsEmbedded">
+    <data-grid-ro5 [DetailRowButtonContent] = "CanAddTagValue ? {openText: 'Добавить', class: 'btn btn-outline-secondary'}: null" #Ro5DataGrid></data-grid-ro5>
+    <ng-template #cellTag let-item="item">
+        <div class="row no-gutters">
+            <div class="col">
+                <span [innerHtml]="item.TagCode | markerText:dataGrid.SearchFilter"></span>&nbsp;&nbsp;<span class="text-info-additional" [innerHtml]="item.TagName | markerText:dataGrid.SearchFilter"></span>
+            </div>
+        </div>
+    </ng-template>
+    <ng-template #cellUnit let-item="item">
+        <div class="row no-gutters">
+            <div class="col">
+                <div [innerHtml]="(item.UnitDisplayText + ' > ' + item.LogicDeviceDisplayText) | markerText:dataGrid.SearchFilter"></div>
+            </div>
+        </div>
+    </ng-template>
+</div>

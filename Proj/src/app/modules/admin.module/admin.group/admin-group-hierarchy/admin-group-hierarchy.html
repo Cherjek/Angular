@@ -1,0 +1,69 @@
+﻿<message-popup [(messages)]="errors"></message-popup>
+<loader-ro5 [(loading)]="runModesLoading"></loader-ro5>
+
+<div class="main-view-content height-auto main-view-result col-content-ro5">
+    <div class="row no-gutters">
+        <div class="col">
+            <header class="section-header-content row">
+                <div class="col-auto">
+                    <h5> Иерархии с правами доступа </h5>
+                </div>
+                <div class="col"></div>
+                <ng-container *appCanAccess="'ADM_EDIT_GROUP_HIERARCHIES'">
+                    <ng-container *ngIf="editMode">
+                        <div class="col-auto">
+                            <button-ro5 class="btn-primary"
+                                        (onclick)="saveCurrModePermissionsChanges()">
+                                Сохранить
+                            </button-ro5>
+                        </div>
+                        <div class="col-auto">
+                            <button-ro5 class="btn-outline-secondary"
+                                        (onclick)="cancelCurrModePermissionsChanges()">
+                                Отменить изменения
+                            </button-ro5>
+                        </div>
+                    </ng-container>
+                    <div class="col-auto" *ngIf="!editMode">
+                        <button-ro5 class="btn-primary"
+                                    (onclick)="changeCurrModePermissions()">
+                            Изменить
+                        </button-ro5>
+                    </div>
+                </ng-container>
+            </header>
+
+            <section class="section-body-content settings-container" style="height: calc(100vh - 100px);">
+                <section class="section-body-content section-panel-two-columns-settings">
+                    <ng-container>
+                        <!-- <header class="row no-gutters-2 section-header-grouppanel-expander">
+                            <div class="col">
+                                <h5> Вид отчета </h5>
+                            </div>
+                        </header> -->
+
+                        <div class="row align-items-center no-gutters-2 border-bottom-1" *ngFor="let hierarchy of hierarchiesEdit">
+                            <div class="col-3">
+                                <span> {{ hierarchy.Name }} </span>
+                            </div>
+                            <div class="col-9">
+                                <div class="row no-gutters align-items-center">
+                                    <div *ngIf="!editMode" class="col-auto">
+                                        <span> {{ hierarchy.IsActive ? 'Есть' : 'Нет' }} </span>
+                                    </div>
+                                    <div *ngIf="editMode" class="col-auto">
+                                        <toggle-switch [checked]="hierarchy.IsActive"
+                                                       [checkedRunnerColorClass]="'runner-color-checked-green'"
+                                                       [checkedSliderColorClass]="'slider-color-checked-green'"
+                                                       (onCheck)="hierarchy.IsActive = $event;">
+                                        </toggle-switch>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+                </section>
+            </section>
+        </div>
+    </div>
+</div>

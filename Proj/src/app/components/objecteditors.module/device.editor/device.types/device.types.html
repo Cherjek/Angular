@@ -1,0 +1,30 @@
+<div class="main-view-content height-auto">
+    <loader-ro5 [(loading)]="loadingContent"></loader-ro5>
+    <div class="col col-content-ro5 col-content-flex-column">
+        <header class="row no-gutters-2 section-header-content" style="background-color: #fff; margin-bottom: 1px;">
+            <div class="col">
+                <h5> Тип устройства </h5>
+            </div>
+        </header>
+        <div class="section-body-content">
+            <message-popup [(messages)]="errors"></message-popup>
+            <list-view-ro5 #typesLV
+                           [KeyField]="'Code'"
+                           [DisplayField]="'Text'"
+                           [RowTemplate]="typesRowTemplate"
+                           [DataSource]="deviceTypes"
+                           (OnItemClick)="onItemClick($event)">
+                <ng-template #typesRowTemplate let-item="item">
+                    <div class="row">
+                        <div class="col">
+                            <a [innerHtml]="item.Data[typesLV.DisplayField] | markerText:typesLV.SearchFilter"></a>
+                        </div>
+                        <div class="col-auto">
+                            <i class="zmdi zmdi-chevron-right zmdi-hc-2x"></i>
+                        </div>
+                    </div>
+                </ng-template>
+            </list-view-ro5>
+        </div>
+    </div>
+</div>

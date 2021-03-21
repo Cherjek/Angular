@@ -1,0 +1,60 @@
+.validate-create {
+    width: 100%;
+} 
+.editTagPanel input[type=number] {
+    width: 100px;
+}
+.tag-info-label {
+    font-size: 1.15em;
+}
+.view-tag-panel {
+    width: 100%;
+}
+.view-tag-panel > tbody > tr > td:first-child {
+    padding-bottom: 12px;
+}
+.view-tag-panel > tbody > tr > td:last-child {
+    width: 40px;
+}
+.allowance-input-width {
+    width: 220px;
+}
+.footer-panel-container {
+    width: 300px;
+    height: 100%;
+    float: right;
+}
+.validate-create td {
+    position: relative;
+}
+.validate-create h6 {
+    position: absolute;
+    top: 10px;
+}
+.item-row-checkbox {
+    padding-bottom: 8px;
+}
+.edit-issue-header {
+    margin-bottom: 14px;
+}
+.edit-issue-header > div:last-child i {
+    margin-top: 3px;
+}
+.details-row-view {
+    margin-left: 2px;
+}
+.button-settemplate-left {
+    height: 40px; 
+    width: 250px;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+.button-settemplate-right {
+    height: 40px;
+    width: 50px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0
+}
+.col-objects-ro5 {
+    height: calc(100% - 50px); 
+}

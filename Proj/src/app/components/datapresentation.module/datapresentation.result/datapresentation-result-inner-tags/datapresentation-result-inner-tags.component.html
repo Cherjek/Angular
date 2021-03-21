@@ -1,0 +1,81 @@
+    <message-popup [messages]="errors"></message-popup>
+<loader-ro5 [(loading)]="loadingContentPanel"></loader-ro5>
+<div *ngIf="alert" class="popup-alert">
+    <ngb-alert [type]="alert.type" [dismissible]="true" (close)="closeAlert()">
+      {{alert.msg}}
+    </ngb-alert>
+  </div>
+<div class="row no-gutters details-row">
+  <div class="col details-row-view background">
+
+      <section class="section-panel-two-columns-settings">
+          <div class="row no-gutters-2 border-bottom-1">
+              <div class="col-2">   
+                Дата и время                                        
+              </div>
+              <div class="col-4">
+                  <date-picker-ro5 
+                  [isIntervalMode] ="false"
+                  [(fromDate)]="tag.Datetime"></date-picker-ro5>
+              </div>
+          </div>
+              <div class="row no-gutters-2 border-bottom-1">
+                  <div class="col-2">Значение</div>
+                  <div class="col-4">
+                <ng-container [ngSwitch]="tag?.ValueType">
+                    <input-box *ngSwitchCase="'ValueString'" 
+                                        [placeholder]="'Введите значение'"
+                                        [(value)]="tag.ValueEdit" 
+                                        [maxlength]="90"></input-box>
+      
+                                    <input-box *ngSwitchCase="'ValueFloat'" 
+                                        [type]="'float'"
+                                        [placeholder]="'Введите значение'"
+                                        [(value)]="tag.ValueEdit"></input-box>
+      
+                                    <input-box *ngSwitchCase="'ValueInteger'" 
+                                        [type]="'number'"
+                                        [placeholder]="'Введите значение'"
+                                        [(value)]="tag.ValueEdit"></input-box>
+      
+                                    <date-picker-ro5 *ngSwitchCase="'ValueDatetime'"
+                                        [isIntervalMode]="false"
+                                        [(fromDate)]="tag.ValueEdit">
+                                    </date-picker-ro5>
+      
+                                    <toggle-switch *ngSwitchCase="'ValueBool'" 
+                                        [checked]="tag.ValueEdit"
+                                        [checkedRunnerColorClass]="'runner-color-checked-green'"
+                                        [checkedSliderColorClass]="'slider-color-checked-green'"
+                                        (onCheck)="tag.ValueEdit = $event"></toggle-switch>
+                                    <input-box
+                                        *ngSwitchDefault
+                                        [(value)] = "tag.ValueEdit"
+                                        placeholder="Введите значение"></input-box>  
+                </ng-container>                                         
+
+                  </div>
+              </div>
+          <div class="row no-gutters-2 border-bottom-1">
+              <div class="col-2">                                           
+              </div>
+              <div class="col">
+                  <div class="row no-gutters col-wrappanel">
+                      <div class="col-auto">
+                          <button-ro5 
+                              (onclick)="save()"
+                              [class]="'btn button-apply'"> Добавить </button-ro5>
+                      </div>
+                      <div class="col-auto">
+                          <button-ro5 
+                              (onclick)="cancel()"
+                              [class]="'btn btn-outline-secondary'" 
+                              data-toggle="collapse"> Отмена </button-ro5>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </section>
+
+  </div>
+</div>

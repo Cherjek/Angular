@@ -1,0 +1,54 @@
+<div class="main-view-content height-auto main-view-result">
+  <div 
+      romHotkeys
+      (onEsc)="cancel(propertiesEditorPanel)"
+      (onCtrlSave) = "saveObject(propertiesEditorPanel.getEditProperties())"
+      [editMode]="isPropEdit"
+      class="col col-content-ro5">
+      <div class="col-content-flex-column">
+          <message-popup [messages]="errorsPropertyPanel"></message-popup>
+          <loader-ro5 [(loading)]="loadingPropertyPanel"></loader-ro5>
+
+          <!-- <header class="section-header-content row no-gutters">
+              <div class="col">
+                  <h5> Параметры </h5>
+              </div>
+              <div class="col-auto">
+                  <button class="btn btn-outline-secondary" *ngIf="isPropEdit" (click)="rollbackPropertyChanges(propertiesEditorPanel)"> Отменить изменения </button>
+
+                  <ng-container>
+                      <button class="btn btn-primary" *ngIf="!isPropEdit" (click)="changeProperties(propertiesEditorPanel)"> Изменить </button>
+                  </ng-container>
+
+              </div>
+          </header> -->
+
+          <section class="section-body-content settings-container">
+              <properties-editor-panel #propertiesEditorPanel
+                                       [properties]="properties"
+                                       [isEdit]="isPropEdit"
+                                       [service]="scriptTagsEditorService">
+              </properties-editor-panel>
+          </section>
+
+          <!-- <footer class="section-footer-content" *ngIf="isPropEdit">
+              <div class="row no-gutters-2 align-items-center">
+                  <div class="col">
+                      <div class="row no-gutters col-wrappanel align-items-center">
+                          <div class="col-auto">
+                              <button type="button" class="btn btn-primary" (click)="saveObject(propertiesEditorPanel.getEditProperties());">
+                                  Сохранить
+                              </button>
+                          </div>
+                          <div class="col-auto">
+                              <button type="button" class="btn btn-outline-secondary" (click)="cancel(propertiesEditorPanel)">
+                                  Отмена
+                              </button>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </footer> -->
+      </div>
+  </div>
+</div>

@@ -1,0 +1,8 @@
+﻿.title {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.row.no-gutters.border-bottom-1.align-items-center:last-child {
+    border-bottom: 0;
+}

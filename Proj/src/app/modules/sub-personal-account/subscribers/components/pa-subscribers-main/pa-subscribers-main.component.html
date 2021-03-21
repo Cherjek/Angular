@@ -1,0 +1,107 @@
+<message-popup [(messages)]="errors"></message-popup>
+<loader-ro5 [(loading)]="loadingContent"></loader-ro5>
+<header class="main-content-header row">
+    <div class="col">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3>{{ 'CustomerList' | transloco }}</h3>
+            </div>
+        </div>
+    </div>
+</header>
+<div class="main-view-content">
+    <div class="col-filter-ro5 border-right-1">
+        <frame-filters-custompanel 
+            (onApplyFilter)="onApplyFilter($event)"
+            [service]="subPersonalFilterContainerService"
+            [isAsyncCallbackStart]="loadingContent">
+        </frame-filters-custompanel>
+    </div>
+
+    <div class="col col-content-ro5 border-right-1">
+        <header class="section-header-content row">
+            <div class="col-auto">
+                <h5>{{ 'CustomerList' | transloco }}</h5>
+            </div>
+            <div class="col"></div>
+            <div class="col-auto" *appCanAccess="'CPA_CREATE_CUSTOMER'">
+                <button-ro5 [class]="'btn btn-primary'" (onclick)="addNewSchedule()">
+                    + {{ 'AddCustomer' | transloco }}
+                </button-ro5>
+            </div>
+        </header>
+
+        <data-grid-ro5 #Ro5DataGrid 
+          [HeaderActionTemplate]="headerActionTemplate"
+          (onActionButtonClicked)="onActionButtonClicked($event)">
+          <ng-template #headerActionTemplate>          
+            <div class="row no-gutters-2" *ngIf="Ro5DataGrid.SelectionRow?.isItemsSelect">
+              <div class="col-auto">
+                <ng-template #popContent>
+                  <ng-container [ngSwitch]="menuConfirmItem == null">
+                    <ng-container *ngSwitchCase="true">
+                      <a *ngFor="let menuItem of commandActions" 
+                        class="dropdown-item"
+                        (click)="menuItem.code === 'export' ? itemActionEvent(menuItem) : menuConfirmItem = menuItem;$event.stopPropagation(); menuItem.code=== 'export' && popUpActionButton.close()"
+                        [innerHtml]="menuItem.name">                                                        
+                      </a>
+                    </ng-container>
+                    <ng-container *ngSwitchDefault>
+                      <div class="row no-gutters pa-sub-action-confirm">
+                        <div class="col">
+                          {{ ('AreYouSureYouWant' | transloco)+' "' + menuConfirmItem.name + '" ' + ('Customer' | transloco | lowercase) }}
+                        </div>
+                      </div>
+                      <div class="row no-gutters col-wrappanel pa-sub-action-popup">
+                          <div class="col-auto">
+                              <button type="button" class="btn btn-primary" 
+                                (click)="itemActionEvent(menuConfirmItem);popUpActionButton.close()">
+                                  {{ menuConfirmItem.name.split(' ')[0] }}
+                              </button>
+                          </div>
+                          <div class="col-auto">
+                              <button type="button" class="btn btn-outline-secondary" (click)="popUpActionButton.close()">
+                                  {{'Cancelation' | transloco}}
+                              </button>
+                          </div>
+                      </div>
+                    </ng-container>
+                  </ng-container>
+                  
+                </ng-template>
+                <button-ro5 
+                  [style.display]="commandActions?.length ? 'block' : 'none'"
+                  class="btn-outline-secondary" 
+                  container="body" 
+                  placement="bottom auto"
+                  #popUpActionButton="ngbPopover" 
+                  [ngbPopover]="popContent" 
+                  [autoClose]="'outside'" 
+                  triggers="manual"
+                  (hidden)="menuConfirmItem = null"
+                  (click)="popUpActionButton.open();$event.stopPropagation();">
+                  {{ 'Actions' | transloco }}
+                  &nbsp;&nbsp;&nbsp;
+                  <i class="zmdi zmdi-caret-down"></i>
+                </button-ro5>
+              </div>
+            </div>
+          </ng-template>
+            <ng-template #cellColumnTemplate let-item="item" let-column="column">
+                <a [routerLink]="[
+                        '../../sub-personal-account/apps/' + item?.Application?.Id
+                    ]" [innerHTML]="item?.Application?.Name | pipeNoName | markerText: dataGrid.SearchFilter">
+                </a>
+            </ng-template>
+            <ng-template #userColumnTemplate let-item="item" let-column="column">
+                <a [routerLink]="[
+                        '../../sub-personal-account/subscribers/' + item.Id
+                    ]" [innerHTML]="item?.Surname | pipeNoName | markerText: dataGrid.SearchFilter">
+                </a>
+            </ng-template>
+            <ng-template #statusColumnTemplate let-item="item" let-column="column">
+                <span [innerHTML]="item?.Status?.Name | markerText: dataGrid.SearchFilter"></span>
+            </ng-template>
+        </data-grid-ro5>
+    </div>
+</div>

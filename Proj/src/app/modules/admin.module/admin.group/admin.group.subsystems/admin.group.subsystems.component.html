@@ -1,0 +1,68 @@
+<message-popup [(messages)]="errors"></message-popup>
+<loader-ro5 [(loading)]="loadingContent"></loader-ro5>
+
+<div 
+    romHotkeys
+    (onEsc)="editCancel()"
+    (onCtrlSave) = "saveChanges()"
+    [editMode]="editMode"
+    class="main-view-content height-auto main-view-result col-content-ro5">
+    <div class="row no-gutters">
+        <div class="col">
+            <header class="section-header-content row">
+                <div class="col-auto">
+                    <h5> Подсистемы </h5>
+                </div>
+                <div class="col"></div>
+                <ng-container *appCanAccess="'ADM_EDIT_GROUP_SUBSYSTEMS'">
+                    <ng-container *ngIf="editMode">
+                        <div class="col-auto">
+                            <button-ro5 class="btn-primary"
+                                        (onclick)="saveChanges()">
+                                Сохранить
+                            </button-ro5>
+                        </div>
+                        <div class="col-auto">
+                            <button-ro5 class="btn-outline-secondary"
+                                        (onclick)="editCancel()">
+                                Отменить изменения
+                            </button-ro5>
+                        </div>
+                    </ng-container>
+                    <div class="col-auto" *ngIf="!editMode">
+                        <button-ro5 class="btn-primary"
+                                    (onclick)="editMode = true;">
+                            Изменить
+                        </button-ro5>
+                    </div>
+                </ng-container>
+            </header>
+
+            <section class="section-body-content settings-container">
+                <section class="section-body-content section-panel-two-columns-settings">
+                    <ng-container>
+                        <div class="row align-items-center no-gutters-2 border-bottom-1" *ngFor="let subsystem of subsystemsEdit">
+                            <div class="col-3">
+                                <span> {{ subsystem.Name }} </span>
+                            </div>
+                            <div class="col-9">
+                                <div class="row no-gutters align-items-center">
+                                    <div *ngIf="!editMode" class="col-auto">
+                                        <span> {{ subsystem.IsActive ? 'Есть' : 'Нет' }} </span>
+                                    </div>
+                                    <div *ngIf="editMode" class="col-auto">
+                                        <toggle-switch [checked]="subsystem.IsActive"
+                                                       [checkedRunnerColorClass]="'runner-color-checked-green'"
+                                                       [checkedSliderColorClass]="'slider-color-checked-green'"
+                                                       (onCheck)="subsystem.IsActive = $event;">
+                                        </toggle-switch>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+                </section>
+            </section>
+        </div>
+    </div>
+</div>

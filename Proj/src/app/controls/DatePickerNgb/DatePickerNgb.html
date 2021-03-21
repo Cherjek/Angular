@@ -1,0 +1,75 @@
+﻿<div class="date-picker-ro5" [attr.id]="id">
+    <div class="row">
+        <div class="col-12" [ngClass]="{ 'inline-display-flex': !isVertical, 'inline-display-block': isVertical }">
+            <div class="row row-no-wrap align-items-center">
+                <div class="col-12" (click)="$event.stopPropagation()" (touchstart)="$event.stopPropagation()">
+
+                    <div class="input-group">
+                        <input class="form-control" 
+                               [attr.placeholder]="formatDate"
+                               name="dpFrom" 
+                               [(ngModel)]="fromDate"
+                               (dateSelect)="openCloseNgbPicker(dpFrom)"
+                               ngbDatepicker
+                               [autoClose]="false"
+                               [footerTemplate]="footerFromDateTemplate"
+                               #dpFrom="ngbDatepicker">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" (click)="dpTo.close();openCloseNgbPicker(dpFrom)">
+                                <i class="zmdi zmdi-calendar"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <ng-template #footerFromDateTemplate>
+                        <div class="row no-gutters align-items-center justify-content-center">
+                            <div class="col-auto">
+                                <ngb-timepicker [(ngModel)]="fromDate"></ngb-timepicker>
+                            </div>
+                        </div>
+                    </ng-template>
+
+                </div>
+            </div>
+            <div class="row no-gutters-2 align-items-center" style="width: auto">
+                <div class="col-auto">
+                    <i class="zmdi zmdi-unfold-more zmdi-hc-rotate-90"></i>
+                </div>
+            </div>
+            <div class="row row-no-wrap align-items-center">
+                <div class="col-12" (click)="$event.stopPropagation()" (touchstart)="$event.stopPropagation()">
+                    
+                    <div class="input-group">
+                        <input class="form-control"
+                               [attr.placeholder]="formatDate"
+                               name="dpTo"
+                               [(ngModel)]="toDate"
+                               (dateSelect)="openCloseNgbPicker(dpTo)"
+                               ngbDatepicker
+                               [autoClose]="false"
+                               [footerTemplate]="footerToDateTemplate"
+                               #dpTo="ngbDatepicker">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" (click)="dpFrom.close();openCloseNgbPicker(dpTo)">
+                                <i class="zmdi zmdi-calendar"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <ng-template #footerToDateTemplate>
+                        <div class="row no-gutters align-items-center justify-content-center">
+                            <div class="col-auto">
+                                <ngb-timepicker [(ngModel)]="toDate"></ngb-timepicker>
+                            </div>
+                        </div>
+                    </ng-template>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<br *ngIf="fastPanel && isIntervalMode && !isMonthMode" />
+<div class="date-picker-ro5" *ngIf="fastPanel && isIntervalMode">
+    <span style="font-size: 12px">Быстрый выбор: </span><span><a href="javascript:void(0)" (click)="setFastDate(1)">Последние сутки</a></span>, <span><a href="javascript:void(0)" (click)="setFastDate(2)">Последняя неделя</a></span>, <span><a href="javascript:void(0)" (click)="setFastDate(3)">Последние 30 дней</a></span>, <span><a href="javascript:void(0)" (click)="setFastDate(4)">Последний календарный месяц</a></span>    
+</div>

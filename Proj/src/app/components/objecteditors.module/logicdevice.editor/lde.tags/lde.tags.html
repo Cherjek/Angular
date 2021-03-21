@@ -1,0 +1,90 @@
+<div class="main-view-content height-auto">
+    <div class="col-filter-ro5 border-right-1" *ngIf="showFilter">
+        <frame-filters-custompanel #ObjRo5FiltersPanel
+                                   [service]="filtersContainerService"
+                                   (onApplyFilter)="onApplyFilter($event)">
+        </frame-filters-custompanel>
+    </div>
+    <div class="col col-content-ro5 border-right-1">
+        <header class="section-header-content row">
+            <div class="col-auto">
+                <h5>Теги оборудования</h5>
+            </div>
+            <div class="col"></div>
+            <div class="col-auto" *appCanAccess="'OE_EDIT_TAGS_POSITION'">
+                <button type="button" class="btn btn-outline-secondary" (click)="tagsOrder()">
+                    Порядок тегов
+                </button>
+            </div>
+            <div class="col-auto" *appCanAccess="'OE_EDIT_TAGS'">
+                <button type="button" class="btn btn-primary" (click)="addTags()">
+                    Добавить теги
+                </button>
+            </div>
+        </header>
+
+        <message-popup [(messages)]="DGErrors"></message-popup>
+        <loader-ro5 [(loading)]="loadingContentPanel"></loader-ro5>
+
+        <data-grid-ro5 #Ro5DataGrid
+                       [HeaderActionTemplate]="headerAction"
+                       (onActionButtonClicked)="onDGRowActionBttnClick($event)">
+
+            <ng-template #LogicTagTypeColumnTemplate let-item="item">
+                <a [routerLink]="['/lde-tags-card/' + ldId]"
+                  [queryParams]="{ mode: 'edit', unitId: item.IdUnit, ids: item.Id }">
+                  <span [innerHtml]="item['LogicTagType']['Code'] + ' ' | markerText:Ro5DataGrid.SearchFilter"></span>
+                  <span class="text-info-additional" [innerHtml]="item['LogicTagType']['Name'] | markerText:Ro5DataGrid.SearchFilter"></span>
+                  <span class="text-info-additional" [innerHtml]="(item['LogicTagType']['ValueName'] ? (', ' + item['LogicTagType']['ValueName']) : '') | markerText:Ro5DataGrid.SearchFilter"></span>
+                </a>                
+            </ng-template>
+
+            <ng-template #TagTypeColumnTemplate let-item="item">
+                <span [innerHtml]="item['TagType']['Name'] | markerText:Ro5DataGrid.SearchFilter"></span>
+            </ng-template>
+            <ng-template #FilterTagTypeColumnTemplate let-item="item">
+                <span [innerHtml]="item['TagValueFilter']['Name'] | markerText:Ro5DataGrid.SearchFilter"></span>
+            </ng-template>
+
+            <ng-template #MeasureChannelColumnTemplate let-item="item">
+                <span [innerHtml]="item['MeasureChannel']['Name'] | markerText:Ro5DataGrid.SearchFilter"></span>
+            </ng-template>
+
+            <ng-template #SubSystemColumnTemplate let-item="item">
+                <span [innerHtml]="item['SubSystem']['Name'] | markerText:Ro5DataGrid.SearchFilter"></span>
+            </ng-template>
+
+            <ng-template #SourceColumnTemplate let-item="item">
+                <a *ngIf="item['Source'].IsLink" [routerLink]="['/device-editor/' + item['Source']['Id']]" 
+                   [queryParams]="{ unitId: item.IdUnit }"
+                   [innerHTML]="item['Source']['Name'] | pipeNoName | markerText:dataGrid.SearchFilter"></a>
+                
+                <span *ngIf="!item['Source'].IsLink"
+                   [innerHTML]="item['Source']['Name'] | markerText:dataGrid.SearchFilter"></span>
+            </ng-template>
+
+            <ng-template #ThresholdColumnTemplate let-item="item">
+                <span [innerHTML]="item['Threshold']['Name']"></span>
+            </ng-template>
+
+            <ng-template #headerAction>
+                <div class="row no-gutters">   
+                    <div class="col-auto" *ngIf="Ro5DataGrid.SelectionRow?.isItemsSelect">
+                        <div class="row no-gutters-2" *appCanAccess="'OE_EDIT_TAGS'">
+                            <div class="col-auto">
+                                <button type="button" class="btn btn-primary" (click)="editRows()"> Редактировать </button>
+                            </div>                            
+                        </div>                        
+                    </div>                    
+                    <div class="col">
+                        <datagrid-header-temp-def 
+                            permissionDelete="OE_EDIT_TAGS"
+                            [dataGrid]="dataGrid" 
+                            (deletedRows)="deleteRows();">
+                        </datagrid-header-temp-def>
+                    </div>
+                </div>
+            </ng-template>
+        </data-grid-ro5>
+    </div>
+</div>

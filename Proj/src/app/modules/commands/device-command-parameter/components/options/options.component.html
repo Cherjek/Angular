@@ -1,0 +1,30 @@
+<div class="main-view-content height-auto">
+    <message-popup [(messages)]="errors"></message-popup>
+    <loader-ro5 [(loading)]="loadingContent"></loader-ro5>
+    <div class="col col-content-ro5 border-right-1">
+        <header class="section-header-content row">
+            <div class="col-auto">
+                <h5> Варианты выбора </h5>
+            </div>
+            <div class="col"></div>
+            <div class="col-auto" *appCanAccess="'OE_EDIT_DEVICE_COMMAND'">
+                <button-ro5 [class]="'btn btn-primary'" (onclick)="addOption()">
+                    + Добавить выбор
+                </button-ro5>
+            </div>
+        </header>
+        <div class="main-view-content height-auto">
+            <div class="col col-content-ro5 border-right-1">
+                <data-grid-ro5 #Ro5DataGrid 
+                    (onActionButtonClicked)="onDGRowActionBtnClick($event)">
+                    
+                    <ng-template #cellNameOption let-item="item">
+                        <a [routerLink] = "['/commands-module/device-command-parameter-option/' + parameterId + '/' + item.Id]"
+                            [innerHTML]="item?.LogicDeviceOption?.Text | markerText:dataGrid.SearchFilter"></a>
+                    </ng-template>
+
+                </data-grid-ro5>
+            </div>
+        </div>
+    </div>
+</div>

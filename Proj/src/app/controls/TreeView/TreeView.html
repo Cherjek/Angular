@@ -1,0 +1,65 @@
+﻿<loader-ro5 [(loading)]="loadingPanel"></loader-ro5>
+
+<ng-template #headerTemplate let-config="config" let-item="item"
+             let-onCollapseExpand="onCollapseExpand"
+             let-onCheckedChange="onCheckedChange"
+             let-onFilterTextChange="onFilterTextChange">
+
+    <div class="row no-gutters" style="margin-bottom: 7px" *ngIf="isSearch">
+        <div class="col">
+            <input-box [type]="'search'" [(value)]="__search" (valueChange)="onFilterTextChange(($event||''));correctChecked()"></input-box>
+        </div>
+    </div>
+    <div class="row no-gutters" *ngIf="showExpandToggle && nodes && nodes.length" style="height: 28px">
+        <div class="col" *ngIf="isCheck">
+            <check-box-ro5 class="check-all" [label]="'Все'"
+                           [indeterminate]="item.indeterminate"
+                           [checked]="item.checked"
+                           (onClick)="item.checked = $event.checked; treeViewComponent.onAllCheckedChange()"></check-box-ro5>
+            <div style="height: 3px; clear: both"></div>
+        </div>
+        <div class="col-auto">
+            <button 
+                container="body"
+                ngbTooltip="{{ !item.collapsed ? 'Свернуть' : 'Развернуть' }}"    
+                class="btn-collapse btn-outline-circle btn-circle-size-24"
+                (click)="onCollapseExpand()">
+                <i class="zmdi collapse-icon"
+                    [class.zmdi-unfold-less]="item.collapsed" 
+                    [class.zmdi-unfold-more]="!item.collapsed"></i>
+            </button>            
+        </div>
+    </div>
+
+</ng-template>
+
+<ng-template #itemTemplate let-item="item" let-onCollapseExpand="onCollapseExpand" let-onCheckedChange="onCheckedChange">
+    <div class="row no-gutters white-space-normal" style="flex-wrap: nowrap;">
+        <div class="col-auto" style="margin-right: 5px; margin-top: -3px; width:12px">
+            <i *ngIf="item.children" (click)="onCollapseExpand();detectRowCollapse();" aria-hidden="true" class="zmdi zmdi-hc-2x" style="cursor: pointer"
+               [class.zmdi-caret-right]="item.collapsed"
+               [class.zmdi-caret-down]="!item.collapsed"></i>
+        </div>        
+        <div *ngIf="isCheck">
+            <check-box-ro5 [indeterminate]="item.indeterminate"
+                           [checked]="item.checked"
+                           (onClick)="item.checked = $event.checked; onCheckedChange()"></check-box-ro5>
+        </div>
+        <div  [ngSwitch]="isCheck" data-toggle="tooltip" data-placement="top" [title]="item.text">
+            <label *ngSwitchCase="true" (click)="item.checked = !item.checked; onCheckedChange()">
+                {{item.text}}
+            </label>
+            <label *ngSwitchDefault (click)="itemSelect.emit(item.value);">
+                {{item.text}}
+            </label>
+        </div>
+    </div>    
+</ng-template>
+<ngx-treeview #treeViewComponent
+              [config]="config"
+              [items]="nodes"
+              [headerTemplate]="headerTemplate"
+              [itemTemplate]="itemTemplate"
+              (selectedChange)="nodeSelect($event)"
+              (filterChange)="filterChange($event)">
+</ngx-treeview>

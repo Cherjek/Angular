@@ -1,0 +1,47 @@
+<ng-container [ngSwitch]="calendarPickerType">
+    <div *ngSwitchCase="calendarPickerTypes.Dates" class="days__container">
+        <div class="row no-gutters" *ngFor="let row of daysTable">
+            <div class="col-auto" *ngFor="let i of row">
+                <button class="btn btn-outline-secondary" (click)="set(i)" [ngClass]="{'select': isSelect(i), 'last-word': i === -1 }">
+                    {{ i === -1 ? lastDayMonth : i }}
+                </button>
+            </div>
+        </div>
+    </div>
+    <div *ngSwitchCase="calendarPickerTypes.NumberOrder" class="days__container">
+        <div class="row no-gutters">
+            <div class="col-auto" *ngFor="let i of orderNumbers">
+                <button class="btn btn-outline-secondary" (click)="set(i)" [ngClass]="{'select': isSelect(i), 'last-word': i === -1}">
+                    {{ i === -1 ? lastOrder : i }}
+                </button>
+            </div>
+        </div>
+    </div>
+    <div *ngSwitchCase="calendarPickerTypes.Months" class="month__container">
+        <div class="row no-gutters" *ngFor="let row of monthsTable">
+            <div class="col-auto" *ngFor="let i of row">
+                <button type="button" class="btn btn-outline-secondary" (click)="set(i)" [ngClass]="{'select':isSelect(i)}">
+                    {{ i }}
+                </button>
+            </div>
+        </div>
+    </div>
+    <div *ngSwitchCase="calendarPickerTypes.Weeks" class="week__container">
+        <div class="row no-gutters">
+            <div class="col-auto" *ngFor="let i of weeks">
+                <button type="button" class="btn btn-outline-secondary" (click)="set(i)" [ngClass]="{'select': isSelect(i)}">
+                    {{ i }}
+                </button>
+            </div>
+        </div>
+    </div>
+    <div *ngSwitchCase="calendarPickerTypes.TimeRange" class="time-range__container">
+        <div class="row no-gutters" *ngFor="let row of timeRangesTable">
+            <div class="col-auto" *ngFor="let i of row">
+                <button type="button" class="btn btn-outline-secondary" (click)="set(i)" [ngClass]="{'select':isSelect(i)}">
+                    {{ i }}
+                </button>
+            </div>
+        </div>
+    </div>
+</ng-container>

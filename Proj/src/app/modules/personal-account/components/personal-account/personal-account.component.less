@@ -1,0 +1,115 @@
+header {
+    max-width: calc(100vw) !important;
+}
+
+.main-view-content.overflow {
+    overflow-y: auto;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch;
+    height: calc(100% - 50px);
+}
+
+.main-menu-background {
+    width: 20vw;
+    background-color: #edf2f8;
+    position: absolute;
+    height: 100%;
+}
+
+.background-color-white {
+    background-color: #fff;
+}
+
+li:hover, li.active {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.content { 
+    display: flex;
+}
+
+.unit {
+    background-color: rgb(255, 247, 230);
+    font-size: @unitFontSize;
+}
+
+.logic-device {
+    font-size: @lDFontSize;
+}
+
+.danger-color {
+    color: #dc3545 !important;
+}
+
+.details-container {
+    width: 100%;
+    flex: 1 1 auto;
+}
+
+@unitFontSize: 1.3rem;
+@lDFontSize: 1.1rem;
+
+@landscapeHeaderHeight: 3.5rem;
+@landscapeMenuItemFontSize: 1rem;
+@landscapeMenuItemHeight: 3rem;
+@reportsHeaderHeight: 4rem;
+@media screen and (orientation:landscape) {
+
+    .content {
+        flex-direction: row;
+
+        & > .main-menu {
+            width: 20vw;
+            background-color: #edf2f8;
+
+            & > .menu-items {
+                width: 100%;
+
+                & > .reports-header {
+                    height: @reportsHeaderHeight;
+                    font-weight: bold;
+
+                    span {
+                        font-size: @landscapeMenuItemFontSize;
+                    }
+                }
+
+                & > .items {
+                    height: @landscapeMenuItemHeight;
+
+                    span {
+                        font-size: @landscapeMenuItemFontSize;
+                    }
+                }
+            }
+        }
+
+        & > div > .main-menu-tab {
+            display: none !important;
+        }
+    }
+}
+
+@media screen and (orientation:portrait) {
+
+    .main-menu-background {
+        display: none !important;
+    }
+
+    .content {
+        flex-direction: column;
+
+        & > .main-menu {
+            .main-menu-background;
+        }
+    }
+}
+/*.border-bottom-1-dotted {
+    border-bottom: 1px dotted;
+}*/
+.h-padding {
+  padding: 0 .5rem;
+}
+.v-padding {
+  padding: .5rem;
+}

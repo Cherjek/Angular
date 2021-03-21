@@ -1,0 +1,38 @@
+﻿<div class="main-view-content height-auto">
+    <loader-ro5 [(loading)]="loadingContentPanel"></loader-ro5>
+    <message-popup [(messages)]="errorsContentValidationForms"></message-popup>
+    <div class="col col-content-ro5 col-content-flex-column">
+        <header class="row no-gutters-2 section-header-content rom-sub-header">
+            <div class="col">
+                <navigate-menu-ro5 [items]="navItems"
+                                   [isTabView]="true"
+                                   (onNavSelectChanged)="navClick($event)"></navigate-menu-ro5>
+            </div>
+        </header>
+        <div class="section-body-content">
+            <data-grid-ro5 #Ro5DataGrid>
+                <ng-template #cellMessageType let-item="item">
+                    <div class="row no-gutters">
+                        <div class="col">
+                            <div *ngIf="item.MessageType == 'ERROR'" class="rom-alert-error">
+                            </div>
+                            <div *ngIf="item.MessageType == 'WARNING'" class="rom-alert-warn">
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+                <ng-template #cellDatetime let-item="item">
+                    <div class="row no-gutters">
+                        <div class="col-auto">
+                            <div [innerHTML]="item.Datetime | dateFormat | markerText:dataGrid.SearchFilter"></div>
+                        </div>
+                        <div>&nbsp;</div>
+                        <div class="col-auto">
+                            <div [innerHTML]="item.Datetime | date:'HH:mm:ss' | markerText:dataGrid.SearchFilter"></div>
+                        </div>
+                    </div>
+                </ng-template>
+            </data-grid-ro5>
+        </div>        
+    </div>
+</div>

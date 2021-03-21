@@ -1,0 +1,26 @@
+
+<header class="main-content-header row">
+    <div class="col-auto">
+        <backward-button></backward-button>
+    </div>
+    <div class="col main-header-text">
+        <h3> Фильтр </h3>
+    </div>
+    <ng-container>
+        <div class="main-header-navigation">
+
+            <ng-template #templateNavItem let-navItem="navItem">
+                <rom-forms__navigate-item-template [navItem]="navItem"></rom-forms__navigate-item-template>
+            </ng-template>
+
+            <navigate-menu-ro5 [items]="navigateMenuTabs" [templateNavItem]="templateNavItem"></navigate-menu-ro5>
+        </div>
+    </ng-container>
+</header>
+<div class="main-view-content">
+    <div class="col">
+        <loader-ro5 [(loading)]="loadingContent"></loader-ro5>
+        <message-popup [(messages)]="errors"></message-popup>
+        <router-outlet></router-outlet>
+    </div>
+</div>

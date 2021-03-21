@@ -1,0 +1,65 @@
+<message-popup [(messages)]="errors"></message-popup>
+<loader-ro5 [(loading)]="loadingContent"></loader-ro5>
+<div class="main-view-content height-auto main-view-result">
+  <div class="col col-content-ro5">
+
+      <div class="col-content-flex-column" *ngIf="errorLoadEntity == null">
+          <section class="section-body-content section-panel-two-columns-settings">
+              <header class="section-header-grouppanel-expander row no-gutters border-bottom-1">
+                  <div class="col"></div>
+                  <div class="col-auto" [ngSwitch]="isPropEdit">
+                      <ng-container *ngSwitchCase="true">
+                          <button-ro5 [class]="'btn-outline-secondary'" (onclick)="cancel()">
+                              {{'Cancelation' | transloco}}
+                          </button-ro5>
+                      </ng-container>                       
+                  </div>
+                  <div class="col-auto" [ngSwitch]="isPropEdit">
+                      <ng-container *ngSwitchCase="true">
+                          <button-ro5 [class]="'btn-primary'" (onclick)="save()">
+                            {{'Deny' | transloco}}
+                          </button-ro5>
+                      </ng-container>                       
+                  </div>
+              </header>
+
+              <section id="propertySection" class="collapse show">
+
+                  <section class="section-panel-two-columns-settings" *ngIf="properties">
+                      <div class="row no-gutters-2 border-bottom-1" *ngFor="let prop of properties;let i= index">
+                          <div class="col-2">
+                              <span> {{ prop.Name }} </span><span *ngIf="isPropEdit && prop.IsRequired" class="error-required-color">&nbsp;*</span>
+                          </div>
+                          <div class="col-10 word-break-all">
+                              <ng-container [ngSwitch]="isPropEdit && !prop.ReadOnly">
+
+                                  <ng-container *ngSwitchCase="true">
+                                      <ng-container [ngSwitch]="prop.Type">                                     
+                                          <textarea 
+                                              *ngSwitchCase="'MultiString'" 
+                                              maxlength="300"
+                                              class="form-control"
+                                              [(ngModel)]="prop.Value"
+                                              [placeholder]="prop.Name"></textarea>
+
+                                      </ng-container>
+                                  </ng-container>
+
+                                  <ng-container *ngSwitchCase="false">
+                                      <ng-container [ngSwitch]="prop.Type">
+                                          <div *ngSwitchDefault>
+                                              {{ prop.Value || prop.IsNullName }}
+                                          </div>
+                                      </ng-container>
+                                  </ng-container>
+                              </ng-container>
+                          </div>
+                      </div>
+                      <ng-content></ng-content>
+                  </section>            
+
+              </section>
+          </section>
+      </div>
+  </div>
+</div>

@@ -1,0 +1,13 @@
+﻿<header class="main-content-header row">
+    <div class="col">
+        <h3>Тест компонентов</h3>
+    </div>
+    <context-button [items]="ContextButtonItems"
+                    [width]="230"
+                    (onItemClick)="contextButtonHeaderClick($event)"></context-button>
+</header>
+<div class="main-view-content">
+    <div class="col col-content-ro5" style="overflow-y: auto; overflow-x: hidden;">
+        <router-outlet></router-outlet>
+    </div>
+</div>

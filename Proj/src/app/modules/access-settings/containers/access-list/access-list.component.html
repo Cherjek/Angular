@@ -1,0 +1,16 @@
+<div class="main-view-content height-auto col-content-ro5">
+    <div class="row no-gutters">
+
+        <!--<message-popup [(messages)]="errors"></message-popup>-->
+        <loader-ro5 [(loading)]="loadingContentPanel"></loader-ro5>
+
+        <rom-access-list-nav class="col-4 border-right-1"
+                             [accessList]="accessList"
+                             [activeAccessListItem]="activeAccessListItem"
+                             (toggleActive)="activeAccessListItem = $event"></rom-access-list-nav>
+        <rom-access-list-info class="col"
+                              [accessList]="accessList"
+                              [activeAccessListItem]="activeAccessListItem"></rom-access-list-info>
+    </div>
+</div>
+

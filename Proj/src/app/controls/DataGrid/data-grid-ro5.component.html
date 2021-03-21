@@ -1,0 +1,349 @@
+﻿<div class="data-grid-ro5">
+    <header [ngStyle]="searchBoxStyle" class="section-header-content" *ngIf="DataGridOptions.isSearchVisibility">
+        <input-box #searchInputControl [type]="'search'" [isFocus]="true" [isFullSize]="true" [(value)]="__search" (valueChange)="searchTextInput($event)"></input-box>
+    </header>
+
+    <section class="section-body-content" (click)="onEventMouseupClickMainFrame($event)">
+        <div class="row no-gutters-2 border-bottom-1 data-grid-with-max calculate-header-width data-grid-header">
+            <div class="col">
+                <div *ngIf="HeaderActionTemplate" class="row align-items-center data-grid-header-action border-bottom-1">
+                    <div class="col">
+                        <div class="row align-items-center" [ngClass]="{'no-gutters' : isMultiSelect, 'no-gutters-2' : !isMultiSelect}">
+                            <ng-template [ngTemplateOutlet]="headerLabelTemplate">
+                            </ng-template>
+                            <div class="col">
+                                <ng-template [ngTemplateOutlet]="HeaderActionTemplate">
+                                </ng-template>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row no-gutters-2 align-items-center" [style.marginRight]="headerMarginRight" [style.height]="__headerHeight">
+                    <!--колонка чекбоксов для выбора нескольких строк-->
+                    <div class="col-auto table-column-check" *ngIf="isMultiSelect">
+                        <check-box-ro5 class="form-check-item"
+                                       [ngClass]="{'visible' : SelectionRow.isItemsSelect}"
+                                       [indeterminate]="SelectionRow.isNotAllItemsSelect"
+                                       [checked]="SelectionRow.isAllItemsSelect"
+                                       [disabled]="itemsLength() === 0"
+                                       (onClick)="allRowSelect($event)"></check-box-ro5>
+                    </div>
+                    <div class="col" *ngIf="HeaderTemplate == null && !(Columns || []).length">
+                        <!--Когда не установлен HeaderTemplate и нет колонок, выводим надпись "Всего"-->
+                        <div class="row no-gutters">
+                            <ng-template [ngTemplateOutlet]="headerLabelTemplate">
+                            </ng-template>
+                        </div>
+                    </div>
+                    <div class="col" *ngIf="HeaderTemplate">
+                        <div class="row align-items-center">
+                            <ng-template [ngTemplateOutlet]="headerLabelTemplate">
+                            </ng-template>
+                            <div class="col">
+                                <ng-template [ngTemplateOutlet]="HeaderTemplate">
+                                </ng-template>
+                            </div>
+                        </div>
+                    </div><!--если задан шаблон, то Columns не должен ни в каком случае работать-->
+                    <ng-container *ngFor="let col of (HeaderTemplate!=undefined?[]:Columns); let i=index;">
+                        <div *ngIf="DragAndDropRow && i==0" class="col-auto table-column-dragdrop">
+                        </div>
+                        <div [title]="col.Caption" *ngIf="col.Visible" class="col table-header-cell data-grid-cell-header-inline" 
+                             (click)="headerSortClick(col)"
+                             [style.maxWidth.px]="col.Width"
+                             [ngClass]="{'flex-width-style-not-null': col.Width != null,
+                                    'text-align-center' : col.TextAlign === dataColumnTextAlign.Center,
+                                    'text-align-left' : col.TextAlign === dataColumnTextAlign.Left,
+                                    'text-align-right' : col.TextAlign === dataColumnTextAlign.Right }">
+
+                            <ng-container *ngIf="!col.ColTemplate">
+                              <div class="data-grid-cell-header" style="display: flex;">
+                                <ng-template [ngTemplateOutlet]="defaultColTemplate" [ngTemplateOutletContext]="{ $implicit: col }">
+                                </ng-template>  
+                                <div class="sort-icon" *ngIf="columnSort.Name === col.Name">
+                                  <i *ngIf="columnSort.Sortable === 1" class="zmdi zmdi-sort-amount-asc"></i>
+                                  <i *ngIf="columnSort.Sortable === -1" class="zmdi zmdi-sort-amount-desc"></i>
+                                </div>                              
+                              </div>                              
+                            </ng-container>                            
+                            <div *ngIf="col.ColTemplate" class="data-grid-header-col-template">
+                                <ng-template [ngTemplateOutlet]="col.ColTemplate" [ngTemplateOutletContext]="{ $implicit: col }">
+                                </ng-template>
+                            </div>
+                        </div>
+                    </ng-container>
+                    <!--колонка с кнопкой детализации-->
+                    <div *ngIf="DetailRow != null" class="table-column-detail">
+                    </div>
+                    <!--колонка с кнопкой action(н-р: удалить, редактировать строку)-->
+                    <div class="table-column-action" [ngClass]="{'ct-state-invisible':!ActionButtons.length}">
+                    </div>
+                    <div class="table-column-status" *ngIf="StatusColumn">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <ng-template #headerLabelTemplate>
+            <ng-container [ngSwitch]="isMultiSelect && SelectionRow.isItemsSelect">
+                <div *ngSwitchCase="true" class="col-auto table-header-cell" (click)="allRowSelect({ checked: !SelectionRow.isAllItemsSelect })">
+                    {{ headerTextTemplatePattern }}
+                </div>
+                <div *ngSwitchCase="false" class="col-auto table-header-cell" (click)="allRowSelect({ checked: !SelectionRow.isAllItemsSelect })">
+                    {{ HeaderTextTemplate + ': ' + itemsLength() }}
+                </div>
+            </ng-container>
+        </ng-template>
+        <ng-template #defaultColTemplate let-col>
+            <span class="data-grid-header-title">{{col.Caption}}</span>            
+        </ng-template>
+
+        <div *ngIf="isNotDataItems" class="row no-gutters align-items-center not-data-items">
+            <div class="col">
+                Нет данных
+            </div>
+        </div>
+        <!--<virtual-scroll>-->
+        <virtual-scroller cdkDropList [cdkDropListDisabled]="!DragAndDropRow"
+                          class="virtualScrollBody"
+                          (cdkDropListDropped)="drop($event)"
+                          [items]="DataSourceForm | filterRow:'':Filter | searchRow:SearchFilter:getColumnsObjectItems() | orderBy:columnSort.Name:columnSort.Sortable === 1:columnSort.AggregateFieldName:columnSort.DataType === dataColumnType.DateTime"
+                          [checkResizeInterval]="0"
+                          (vsUpdate)="updateVirtualScrollItems($event)">
+
+
+            <!--<div class="row no-gutters data-grid-with-max data-grid-content">
+                <div class="col">-->
+            <ng-container *ngFor="let item of visibleScrollElements; index as i;">
+
+                <div cdkDrag [cdkDragDisabled]="!DragAndDropRow" class="row no-gutters-2 data-grid-with-max data-grid-content table-data-row hover-list-row border-bottom-1 align-items-center"
+                     [ngClass]="{ 'selected-list-row': SelectedRows[item[KeyField]] != undefined,
+                                  'edit-row-view background': EditingRows[item[KeyField]],
+                                  'not-user-select-html': DragAndDropRow }">
+                    <div *ngIf="DragAndDropRow" class="col-auto table-column-dragdrop">
+                        <div class="row justify-content-right no-gutters-2">
+                            <div class="col-auto">
+                                <i cdkDragHandle class="zmdi zmdi-swap-vertical zmdi-hc-2x cursor-grab"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col" style="padding-right: 0">
+                        <div class="row no-gutters-2 data-grid-item-row"
+                             (click)="rowSelect(item, $event);">
+                            <!--колонка чекбоксов для выбора нескольких строк-->
+                            <div *ngIf="isMultiSelect"
+                                 class="table-column-check"
+                                 (mouseenter)="mouseenterCheckColumn($event)"
+                                 (mouseleave)="mouseleaveCheckColumn($event)">
+                                <check-box-ro5 class="form-check-item" [ngClass]="{
+                                                'visible' : (SelectedRows[item[KeyField]] != undefined || SelectionRow.isItemsSelectMoreThenOne),
+                                                'light-visible': SelectionRow.isNotAllItemsSelect && !SelectionRow.isItemsSelectMoreThenOne}"
+                                               [indeterminate]="(SelectedRows[item[KeyField]] || { IsIndeterminate: false }).IsIndeterminate"
+                                               [checked]="(SelectedRows[item[KeyField]] || { IsCheck: false }).IsCheck"
+                                               [disabled]="__isNotCheckWhileEdit || (__isNotCheckIfLimitFinish && !SelectedRows[item[KeyField]])">
+
+                                </check-box-ro5>
+                            </div>
+                            <ng-template [ngTemplateOutlet]="RowsTemplate ? CustomRowsTemplate : DefaultRowsTemplate" [ngTemplateOutletContext]="{ item: item, id: item[KeyField] }">
+                            </ng-template>
+
+                            <!--колонка с кнопкой action(н-р: удалить, редактировать строку)-->
+                            <div class="table-column-action" [ngClass]="{'ct-state-invisible':!ActionButtons.length}"
+                                 [ngStyle]="{ 'cursor': __isNotActionWhileEditOrCheck ? 'not-allowed' : 'default' }">
+                                <ng-template #popContent>
+                                    <div style="font-size: 14px" [ngSwitch]="(actionButton || { IsConfirm: false }).IsConfirm">
+                                        <ng-container *ngSwitchCase="false">
+                                            
+                                            <ng-template #menuItemTemplate let-disabled="disabled" let-menuItem="menuItem">
+                                                <div [ngStyle]="{ 'cursor': disabled ? 'not-allowed' : 'default' }">
+                                                    <a class="dropdown-item"
+                                                       (click)="actionButtonMenuClicked(menuItem, item, i, popUpActionButton, $event)"
+                                                       [class.item-display-disabled]="disabled"
+                                                       [innerHtml]="menuItem.DisplayText">                                                        
+                                                    </a>
+                                                </div>
+                                            </ng-template>
+                                            
+                                            <ng-template *ngFor="let menuItem of ActionButtons"
+                                                         [ngTemplateOutlet]="menuItemTemplate" 
+                                                         [ngTemplateOutletContext]="{ disabled: !menuItem.IsValid(item), menuItem: menuItem }"></ng-template>
+
+                                        </ng-container>
+                                        <ng-container *ngSwitchCase="true">
+                                            <div class="row no-gutters" style="margin: 15px 0">
+                                                <div class="col">
+                                                    {{ actionButton.confirmSettings.ConfirmText }}
+                                                </div>
+                                            </div>
+                                            <div class="row no-gutters">
+                                                <div class="col-auto">
+                                                    <button type="button" class="btn btn-primary" (click)="actionButtonMenuClicked(actionButton, item, i, popUpActionButton, $event, true)">
+                                                        {{ actionButton.confirmSettings.ConfirmButtonText }}
+                                                    </button>
+                                                </div>
+                                                <div class="col-auto" style="margin-left: 10px">
+                                                    <button type="button" class="btn btn-outline-secondary" (click)="popUpActionButton.close()">
+                                                        Отмена
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </ng-container>
+                                    </div>
+                                </ng-template>
+                                <button type="button" class="btn-outline-circle btn-circle-size-32"
+                                        [ngClass]="{'item-display-disabled' : __isNotActionWhileEditOrCheck }"
+                                        container="body"
+                                        placement="left auto"
+                                        #popUpActionButton="ngbPopover"
+                                        [ngbPopover]="popContent"
+                                        [autoClose]="'outside'"
+                                        triggers="manual"
+                                        (hidden)="hiddenEventActionButtonPopover()"
+                                        (click)="actionButtonPopup = popUpActionButton;openActionButtonPopover(popUpActionButton, i);$event.stopPropagation();">
+                                    <i class="zmdi zmdi-more"></i>
+                                </button>
+                            </div>
+
+                            <!--колонка с кнопкой детализации-->
+                            <div *ngIf="DetailRow != null" [class.data-grid-custom-action-button]="DetailRowButtonContent" class="table-column-detail" [ngSwitch]="DetailRow.isRowExpand(item[KeyField]) && DetailRow.isAsyncStart == true">
+                                <div class="content-spinner-ro5" *ngSwitchCase="true">
+                                    <i class="zmdi zmdi-spinner zmdi-hc-2x zmdi-hc-spin"></i>
+                                </div>
+                                <ng-container *ngSwitchCase="false">
+                                    <ng-template #customDetailRowButton>
+                                    <button-ro5
+                                    [ngStyle]="{'display': (DetailRowButtonContent?.closeText || !DetailRow.isRowExpand(item[KeyField])) ? 'inherit': 'none'}"
+                                    (click)="btnExpandedClick(item, $event, '#dataRowObject' + item[KeyField])"
+                                    [class]="DetailRowButtonContent?.class || 'btn btn-primary'">
+                                    {{!DetailRow.isRowExpand(item[KeyField]) ? DetailRowButtonContent?.openText : DetailRowButtonContent?.closeText}}</button-ro5>
+                                    </ng-template>
+                                    <button
+                                    *ngIf="!DetailRowButtonContent; else customDetailRowButton"
+                                     id="btnDetailRow" [attr.data-target]="'#dataRowObject' + item[KeyField]" class="btn-outline-circle transform-rotate-show btn-circle-size-32 collapsed"
+                                        [ngClass]="{ 'collapsed' : !DetailRow.isRowExpand(item[KeyField]), 'active' : DetailRow.isRowExpand(item[KeyField]) }"
+                                        (click)="btnExpandedClick(item, $event, '#dataRowObject' + item[KeyField])">
+                                    <i id="icnDetailButton" class="zmdi zmdi-chevron-right"></i>
+                                </button>
+                                </ng-container>
+                            </div>
+
+                            <!--столбец статуса, задает цвет и текст при наведении-->
+                            <div *ngIf="StatusColumn" class="table-column-status"
+                                 (mouseenter)="statusMouseEnter($event, item, StatusColumn)"
+                                 (mouseleave)="statusMouseLeave($event)"
+                                 [style.border-right-color]="StatusColumn.getColor(item)"
+                                 placement="left"
+                                 [ngbTooltip]="statusColumnContent"
+                                 container="body">
+
+                                <ng-template #statusColumnContent>{{ StatusColumn.getDesc(item) }}</ng-template>
+                            </div>
+                        </div>
+                        <!--Details Row-->
+                        <div *ngIf="DetailRow != null && DetailRow.isRowExpand(item[KeyField])" class="row no-gutters row-detail">
+                            <div class="col-auto" [style.width.px]="isMultiSelect ? 50 : 20"></div>
+                            <div class="col">
+                                <div [attr.id]="'dataRowObject' + item[KeyField]" class="table-data-row-detail border-top-1 collapse"
+                                     [ngClass]="{ 'collapse' : !DetailRow.isRowExpanded(item[KeyField]), 'show' : DetailRow.isRowExpanded(item[KeyField]) }">
+                                    <detail-component-ro5 [DetailRow]="DetailRow">
+                                    </detail-component-ro5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </ng-container>
+
+            <!--</div>
+            </div>-->
+            <!--<div *ngIf="loading" class="loader">Loading...</div>-->
+        </virtual-scroller>
+
+        <ng-template #CustomRowsTemplate let-item="item" let-id="id">
+            <div class="col table-data-cell">
+                <ng-template [ngTemplateOutlet]="RowsTemplate" [ngTemplateOutletContext]="{ $implicit: item }">
+                </ng-template>
+            </div>
+        </ng-template>
+
+        <ng-template #DefaultRowsTemplate let-item="item" let-id="id">
+            <ng-container *ngFor="let col of Columns">
+                <div class="col"
+                     *ngIf="col.Visible"
+                     [ngClass]="{'flex-width-style-not-null': col.Width != null}"
+                     [class.disable-text-wrap]="col?.disableTextWrap"
+                     [title]="col?.disableTextWrap && item[col?.Name] != null ? (item[col?.Name] | titleCell:col.AggregateFieldName) : ''"
+                     [style.maxWidth.px]="col.Width"
+                     [ngSwitch]="((EditingCells[id] || {})[col.Name] || { isEditing: false }).isEditing"
+                     style="position: relative">
+
+                    <div *ngSwitchCase="false" class="table-data-cell"
+                         (click)="cellClick($event, col, item);actionButtonPopup.close()"
+                         [ngClass]="{'dotted-cell-editing' : Editable && (col.IsEdit === undefined || col.IsEdit),
+                        'text-align-center' : col.TextAlign === dataColumnTextAlign.Center,
+                        'text-align-left' : col.TextAlign === dataColumnTextAlign.Left,
+                        'text-align-right' : col.TextAlign === dataColumnTextAlign.Right }"
+                         [ngSwitch]="((EditingCells[id] || {})[col.Name] || { isAsyncUpdateValue: false }).isAsyncUpdateValue">
+
+                        <!--Ячейка отображение значений-->
+                        <ng-template *ngSwitchCase="false" [ngTemplateOutlet]="col.CellTemplate ? col.CellTemplate : defaultCellTemplate" [ngTemplateOutletContext]="{ item: item, value: item[col.Name], column: col, id: id }">
+                        </ng-template>
+
+                        <!--Иконка процесса изменения значения-->
+                        <div class="content-spinner-ro5" *ngSwitchCase="true">
+                            <i class="zmdi zmdi-spinner zmdi-hc-2x zmdi-hc-spin"></i>
+                        </div>
+                    </div>
+
+                    <!--Всплывающее окно редактирования значения-->
+                    <div *ngSwitchCase="true" class="inline-celledit-control row no-gutters align-items-center" (click)="$event.stopPropagation();">
+
+                        <ng-container *ngIf="col.TypeParsing" [ngSwitch]="col.TypeParsing.getDataType(item) !== dataColumnType.Boolean">
+                            <div *ngSwitchCase="true" class="input-control-edit">
+                                <input-box [type]="col.TypeParsing.getDataType(item) === dataColumnType.Number ? 'number' :
+                                                              col.TypeParsing.getDataType(item) === dataColumnType.Decimal ? 'float' : 'text'"
+                                           [isFocus]="true" [placeholder]="col.Caption" [min]="0" [(value)]="((EditingCells[id] || {})[col.Name]).value"
+                                           [isEnableValidate]="true"
+                                           (isCheckValidValue)="((EditingCells[id] || {})[col.Name]).isValidValue = $event"></input-box>
+                            </div>
+                            <div *ngSwitchCase="false">
+                                <!--<check-box-ro5 [checked]="item[col.Name]" (onClick)="((EditingCells[id] || {})[col.Name]).value = $event.checked"></check-box-ro5>-->
+                                <toggle-switch [checked]="((EditingCells[id] || {})[col.Name]).value"
+                                               (onCheck)="((EditingCells[id] || {})[col.Name]).value = $event"></toggle-switch>
+                            </div>
+                        </ng-container>
+
+                        <div class="col-auto" [ngStyle]="{ 'cursor': !((EditingCells[id] || {})[col.Name]).isValidValue ? 'not-allowed' : 'default' }">
+                            <button type="button" class="btn btn-primary" [ngClass]="{ 'item-display-disabled' : !((EditingCells[id] || {})[col.Name]).isValidValue }" (click)="applyPopupInlineCellEdit($event, col, item)">
+                                <i class="zmdi zmdi-check"></i>
+                            </button>
+                        </div>
+                        <div class="col-auto">
+                            <button type="button" class="btn btn-outline-secondary" (click)="closePopupInlineCellEdit($event, col, item)">
+                                <i class="zmdi zmdi-close"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </ng-container>
+        </ng-template>
+
+        <ng-template #defaultCellTemplate let-value="value">
+            <span [innerHTML]="value | markerText:SearchFilter"></span>
+        </ng-template>
+
+        <ng-template #dateCellTemplate let-value="value">
+            <span [innerHTML]="value | dateFormat | markerText:SearchFilter"></span>
+        </ng-template>
+
+        <ng-template #dateTimeCellTemplate let-value="value">
+            <span [innerHTML]="value | dateTimeFormat | markerText:SearchFilter"></span>
+        </ng-template>
+
+        <ng-template #decimalCellTemplate let-value="value">
+            <span [innerHTML]="value | decimalFormat | markerText:SearchFilter:1"></span>
+        </ng-template>
+
+    </section>
+</div>

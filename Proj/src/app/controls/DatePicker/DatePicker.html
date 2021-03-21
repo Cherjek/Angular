@@ -1,0 +1,49 @@
+﻿<div class="date-picker-ro5" [attr.id]="id">
+    <div class="row">
+        <div class="col-12" [ngClass]="{ 'inline-display-flex': !isVertical, 'inline-display-block': isVertical }">
+            <div class="row row-no-wrap align-items-center">
+                <div class="col-1" *ngIf="isIntervalMode && !isMonthMode">
+                    <div class="date-label">С</div>
+                </div>
+                <div (change)="fastButtonType = 0" class="col-10">
+                    <owl-date-time #owlDateStart
+                                   [autoClose]="!isTimeShow"
+                                   [type]="isTimeShow && !isMonthMode ? 'both' : 'calendar'"
+                                   [(ngModel)]="fromDate"
+                                   [min]="min1"
+                                   [max]="max1"
+                                   [locale]="ru"
+                                   [readonlyInput]="false"
+                                   [placeHolder]="formatDate"
+                                   [dateFormat]="formatDate"
+                                   (onBlur)="onBlur($event, 1)"
+                                   (onFocus)="onFocus($event, 1)"></owl-date-time>
+                </div>
+            </div>
+            <div class="row row-no-wrap align-items-center" *ngIf="isIntervalMode && !isMonthMode">
+                <div class="col-1">
+                    <div class="date-label">По</div>
+                </div>
+                <div (change)="fastButtonType = 0" class="col-10">
+                    <owl-date-time #owlDateEnd
+                                   [autoClose]="!isTimeShow"
+                                   [type]="isTimeShow ? 'both' : 'calendar'"
+                                   [(ngModel)]="toDate"
+                                   [min]="min2"
+                                   [max]="max2"
+                                   [locale]="ru"
+                                   [readonlyInput]="false"
+                                   [placeHolder]="formatDate"
+                                   [dateFormat]="formatDate"
+                                   (onBlur)="onBlur($event, 2)"
+                                   (onFocus)="onFocus($event, 2)"></owl-date-time>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<br *ngIf="fastPanel && isIntervalMode && !isMonthMode" />
+<div class="date-picker-ro5" *ngIf="fastPanel && isIntervalMode">
+    <span style="font-size: 12px">Быстрый выбор: </span><span><a [ngClass]="{ 'date-picker-ro5-selected' : fastButtonType === 1 }" href="javascript:void(0)" (click)="setFastDate(1)">Последние сутки</a></span>, <span><a [ngClass]="{ 'date-picker-ro5-selected' : fastButtonType === 2 }" href="javascript:void(0)" (click)="setFastDate(2)">Последняя неделя</a></span>, <span><a [ngClass]="{ 'date-picker-ro5-selected' : fastButtonType === 3 }" href="javascript:void(0)" (click)="setFastDate(3)">Последние 30 дней</a></span>, <span><a [ngClass]="{ 'date-picker-ro5-selected' : fastButtonType === 4 }" href="javascript:void(0)" (click)="setFastDate(4)">Последний календарный месяц</a></span>
+</div>

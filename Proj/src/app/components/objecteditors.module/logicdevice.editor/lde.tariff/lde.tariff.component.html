@@ -1,0 +1,49 @@
+<div class="main-view-content height-auto">
+  <message-popup [(messages)]="errors"></message-popup>
+  <loader-ro5 [(loading)]="loadingContent"></loader-ro5>
+  <div class="col col-content-ro5 border-right-1">
+      <header class="section-header-content row">
+          <div class="col-auto">
+              <h5> Тариф </h5>
+          </div>
+          <div class="col"></div>
+          <div class="col-auto" *appCanAccess="'TC_LOGIC_DEVICE_TARIFF_ADD'">
+              <button-ro5 [class]="'btn btn-primary'" (onclick)="addItem()">
+                  + Добавить
+              </button-ro5>
+          </div>
+      </header>
+      <div class="main-view-content height-auto">
+          <div class="col col-content-ro5 border-right-1">
+              <data-grid-ro5 #Ro5DataGrid 
+                  (onActionButtonClicked)="onDGRowActionBtnClick($event)">
+                  
+                  <ng-template #dateTemplate let-id="id" let-item="item">
+                    <a [routerLink]="[id]" [innerHTML]="item?.StartDate | dateFormat | markerText:dataGrid.SearchFilter"></a>
+                  </ng-template>
+                  <ng-template #supplierTemplate let-item="item">
+                    <span [innerHTML]="item?.Supplier?.Name | pipeNoName | markerText:dataGrid.SearchFilter"></span>
+                  </ng-template>
+                  <ng-template #maxPowerTemplate let-item="item">
+                    <span [innerHTML]="item?.MaxPowerType?.Name | pipeNoName | markerText:dataGrid.SearchFilter"></span>
+                  </ng-template>
+                  <ng-template #agreementTemplate let-item="item">
+                    <span [innerHTML]="item?.AgreementType?.Name | pipeNoName | markerText:dataGrid.SearchFilter"></span>
+                  </ng-template>
+                  <ng-template #priceCategoryTemplate let-item="item">
+                    <span [innerHTML]="item?.PriceCategoryType?.Name | pipeNoName | markerText:dataGrid.SearchFilter"></span>
+                  </ng-template>
+                  <ng-template #powerLevelTemplate let-item="item">
+                    <span [innerHTML]="item?.PowerLevelType?.Name | pipeNoName | markerText:dataGrid.SearchFilter"></span>
+                  </ng-template>
+                  <ng-template #supplyOrgTemplate let-item="item">
+                    <span [innerHTML]="item?.SupplyOrganizationType?.Name | pipeNoName | markerText:dataGrid.SearchFilter"></span>
+                  </ng-template>
+                  <ng-template #generatorTemplate let-item="item">
+                    <span [innerHTML]="(item?.IsGenerator ? 'Да' : 'Нет') | markerText:dataGrid.SearchFilter"></span>
+                  </ng-template>
+              </data-grid-ro5>
+          </div>
+      </div>
+  </div>
+</div>

@@ -1,0 +1,18 @@
+<message-popup [(messages)]="errors"></message-popup>
+<loader-ro5 [(loading)]="loadingContent"></loader-ro5>
+<div class="main-view-content">
+
+    <div class="col col-content-ro5 border-right-1">
+        <header class="section-header-content row">
+            <div class="col">
+                <h5>{{'Files' | transloco}}</h5>
+            </div>
+        </header>
+
+        <data-grid-ro5 #Ro5DataGrid>
+          <ng-template #cellTemplateFile let-value="value" let-item="item" let-column="column">
+            <a *ngIf="value" href="javascript:void(0)" (click)="downloadFile(value); $event.stopPropagation()">{{ value }}</a>
+          </ng-template>
+        </data-grid-ro5>
+    </div>
+</div>

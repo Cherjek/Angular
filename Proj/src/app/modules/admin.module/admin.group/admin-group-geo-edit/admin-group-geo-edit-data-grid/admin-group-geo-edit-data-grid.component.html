@@ -1,0 +1,27 @@
+﻿<data-grid-ro5 #Ro5DataGrid
+               [DataGridOptions]="{ isSearchVisibility: false }"
+               [HeaderActionTemplate]="headerAction"
+               [HeaderTextTemplate]="'Всего ЭСО'">
+    <ng-template #headerAction>
+        <div class="row no-gutters-2 align-items-center" *ngIf="Ro5DataGrid.SelectionRow.isItemsSelect">
+            <div class="col-auto">
+                <button-ro5 [class]="'btn-orange'" (onclick)="onBasketItemAdd()">
+                    Добавить ЭСО в корзину
+                </button-ro5>
+            </div>
+        </div>
+    </ng-template>
+    <ng-template #cellTemplateMacroregion let-value="value">
+        <div [innerHTML]="value | markerText:filterQuery"></div>
+    </ng-template>
+    <ng-template #cellTemplateRegion let-value="value">
+        <div [innerHTML]="value | markerText:filterQuery"></div>
+    </ng-template>
+    <ng-template #cellTemplateBranch let-value="value">
+        <div [innerHTML]="value | markerText:filterQuery"></div>
+    </ng-template>
+    <ng-template #cellTemplateEso let-value="value">
+        <div [innerHTML]="value | markerText:filterQuery"></div>
+    </ng-template>
+</data-grid-ro5>
+

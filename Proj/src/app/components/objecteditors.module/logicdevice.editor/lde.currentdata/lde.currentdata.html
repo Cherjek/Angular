@@ -1,0 +1,68 @@
+<div class="main-view-content height-auto main_view_queue">
+    
+    <div class="col-filter-ro5 border-right-1">
+        <loader-ro5 [(loading)]="loadingPagePanel"></loader-ro5>
+        <message-popup [(messages)]="errorsPageLoad"></message-popup>
+
+        <header class="section-header-content row">
+            <div class="col">
+                <h5>Категории</h5>
+            </div>
+        </header>
+        
+        <section class="section-body-content">
+            <ul class="nav list-box-vertical">
+                <li class="border-bottom-1 background-gray" *ngFor="let page of pages; let i = index;"
+                    [ngClass]="{ 'active' : page.Id === (selectedPage||{}).Id }"
+                    (click)="onPageSelect(page)">
+                    <a class="nav-link" [style.color]="page.Id===(selectedPage||{}).Id?'#000':''">{{page.Name}}</a>
+                </li>
+            </ul>
+        </section>
+        
+    </div>
+
+    <div class="col col-content-ro5 border-right-1 pages-container">
+        
+        <loader-ro5 [(loading)]="loadingContent"></loader-ro5>
+        <message-popup [(messages)]="errorsContent"></message-popup>
+        
+        
+        <button id="navToDataPresentButton" (click)="clickResponseToView()">Go to datapresentation result</button>
+        <button id="createDatePickerButton" (click)="createDatePicker($event)">Create datepicker</button>
+        <div class="col-content-flex-column">
+          <header class="section-header-content row">
+            <div class="col">
+                <h5>{{ ( selectedPage || { Name: 'Показания' } ).Name }}</h5>
+            </div>
+            <div class="col-auto" [ngStyle]="{ 'cursor': !(selectedPage || {}).IsPrintable ? 'not-allowed' : 'default' }">
+                <button type="button" class="btn btn-outline-secondary"
+                        [ngClass]="{'item-display-disabled': !(selectedPage || {}).IsPrintable }"
+                        (click)="print()"> Печать </button>
+            </div>
+            <div class="col-auto" [ngStyle]="{ 'cursor': !(selectedPage || {}).IsExportable ? 'not-allowed' : 'default' }">
+                <button type="button" class="btn btn-outline-secondary"
+                        [ngClass]="{'item-display-disabled': !(selectedPage || {}).IsExportable }"
+                        (click)="export()"> Экспорт </button>
+            </div>
+          </header>
+          <header class="section-header-content">
+              <input-box #searchInputControl
+                        [type]="'search'"
+                        [isFocus]="true"
+                        [isFullSize]="true"
+                        [(value)]="searchFilter"
+                        (valueChange)="searchTextInput($event)"></input-box>
+          </header>
+          <header class="row border-bottom-1">
+              <div class="col">
+                  <h6>
+                      Всего: {{ total }}
+                  </h6>
+              </div>
+          </header>
+
+          <div [innerHTML]="innerHTML" class="section-body-content current-data"></div>
+        </div>
+    </div>
+</div>

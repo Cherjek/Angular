@@ -1,0 +1,39 @@
+<header class="main-content-header row align-items-center">
+    <div class="col-auto">
+        <backward-button></backward-button>
+    </div>
+    <div class="col">
+        <h3> Новый узел </h3>
+    </div>
+</header>
+
+<div class="main-view-content height-auto">
+    <loader-ro5 [(loading)]="loadingContent"></loader-ro5>
+    <div class="col col-content-ro5 col-content-flex-column">
+        <header class="row no-gutters-2 section-header-content">
+            <div class="col">
+                <h5>Типы узлов</h5>
+            </div>
+        </header>
+        <div class="section-body-content">
+            <message-popup [(messages)]="errors"></message-popup>
+            <list-view-ro5 
+                #typesLV 
+                [KeyField]="'Id'" 
+                [DisplayField]="'Name'" 
+                [RowTemplate]="typesRowTemplate"
+                [DataSource]="typesSource" (OnItemClick)="onItemClick($event)">
+                <ng-template #typesRowTemplate let-item="item" let-listView="listView">
+                    <div class="row">
+                        <div class="col">
+                            <a [innerHtml]="item.Data.Name | markerText:listView.SearchFilter"></a>
+                        </div>
+                        <div class="col-auto">
+                            <i class="zmdi zmdi-chevron-right zmdi-hc-2x"></i>
+                        </div>
+                    </div>
+                </ng-template>
+            </list-view-ro5>
+        </div>
+    </div>
+</div>

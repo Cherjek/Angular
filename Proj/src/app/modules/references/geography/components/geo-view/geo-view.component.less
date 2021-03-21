@@ -1,0 +1,30 @@
+.padding__header-button {
+
+  > .col {      
+    padding: 7px 0;
+    display: flex;
+    justify-content: flex-end!important;
+
+    > * {
+      flex: 0 auto;
+    }
+  }
+}
+.margin__edit-panel {
+  margin: 5px 0;
+}
+.row-list-edit {
+  > .button-edit {
+    visibility: hidden;
+  }  
+}
+.row-list-edit:hover {
+  > .button-edit {
+    visibility: visible;
+    opacity: 0.5;
+
+    &:hover {
+      opacity: 1;
+    }
+  }  
+}

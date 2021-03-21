@@ -1,0 +1,231 @@
+<div class="main-view-component">
+
+    <div class="col border-right-1">
+
+        <header class="main-content-header row">
+            <div class="col-auto">
+                <backward-button></backward-button>
+            </div>
+            <div class="col">
+                <h3>Новая команда</h3>
+            </div>
+        </header>
+
+        <div class="main-view-content">            
+            <div class="col col-content-ro5">
+                
+                <message-popup [(messages)]="errors"></message-popup>
+                <loader-ro5 [(loading)]="loadingContentPanel"></loader-ro5>
+
+                <list-view-ro5 #contentListView
+                               KeyField="Id"
+                               DisplayField="Name"
+                               [RowTemplate]="rowTemplate"
+                               [HeaderText]="'Команды'"
+                               [DataSource]="commandsType"
+                               (OnItemClick)="(lastRowReportClick || { IsFocused: false }).IsFocused = false;lastRowReportClick = $event;lastRowReportClick.IsFocused = true;">
+
+                    <ng-template #rowTemplate let-item="item" let-rowId="rowId">
+                        <div class="row">
+                            <div class="col" (click)="jobName = item.Data.Command.Name; onRowExpanded(rowId); dropParamsValue(item.Data.Parameters);">
+                                <a [innerHtml]="item.Data.Command.Name | markerText:contentListView.SearchFilter"></a>
+                            </div>                            
+                        </div>
+                        <div [attr.id]="rowId"
+                             *ngIf="expandedRow.expandedRowId === rowId"
+                             class="row details" [ngClass]="{ 'collapse': !expandedRow.isExpanded, 'collapse show': expandedRow.isExpanded }">
+                            <div class="col">
+                                <ng-template [ngTemplateOutlet]="reportDetailesTemplate" [ngTemplateOutletContext]="{ item: item, rowId: rowId }">
+                                </ng-template>
+                            </div>
+                        </div>
+                    </ng-template>
+
+                    <ng-template #reportDetailesTemplate let-item="item" let-rowId="rowId">
+
+                        <div class="row no-gutters details-row">
+                            <div class="col details-row-view background">
+
+                                <header class="row no-gutters-2 align-items-center border-bottom-1 report-create-setting-header">
+                                    <div class="col">
+                                        <h5>ПАРАМЕТРЫ КОМАНДЫ</h5>
+                                    </div>
+                                    <div class="col-auto">
+                                        <button type="button" class="btn-outline-circle btn-circle-size-32" data-toggle="collapse" [attr.data-target]="'#' + rowId"
+                                                (click)="onRowExpanded(rowId); dropParamsValue(item.Data.Parameters)">
+                                            <i class="zmdi zmdi-close"></i>
+                                        </button>
+                                    </div>
+                                </header>
+
+                                <section class="section-panel-two-columns-settings">
+                                    <div class="row no-gutters-2 border-bottom-1">
+                                        <div class="col-2">   
+                                            Название команды                                        
+                                        </div>
+                                        <div class="col-4">
+                                            <input-box
+                                                placeholder="Название..." 
+                                                [maxlength]="128" 
+                                                [(value)]="jobName"></input-box>
+                                        </div>
+                                    </div>
+                                    <ng-container *ngFor="let param of item.Data.Parameters">
+                                        <div class="row no-gutters-2 border-bottom-1">
+                                            <div class="col-2">{{ param.Name }}</div>
+                                            <div class="col-4">
+                                                
+                                                <ng-container [ngSwitch]="param?.Options?.length > 0">
+
+                                                    <ng-container *ngSwitchDefault>
+                                                        <input-box 
+                                                            *ngIf="param.ValueType.Name === 'String'"
+                                                            placeholder="Значение..." 
+                                                            [maxlength]="128" 
+                                                            [(value)]="param.Value">
+                                                        </input-box>
+
+                                                        <input-box 
+                                                            *ngIf="param.ValueType.Name === 'Integer'"
+                                                            [isFocus]="true" 
+                                                            [type]="'number'"
+                                                            [(value)]="param.Value"
+                                                            [min]="param.MinimumValue" 
+                                                            [max]="param.MaximumValue">
+                                                        </input-box>
+                                                    </ng-container>                                                    
+                                                    
+                                                    <ng-container *ngSwitchCase="true">
+                                                        <!-- <combo-box-ro5 
+                                                            keyField="Id" 
+                                                            valueField="Text"
+                                                            placeholder="Команда..."
+                                                            [value]="getOptionValue(param.Value, param.Options)"
+                                                            [itemsInput]="param.Options"
+                                                            (onSelected)="param.Value = $event.Value">
+                                                        </combo-box-ro5> -->
+                                                        <combo-box-ro5 
+                                                            keyField="Id" 
+                                                            valueField="Text"
+                                                            placeholder="Команда..."
+                                                            [value]="param.ValueOpt"
+                                                            [itemsInput]="param.Options"
+                                                            (onSelected)="param.Value = $event.Value; param.ValueOpt = $event">
+                                                        </combo-box-ro5>
+                                                    </ng-container>                                                    
+
+                                                </ng-container>                                                
+
+                                            </div>
+                                        </div>
+                                    </ng-container>
+                                    <div class="row no-gutters-2 border-bottom-1">
+                                        <div class="col-2">                                           
+                                        </div>
+                                        <div class="col">
+                                            <div class="row no-gutters col-wrappanel">
+                                                <div class="col-auto">
+                                                    <button-ro5 
+                                                        [class]="'btn button-apply'" 
+                                                        [disabled]="checkParams(item.Data.Parameters)"
+                                                        (onclick)="clickedAddCommand(item.Data)"> Запустить команду </button-ro5>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <button-ro5 
+                                                        [class]="'btn btn-outline-secondary'" 
+                                                        data-toggle="collapse" 
+                                                        [attr.data-target]="'#' + rowId" 
+                                                        (onclick)="onRowExpanded(rowId); dropParamsValue(item.Data.Parameters)"> Отмена </button-ro5>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <!-- <div class="row border-bottom-1" *ngFor="let sett of item.Data.Settings">
+                                    <div class="col-2 detail-report-header">
+                                        <span>{{ sett.Name }}</span>
+                                    </div>
+                                    <div class="col-10" style="padding: 10px 10px" [ngSwitch]="sett.EditorType">
+                                        <date-picker-ro5 *ngSwitchCase="'IntervalDate'" [positionDiv]="'fixed'" [fastPanel]="true" [isVertical]="true" [isTimeShow]="false" [(fromDate)]="sett.Value.fromDate" [(toDate)]="sett.Value.toDate"></date-picker-ro5>
+                                        <date-picker-ro5 *ngSwitchCase="'IntervalDateTime'" [positionDiv]="'fixed'" [fastPanel]="true" [isVertical]="true" [(fromDate)]="sett.Value.fromDate" [(toDate)]="sett.Value.toDate"></date-picker-ro5>
+                                        <date-picker-ro5 *ngSwitchCase="'Date'" [positionDiv]="'fixed'" [isIntervalMode]="false" [isTimeShow]="false" [(fromDate)]="sett.Value"></date-picker-ro5>
+                                        <date-picker-ro5 *ngSwitchCase="'Datetime'" [positionDiv]="'fixed'" [isIntervalMode]="false" [(fromDate)]="sett.Value"></date-picker-ro5>
+                                        <date-picker-ro5 *ngSwitchCase="'Month'" [positionDiv]="'fixed'" [isMonthMode]="true" [(fromDate)]="sett.Value"></date-picker-ro5>
+
+                                        <div *ngSwitchCase="'ListSingleSelect'">
+                                            <check-box-ro5 *ngFor="let radio of singleSelectVals; index as i"
+                                                           [label]="radio.DisplayText"
+                                                           [typeInput]="'radio'"
+                                                           [name]="'singleSelect'"
+                                                           [checked]="radio.IsCheck"
+                                                           (onClick)="onSingleSelectClick(sett, i)">
+                                            </check-box-ro5>
+                                        </div>
+                                        <div *ngSwitchCase="'ListMultiSelect'">
+                                            <check-box-ro5 *ngFor="let check of multiSelectVals; index as i"
+                                                           [label]="check.DisplayText"
+                                                           [checked]="check.IsCheck"
+                                                           (onClick)="onMultiSelectClick(sett, i)">
+                                            </check-box-ro5>
+                                        </div>
+                                        <div *ngSwitchCase="'Boolean'">
+                                            <check-box-ro5 [checked]="sett.Value"
+                                                           (onClick)="sett.Value = $event.checked">
+                                            </check-box-ro5>
+                                        </div>
+
+                                        <input-box *ngSwitchCase="'String'" [placeholder]="'Значение...'" [(value)]="sett.Value"></input-box>
+                                        <input-box *ngSwitchCase="'Int'" [placeholder]="'Значение...'" [type]="'number'" [(value)]="sett.Value"></input-box>
+                                        <input-box *ngSwitchCase="'Float'" [placeholder]="'Значение...'" [type]="'number'" [(value)]="sett.Value"></input-box>
+
+                                        <upload-file-ro5 *ngSwitchCase="'File'" (OnUpload)="sett.Value = $event"></upload-file-ro5>
+
+                                        <div *ngSwitchDefault> ... </div>
+                                    </div>
+                                </div> -->
+
+                            </div>
+                        </div>
+
+                    </ng-template>
+                </list-view-ro5>
+
+            </div>
+        </div>
+
+    </div>
+
+    <div class="col-auto">
+
+        <header class="main-content-header row">
+            <div class="col-auto">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h4>Оборудование</h4>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="col-objects-ro5">
+
+            <message-popup [(messages)]="errorsRightPanel"></message-popup>
+            <loader-ro5 [(loading)]="loadingRightPanel"></loader-ro5>
+
+            <ng-container *ngIf="nodes != null">
+                <treelist-checked-panel #treePanel
+                                        [TabViewMode]="true"
+                                        [TreeListItems]="treePanel.TreeListItems || treeListCheckedService.getTreeListItems(basketHeaderMenu)"
+                                        [Tree]="nodes | filterRow:changeDetection" 
+                                        ChildDataName="LogicDevices" 
+                                        KeyField="Id"
+                                        DisplayField="DisplayName"
+                                        AdditionalField="DisplayNameNodeView"
+                                        (removeListItems)="removeListItems($event)"></treelist-checked-panel>    
+            </ng-container>
+            
+        </div>
+
+    </div>
+</div>

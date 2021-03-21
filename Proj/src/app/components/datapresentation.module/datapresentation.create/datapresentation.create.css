@@ -1,0 +1,4 @@
+.show-basket {
+    /*width: 330px;*/
+    transition: width .15s ease-out;
+}

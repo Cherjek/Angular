@@ -1,0 +1,16 @@
+<message-popup [(messages)]="errors"></message-popup>
+<header class="section-header-content">
+  <input type="search" placeholder="Поиск узлов" class="form-control hm-search-box shadow-none" id="hm-searchBox" />
+  <div *ngIf="map || mapInit" class="hm-filter">
+      <div class="filter-box">
+        <custom-state-filter
+            (changeFilterState)="filterItems($event);"
+            [subSystems]="hierarchyMainStatesService?.subSystems"
+            [stateType]="hierarchyMainStatesService?.stateType"></custom-state-filter>
+      </div>
+  </div>
+</header>
+<div *ngIf="!noCoords" id="map-container"></div>
+<div *ngIf="noCoords" class="hm-empty">
+  У вас нет прав или выбранная иерархия не имеет узлов или координат.
+</div>

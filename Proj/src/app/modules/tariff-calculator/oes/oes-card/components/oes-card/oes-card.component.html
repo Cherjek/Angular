@@ -1,0 +1,28 @@
+<header class="main-content-header row">
+  <div class="col-auto">
+      <backward-button></backward-button>
+  </div>
+  <div class="col main-header-text">
+      <h3> ОЭС </h3>
+      <div *ngIf="!isNew && oes?.Name" class="label-info"> {{ oesName }} </div>
+  </div>
+  <ng-container *ngIf="!isNew">
+      <div class="main-header-navigation">
+
+          <ng-template #templateNavItem let-navItem="navItem">
+              <rom-forms__navigate-item-template [navItem]="navItem"></rom-forms__navigate-item-template>
+          </ng-template>
+
+          <navigate-menu-ro5 [templateNavItem]="templateNavItem" [items]="menuItems"></navigate-menu-ro5>
+      </div>
+      <context-button class="context-button" [items]="contextButtonItems"
+          (onItemClick)="contextButtonHeaderClick($event)"></context-button>
+  </ng-container>
+</header>
+<div class="main-view-content">
+  <div class="col">
+      <loader-ro5 [(loading)]="loadingPanel"></loader-ro5>
+      <message-popup [(messages)]="headerErrors"></message-popup>
+      <router-outlet></router-outlet>
+  </div>
+</div>

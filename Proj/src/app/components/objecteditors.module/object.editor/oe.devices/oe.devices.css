@@ -1,0 +1,30 @@
+/*.btn-action-panel {
+    padding: 5px 4px;
+}
+.btn-action-panel:hover {
+    background-color: #418bca;
+    color: #fff;
+}*/
+
+a {
+    color: #317dba;
+    text-decoration: none;
+    background-color: transparent;
+}
+a:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
+
+.action-panel {
+    margin-left: -20px;
+    margin-top: 10px;
+}
+
+.text-align-left {
+    text-align: left;
+}
+
+.color-red {
+    color: red;
+}

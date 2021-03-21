@@ -1,0 +1,161 @@
+<loader-ro5 [(loading)]="loadingFilterPanel"></loader-ro5>
+<message-popup [messages]="errors"></message-popup>
+
+<div class="col-content-flex-column">
+
+    <section *ngIf="panelIndex === 2" id="new-filter" class="section-body-content">
+
+        <div *ngIf="filterListType == FilterListType.Tree" class="row no-gutters">
+            <div class="col">
+                <header class="section-header-content row" style="align-items: inherit !important">
+                    <div class="col-auto" style="padding: 0 !important">
+                        <div class="dropdown" style="height: 100%">
+                            <button class="dropdown-toggle" style="height: 100%; border: none; background-color: transparent" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                {{ filterSearchName[filterByPackName ? 0 : filterByGroupName ? 1 : filterByFilterName ? 2 : 0] }}
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <a class="dropdown-item" href="javascript:void(0)" (click)="filterBy(FilterCategories.PackName);onSearchInput(searchInput.value)" [ngClass]="{'filter-props-active': filterByPackName}"> {{filterSearchName[0]}} </a>
+                                <a class="dropdown-item" href="javascript:void(0)" (click)="filterBy(FilterCategories.GroupName);onSearchInput(searchInput.value)" [ngClass]="{'filter-props-active': filterByGroupName}"> {{filterSearchName[1]}} </a>
+                                <a class="dropdown-item" href="javascript:void(0)" (click)="filterBy(FilterCategories.FilterName);onSearchInput(searchInput.value)" [ngClass]="{'filter-props-active': filterByFilterName}"> {{filterSearchName[2]}} </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="line-height: 48px">|</div>
+                    <div class="col" style="padding: 0 !important">
+                        <input-box #searchInput [type]="'search'" [isFocus]="true" [isFullSize]="true" [(value)]="__search" (valueChange)="onSearchInput($event)"></input-box>
+                    </div>
+                </header>
+                <div class="row no-gutters-2" *ngFor="let container of FilterContainersContainer | ObjNgFor | filterRow:'CategoryName':filterSearchTextByPackName; index as i">
+                    <div class="col" [ngClass]="{ 'ct-state-invisible' : hideContainer(mainContainerDiv) }">
+                        <div class="row align-items-center packname">
+                            <div class="col">
+                                <span [innerHTML]="container.CategoryName | markerText:filterSearchTextByPackName"></span>
+                            </div>
+                            <div class="col-auto">
+                                <button class="btn-outline-circle btn-circle-size-24 transform-rotate" data-toggle="collapse" [attr.data-target]="'#itemObject' + i" [attr.aria-expanded]="true" [attr.aria-controls]="'itemObject' + i">
+                                    <i class="zmdi zmdi-chevron-down"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div #mainContainerDiv class="collapse show content-padding-form" [attr.id]="'itemObject' + i">
+                            <div id="filterGroupDiv" class="row" *ngFor="let group of container.Groups | ObjNgFor | filterRow:'GroupName':filterSearchTextByGroupName">
+                                <div class="col">
+                                    <div class="row align-items-center groupname">
+                                        <div class="col">
+                                            <span [innerHTML]="group.GroupName | markerText:filterSearchTextByGroupName"></span>
+                                        </div>
+                                    </div>
+                                    <div id="filterContainerDiv" class="row filter-caption align-items-center" *ngFor="let filter of ((group.FiltersContainer || { Filters: [] }).Filters || []) | filterRow:'Caption':filterSearchTextByFilterName"
+                                         (click)="showFilterValues(filter, 3)">
+                                        <div class="col">
+                                            <span [innerHTML]="filter.Caption | markerText:filterSearchTextByFilterName"></span>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="zmdi zmdi-chevron-right zmdi-hc-2x"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="filterListType == FilterListType.List" class="row no-gutters">
+            <div class="col">
+                <div class="row no-gutters-2 filter-caption align-items-center" style="padding: 10px 0" *ngFor="let filter of (FiltersContainer || {}).Filters" (click)="showFilterValues(filter, 3)">
+                    <div class="col">
+                        <span style="cursor: pointer;">{{ filter.Caption }}</span>
+                    </div>
+                    <div class="col-auto">
+                        <i class="zmdi zmdi-chevron-right"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+    <section *ngIf="panelIndex === 3" id="filter-values" class="section-body-content">
+        
+        <div class="col-content-flex-column">
+            
+            <div class="section-body-content">
+                <header *ngIf="curr_filter.Search.IsSearch" class="section-header-content row" style="align-items: inherit !important">
+                    <div class="col" style="padding: 0 !important">
+                        <input-box [type]="'search'" [isFocus]="true" [isFullSize]="true" [(value)]="curr_filter.Search.SearchText"></input-box>
+                    </div>
+                </header>
+
+                <div class="row no-gutters-2" style="margin: 10px 0;">
+                    <div class="col">
+                        <div style="margin: 10px 0;">
+                            <a data-container="body" data-placement="bottom"
+                               #p="ngbPopover" [ngbPopover]="operContent"
+                               href="javascript:void(0)" class="border-dashed-bottom-1">{{ getOperator(curr_filter.SelectedOperationType) }}</a>
+                        </div>
+                        <input-box *ngIf="curr_filter.EditorType == 0" [placeholder]="'Значение...'" [(value)]="curr_filter.Data.Value"></input-box>
+                        <input-box *ngIf="curr_filter.EditorType == 1" [placeholder]="'Значение...'" [min]="0" [type]="'number'" [(value)]="curr_filter.Data.Value"></input-box>
+
+                        <date-picker-ro5 *ngIf="curr_filter.EditorType == 2"
+                                         [(fromDate)]="curr_filter.Data.Value.FromDate"
+                                         [(toDate)]="curr_filter.Data.Value.ToDate"
+                                         [isVertical]="true"
+                                         [isDefFast]="false"
+                                         [isIntervalMode]="curr_filter.Data.Value.IsIntervalMode"
+                                         [isNotEmpty]="false"
+                                         [min]="curr_filter.Data.Value.Min"
+                                         [max]="curr_filter.Data.Value.Max"
+                                         [positionDiv]="'fixed'"></date-picker-ro5>
+
+                        <input-box *ngIf="curr_filter.EditorType == 3" [placeholder]="'Значение...'" [type]="'float'" [(value)]="curr_filter.Data.Value"></input-box>
+
+                        <check-box-ro5 *ngIf="curr_filter.EditorType == 5"
+                            [checked]="curr_filter.Data.Value"
+                            [label]="curr_filter.Caption"
+                            (onClick)="curr_filter.Data.Value = $event.checked"></check-box-ro5>
+
+                        <div *ngIf="curr_filter.EditorType == 4">
+                            <!--Template, custom value in filter-->
+                            <ng-template [ngTemplateOutlet]="curr_filter.Data" [ngTemplateOutletContext]="{ filter: curr_filter }">
+                            </ng-template>
+                        </div>
+
+                        <div *ngIf="curr_filter.Lookup">
+
+                            <div *ngIf="curr_filter.Lookup.TreeOptions; then treeControl else listControl"></div>
+
+                            <ng-template #treeControl>
+                                <tree-view-ro5 [options]="curr_filter.Lookup.TreeOptions"
+                                               [noName]="constants.NO_NAME"
+                                               [selectedValuesDetectChange]="curr_filter.Value"
+                                               [nodes]="curr_filter.Data"
+                                               (onSelectedChanged)="curr_filter.Value = $event"></tree-view-ro5>
+                            </ng-template>
+                            <ng-template #listControl>
+                                <filter-array-component [filter]="curr_filter"></filter-array-component>
+                            </ng-template>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <ng-template #operContent>
+                <div *ngFor="let operator of curr_filter.SupportedOperationTypes">
+                    <span (click)="actionButtonBlur(p, operator);"> {{ getOperator(operator) }}</span>
+                </div>
+            </ng-template>
+
+            <footer *ngIf="panelIndex === 3" class="section-footer-content">
+                <div [ngStyle]="{ 'cursor': !isAddFilter ? 'not-allowed' : 'default' }" style="height: 100%">
+                    <button type="button" class="btn btn-primary full-size" (click)="createFilter()" [ngClass]="{ 'item-display-disabled' : !isAddFilter }">
+                        Добавить фильтр
+                    </button>
+                </div>
+            </footer>
+        </div>
+</section>
+    
+    
+</div>

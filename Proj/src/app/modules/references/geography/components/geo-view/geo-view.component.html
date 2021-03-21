@@ -1,0 +1,170 @@
+<message-popup [(messages)]="errors"></message-popup>
+<loader-ro5 [(loading)]="loadingContent"></loader-ro5>
+<header class="main-content-header row">
+    <div class="col">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3>Справочник географии</h3>
+            </div>
+        </div>
+    </div>
+</header>
+<div class="main-view-content">
+
+      <ng-template #popFormContent let-p="p" let-index="index">
+        <div class="popover-body">
+          <div class="row no-gutters popup-body__margin">
+            <div class="col">
+              Вы уверены, что хотите удалить выбранные значения?
+            </div>
+          </div>
+          <div class="row no-gutters col-wrappanel">
+            <div class="col-auto">
+              <button-ro5 class="btn-primary" (onclick)="remove(index);p.close()">
+                Удалить
+              </button-ro5>
+            </div>
+            <div class="col-auto">
+              <button-ro5 class="btn-outline-secondary" (onclick)="p.close()">
+                Отмена
+              </button-ro5>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+    <ng-template #removeButtonTemplate let-index="index">
+      <button-ro5 
+        class="btn-outline-secondary btn-remove" 
+        data-container="body" 
+        data-placement="bottom" 
+        triggers="manual"
+        [autoClose]="true" 
+        [ngbPopover]="popFormContent" 
+        #popUpFormActionButton="ngbPopover"
+        (onclick)="popUpFormActionButton.open({ p: popUpFormActionButton, index: index })">
+        Удалить
+      </button-ro5>
+    </ng-template>
+
+    <div class="col col-content-ro5 border-right-1">
+        <header class="section-header-content row padding__header-button" *appCanAccess="'REF_VIEW_GEOGRAPHY'">
+            <div class="col border-right-1">
+              <ng-template *ngIf="firstPanelCountChecked" [ngTemplateOutlet]="removeButtonTemplate" [ngTemplateOutletContext]="{ index: 1 }">
+              </ng-template>
+              &nbsp;&nbsp;
+              <button-ro5 [class]="'btn btn-outline-secondary'" (onclick)="addNew(1)" *appCanAccess="'REF_EDIT_GEOGRAPHY'">
+                + Добавить макрорегион
+              </button-ro5>
+            </div>
+            <div class="col border-right-1">
+              <ng-template *ngIf="secondPanelCountChecked" [ngTemplateOutlet]="removeButtonTemplate" [ngTemplateOutletContext]="{ index: 2 }">
+              </ng-template>
+              &nbsp;&nbsp;
+              <button-ro5 [class]="'btn btn-outline-secondary'" (onclick)="addNew(2)" *appCanAccess="'REF_EDIT_GEOGRAPHY'">
+                + Добавить регион
+              </button-ro5>
+            </div>
+            <div class="col border-right-1">
+              <ng-template *ngIf="thirdPanelCountChecked" [ngTemplateOutlet]="removeButtonTemplate" [ngTemplateOutletContext]="{ index: 3 }">
+              </ng-template>
+              &nbsp;&nbsp;
+              <button-ro5 [class]="'btn btn-outline-secondary'" (onclick)="addNew(3)" *appCanAccess="'REF_EDIT_GEOGRAPHY'">
+                + Добавить филиал
+              </button-ro5>
+            </div>
+            <div class="col">
+              <ng-template *ngIf="fourthPanelCountChecked" [ngTemplateOutlet]="removeButtonTemplate" [ngTemplateOutletContext]="{ index: 4 }">
+              </ng-template>
+              &nbsp;&nbsp;
+              <button-ro5 [class]="'btn btn-outline-secondary'" (onclick)="addNew(4)" *appCanAccess="'REF_EDIT_GEOGRAPHY'">
+                + Добавить ЭСО
+              </button-ro5>
+            </div>
+        </header>
+        <div *ngIf="levelTree" class="section-header-content row no-gutters">
+            <div class="col border-right-1">
+              <ng-template *ngIf="levelTree==1" [ngTemplateOutlet]="editorTemplate" [ngTemplateOutletContext]="{ placeholder: 'Макрорегион' }">
+              </ng-template>
+            </div>
+            <div class="col border-right-1">
+              <ng-template *ngIf="levelTree==2" [ngTemplateOutlet]="editorTemplate" [ngTemplateOutletContext]="{ placeholder: 'Регион' }">
+              </ng-template>
+            </div>
+            <div class="col border-right-1">
+              <ng-template *ngIf="levelTree==3" [ngTemplateOutlet]="editorTemplate" [ngTemplateOutletContext]="{ placeholder: 'Филиал' }">
+              </ng-template>
+            </div>
+            <div class="col">
+              <ng-template *ngIf="levelTree==4" [ngTemplateOutlet]="editorTemplate" [ngTemplateOutletContext]="{ placeholder: 'ЭСО' }">
+              </ng-template>
+            </div>
+        </div>
+
+        <ng-template #editorTemplate let-placeholder="placeholder">
+          <div class="row no-gutters-2 margin__edit-panel">
+            <div class="col">
+              <div [formGroup]="formValidateGroup" class="row no-gutters col-wrappanel align-items-center" (click)="$event.stopPropagation();">
+                <div class="col">
+                  <input-box
+                    [isFocus]="true" 
+                    [placeholder]="placeholder" 
+                    [(value)]="editingValue"
+                    formControlName="geoName"
+                    [isNotValidValue]="geoName.invalid"></input-box>
+                </div>
+                <div class="col-auto">
+                    <button-ro5 
+                        [class]="'btn btn-primary'" 
+                        [disabled]="!formValidateGroup?.valid" 
+                        (click)="save()">
+                        <i class="zmdi zmdi-check"></i>
+                    </button-ro5>
+                </div>
+                <div class="col-auto">
+                    <button-ro5 
+                      [class]="'btn btn-outline-secondary'" 
+                      (click)="cancel()">
+                        <i class="zmdi zmdi-close"></i>
+                    </button-ro5>
+                </div>
+              </div>
+            </div>
+          </div>          
+        </ng-template>
+
+        <treelist-checked-panel 
+                #treelistCheckedPanel 
+                [TreeListItems]="treeListItems"
+                [Tree]="geoTree | filterRow:changeDetection" 
+                [RowTemplate]="rowTemplate"
+                ChildDataName="Nodes" 
+                KeyField="Id" 
+                DisplayField="Name"
+                (itemChecked)="itemChecked($event)"></treelist-checked-panel>
+
+                <ng-template #rowTemplate let-item="item" let-listView="listView">
+                  <ng-container [ngSwitch]="listEdit != null && listEdit == listView.ControlId && item.Data.Id == editingItem.Id">
+                    <ng-template *ngSwitchCase="true" [ngTemplateOutlet]="editorTemplate" [ngTemplateOutletContext]="{ placeholder: 'Филиал' }">
+                    </ng-template>
+
+                    <div *ngSwitchDefault class="row row-list-edit">
+                      <div class="col">
+                        <div [innerHtml]="item.Data[listView.DisplayField] | markerText:listView.SearchFilter"></div>
+                      </div>
+                      <div class="col-auto button-edit" (click)="$event.stopPropagation();" *appCanAccess="'REF_VIEW_GEOGRAPHY'">
+                        <button-ro5 
+                          tooltip="Редактировать"
+                          [class]="'btn btn-outline-secondary'" 
+                          (click)="edit(item, listView)">
+                          <i class="zmdi zmdi-edit"></i>
+                        </button-ro5>
+                      </div>
+                      <div class="col-auto" *ngIf="listView.HeaderText != 'ЭСО'">
+                        <i class="zmdi zmdi-chevron-right zmdi-hc-2x"></i>
+                      </div>
+                    </div>
+                  </ng-container>                  
+                </ng-template>
+    </div>
+</div>
+

@@ -1,0 +1,85 @@
+<message-popup [(messages)]="errors"></message-popup>
+
+<div class="container-main">
+
+    <div class="container-body">
+
+        <div class="row no-gutters" [ngStyle]="{ 'cursor': loadingTimestampType || loadingTable ? 'not-allowed' : 'default' }">
+            <div class="col" [ngClass]="{ 'item-display-disabled': loadingTimestampType || loadingTable }">
+
+                <div class="row no-gutters align-items-start date-picker border-bottom-1 h-padding v-padding">
+                    <div class="col-auto pick-dates-menu timestamp-type-list">
+                        <a mat-button
+                           href="javascript:void(0)"
+                           [matMenuTriggerFor]="periodMenu"
+                           [ngClass]="{ 'mat-dropdown--disabled' : periodTypes?.length < 2}" 
+                           class="border-dashed-bottom-1">
+                            {{ (timestampType || { DisplayText: 'Нет данных' }).DisplayText }}&nbsp;&nbsp;<i class="zmdi zmdi-caret-down" *ngIf="periodTypes.length > 1"></i>
+                        </a>
+                        <mat-menu #periodMenu="matMenu">
+                            <ng-container *ngFor="let period of periodTypes">
+                                <button *ngIf="period.Code !== timestampType.Code"
+                                        mat-menu-item
+                                        (click)="timestampType = period; changeSelectView = true"
+                                        class="outline-none">
+                                    {{ period.DisplayText }}
+                                </button>
+                            </ng-container>
+                        </mat-menu>
+                    </div>
+                    <div class="col pick-dates">
+                        <date-picker-ngb-ro5
+                                         [(fromDate)]="fromDate"
+                                         [(toDate)]="toDate"
+                                         (fromDateChange)="changeSelectView = true"
+                                         (toDateChange)="changeSelectView = true"
+                                         [isVertical]="false"
+                                         [fastPanel]="true"></date-picker-ngb-ro5>
+                    </div>
+                </div>
+
+
+                <table-container (click)="loadTable()"
+                                 [changeSelectView]="logicDevice != null && changeSelectView"
+                                 [isEmptySource]="tagTable == null || tagTable.length == 0"
+                                 [loadingTable]="loadingTable">
+                    
+                    
+                    <mat-tab-group [selectedIndex]="0"
+                                   [dynamicHeight]="true"
+                                   mat-stretch-tabs
+                                   (selectedTabChange)="selectTabTag($event.index)">
+                        <mat-tab *ngFor="let tab of tagTable">
+                            <ng-template mat-tab-label>
+                                <div class="mat-tab-label-content-custom">
+                                    {{ tab.DisplayText }}
+                                </div>
+                            </ng-template>
+                        </mat-tab>
+                    </mat-tab-group>
+                    
+                    <table class="table-full" mat-table [dataSource]="dataSource" matSort>
+                        <ng-container matColumnDef="Date">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Дата </th>
+                            <td mat-cell *matCellDef="let row"> {{row.Date | dateTimeFormat}} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="Value">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Показания </th>
+                            <td mat-cell *matCellDef="let row"> {{row.Value}} {{row.Unit}} </td>
+                        </ng-container>
+
+                        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                    </table>
+
+                </table-container>
+                
+
+
+            </div>
+        </div>
+
+    </div>
+
+</div>

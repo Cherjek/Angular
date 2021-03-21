@@ -1,0 +1,70 @@
+﻿<div class="main-view-content height-auto main-view-result">
+
+    <div class="col-filter-ro5 border-right-1" *ngIf="isShowFilter">
+        <frame-filters-custompanel #ObjRo5FiltersPanel
+                                   (onApplyFilter)="onApplyFilter($event)"
+                                   [service]="filterDataPresentContainerService"
+                                   [isAsyncCallbackStart]="loadingContentPanel"></frame-filters-custompanel>
+    </div>
+    <div class="col col-content-ro5" [ngClass]="{'hidden': dataBigConfirm != null }">
+
+        <header class="section-header-content row" style="margin-bottom: 1px">
+            <div class="col-auto">
+                <navigate-menu-ro5 #navigateMenu [items]="menuTabHeader"
+                                   [isTabView]="true"
+                                   (onNavSelectChanged)="onNavSelectChanged($event, navigateMenu)"></navigate-menu-ro5>
+            </div>
+        </header>
+
+        <loader-ro5 [(loading)]="loadingContentPanel"></loader-ro5>
+        <message-popup [(messages)]="errorsContentForm"></message-popup>
+
+        <div class="rom-drd-content-container" [hidden]="!panelNavVisible.isTable" >
+            <frame-datapresentation-result-data-tables 
+                                                   [objectTagsValueService]="objectTagsValueService"
+                                                   [DataSource]="this.BigDataSource | filterRow:'':FilterTable:'&&'"
+                                                   (onRefreshData)="removeItems($event)">
+
+            </frame-datapresentation-result-data-tables>
+        </div>
+        
+        <div class="rom-drd-content-container" [hidden]="!panelNavVisible.isGraph">
+            <frame-datapresentation-result-data-graph 
+                                                  [DataSource]="this.BigDataSource | filterRow:'':FilterTable:'&&'">
+
+            </frame-datapresentation-result-data-graph>
+        </div>
+        <div class="rom-drd-content-container" [hidden]="!panelNavVisible.isTag">
+            <frame-datapresentation-result-tags [DataSource]="this.BigDataSource" [IsEmbedded]="true"></frame-datapresentation-result-tags>
+        </div>
+    </div>
+    <div class="col col-content-ro5" [ngClass]="{'hidden': dataBigConfirm == null }">
+        <loader-ro5 [(loading)]="loadingContentPanel"></loader-ro5>
+        <message-popup [(messages)]="errorsContentForm"></message-popup>
+
+        <div class="row no-gutters-2 justify-content-center message-margin__top_bottom">
+            <div class="col" style="text-align: center">
+                <h4>{{ dataBigConfirm?.Message }}</h4>
+            </div>
+        </div>
+        <div class="row no-gutters-2 justify-content-center">
+            <div class="col-auto">
+                <button type="button" class="btn btn-primary" (click)="continueLoadData()"> Продолжить обработку </button>
+            </div>
+            <div class="col-auto">
+                <button type="button" class="btn btn-outline-secondary" (click)="backToDataCreatePage()"> Вернуться к выбору тегов </button>
+            </div>
+        </div>
+    </div>
+
+    <ng-template #filterValueTemplateComponent let-filter="filter">
+        <div class="row no-gutters" *ngFor="let filterType of filterValueTemplateItems; index as i" (click)="onFilterValueTemplateRowClick(filter, i)">
+            <div class="col-auto">
+                <check-box-ro5 [typeInput]="'radio'"
+                               [label]="filterType"
+                               [name]="'radio_value_type'"
+                               [checked]="(i === 0 && filter.Value == null) || filter.Value.Type === i"></check-box-ro5>
+            </div>
+        </div>
+    </ng-template>
+</div>

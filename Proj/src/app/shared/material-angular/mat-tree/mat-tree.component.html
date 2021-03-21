@@ -1,0 +1,47 @@
+<!-- three start -->
+<mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
+    <!-- This is the tree node template for leaf nodes -->
+    <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
+        <!-- use a disabled button to provide padding for tree leaf -->
+        <!-- <button mat-icon-button disabled></button> -->
+        <div class="row no-gutters-2 align-items-center node-has-child">
+            <div class="col">
+                <ng-template 
+                    [ngTemplateOutlet]="nodeTemplate != null ? nodeTemplate : defNodeTemplate"
+                    [ngTemplateOutletContext]="{ $implicit: node }">
+                </ng-template>
+            </div>
+            <!--колонка с кнопкой action(н-р: удалить, редактировать строку)-->
+            <div class="col-auto" [ngClass]="{'ct-state-invisible':!actionButtons?.length}">
+                <mat-tree-action-buttons 
+                    [actionButtons]="actionButtons"
+                    (menuClick)="$event.node = node;actionMenuClick.emit($event)"></mat-tree-action-buttons>
+            </div>
+        </div>
+    </mat-tree-node>
+    <!-- This is the tree node template for expandable nodes -->
+    <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding>
+        <div class="node-has-child" matTreeNodeToggle>
+            <div class="row no-gutters-2 align-items-center">
+                <div class="col-auto">
+                    <i *ngIf="!treeControl.isExpanded(node)" mat-icon-button class="zmdi zmdi-chevron-right zmdi-hc-2x"></i>
+                    <i *ngIf="treeControl.isExpanded(node)" mat-icon-button class="zmdi zmdi-chevron-down zmdi-hc-2x"></i>
+                </div>
+                <div class="col">
+                    <ng-template 
+                        [ngTemplateOutlet]="nodeTemplate != null ? nodeTemplate : defNodeTemplate"
+                        [ngTemplateOutletContext]="{ $implicit: node }">
+                    </ng-template>
+                </div>
+                <!--колонка с кнопкой action(н-р: удалить, редактировать строку)-->
+                <div class="col-auto" [ngClass]="{'ct-state-invisible':!actionButtons?.length}">
+                    <mat-tree-action-buttons [actionButtons]="actionButtons" (menuClick)="$event.node = node;actionMenuClick.emit($event)"></mat-tree-action-buttons>
+                </div>
+            </div>
+        </div>        
+    </mat-tree-node>
+</mat-tree>
+
+<ng-template #defNodeTemplate let-node>
+    {{ node.name }}
+</ng-template>

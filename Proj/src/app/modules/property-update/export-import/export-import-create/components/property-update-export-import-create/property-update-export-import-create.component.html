@@ -1,0 +1,414 @@
+<message-popup [(messages)]="errors"></message-popup>
+<loader-ro5 [(loading)]="loadingContent"></loader-ro5>
+<header class="main-content-header row">
+  <div class="col-auto">
+      <backward-button></backward-button>
+  </div>
+  <div class="col">
+      <h3 *ngIf="typeForm === 'export'">Экспорт</h3>
+      <h3 *ngIf="typeForm === 'import'">Импорт</h3>
+  </div>
+</header>
+<div class="main-view-content">
+  <div class="col col-content-ro5">    
+    <div class="col-content-flex-column">
+
+      <header class="section-header-content row no-gutters" *ngIf="!isNew">
+        <div class="col">
+          <h5> Данные </h5>
+        </div>
+        <div class="col-auto" *ngIf="typeForm === 'export'">
+          <dropdown-box-ro5 
+          #dropdownBox
+          [keyField]="'Id'" 
+          [valueField]="'Name'" 
+          [isSelected]="true" 
+          [itemsInput]="entitiesForSelect"
+          [footerTemplate]="footerTemplate" 
+          [buttonText]="'Добавить'" 
+          [BttnColorClass]="'btn-primary'">
+            <ng-template #footerTemplate>
+              <footer class="section-footer-content">
+                <div class="row no-gutters-2 align-items-center">
+                  <div class="col">
+                    <div class="row no-gutters align-items-center col-wrappanel" style="flex-wrap: nowrap">
+                      <div class="col-auto">
+                        <button-ro5 [class]="'btn btn-primary'"
+                          (onclick)="addFormEntites(dropdownBox.getSelectedRows()); dropdownBox.close()">
+                          Добавить
+                        </button-ro5>
+                      </div>
+                      <div class="col-auto">
+                        <button-ro5 [class]="'btn btn-outline-secondary'" (onclick)="dropdownBox.close()">
+                          Отмена
+                        </button-ro5>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </footer>
+            </ng-template>
+          </dropdown-box-ro5>
+        </div>
+      </header>
+    
+      <section class="section-body-content settings-container padding-panel">
+
+        <header data-toggle="collapse" [attr.data-target]="'#unitsGroupSection'" [attr.aria-controls]="'#unitsGroupSection'"
+          class="section-header-grouppanel-expander row no-gutters border-bottom-1 tags-header">
+          <div class="col-auto">
+            <h5> Основные свойства </h5>
+          </div>
+          <div class="col"></div>
+          <div class="col-auto">
+            <button data-toggle="collapse" [attr.data-target]="'#unitsGroupSection'"
+              [attr.aria-controls]="'#unitsGroupSection'"
+              class="btn-outline-circle transform-rotate-show btn-circle-size-32">
+              <i class="zmdi zmdi-chevron-right"></i>
+            </button>
+          </div>
+        </header>
+      
+        <section [attr.id]="'unitsGroupSection'"
+          class="section-body-content section-panel-two-columns-settings show">
+      
+          <!-- <div class="row no-gutters-2 border-bottom-1">
+            <div class="col-2">
+              <h6>Список объектов</h6>
+            </div>
+            <div class="col">
+              <button-ro5 [class]="'btn-outline-secondary'" (click)="onClickedAddUnits(data)">
+                Редактировать
+              </button-ro5>
+              <ng-container *ngIf="_entityUnits != null">
+                <br>
+                <tree-view-ro5 [nodes]="_entityUnits" [childDataName]="'Nodes'" [isCheck]="false" [isSearch]="true"
+                  [showExpandToggle]="false">
+                </tree-view-ro5>
+              </ng-container>
+            </div>
+          </div> -->
+
+          <div class="row no-gutters-2 border-bottom-1">
+            <div class="col-2">
+              <h6>Название</h6>
+            </div>
+            <div class="col">
+              <input-box [placeholder]="'Название'" [maxlength]="128" [(value)]="name">
+              </input-box>
+            </div>
+          </div>
+      
+          <ng-container *ngIf="typeForm === 'import'">
+            <div class="row no-gutters-2 border-bottom-1">
+              <div class="col-2">
+                <h6>Тип задания</h6>
+              </div>
+              <div class="col">
+                <combo-box-ro5 [keyField]="'Code'" [valueField]="'Name'" [value]="actionType"
+                  [itemsInput]="actionTypes" (onSelected)="actionType = $event;"></combo-box-ro5>
+              </div>
+            </div>
+            <div class="row no-gutters-2 border-bottom-1">
+              <div class="col-2">
+                <h6>Файлы</h6>
+              </div>
+              <div class="col">
+                <rom-uploader 
+                  multiple="true"
+                  asBlob="true"
+                  (onFileUpload)="onFileUpload($event)"
+                  (onWrongFileUpload)="onFileUploadError($event)">
+                </rom-uploader>
+              </div>
+            </div>
+          </ng-container>
+      
+        </section>
+
+        <ng-container *ngFor="let data of entitiesSelected; let i=index;">
+          <header 
+            data-toggle="collapse" 
+            [attr.data-target]="'#logicDeviceGroupSection' + i"
+            [attr.aria-controls]="'#logicDeviceGroupSection' + i"
+            class="section-header-grouppanel-expander row no-gutters border-bottom-1 tags-header">
+            <div class="col-auto">
+              <h5> {{ data?.Name }} </h5>
+            </div>
+            <div class="col"></div>
+            <div class="col-auto">
+              <button-ro5 [class]="'btn btn-outline-secondary'" (onclick)="removeFormEntites(data);$event.stopPropagation();">
+                Удалить
+              </button-ro5>
+            </div>
+            <div class="col-auto">
+              <button data-toggle="collapse" [attr.data-target]="'#logicDeviceGroupSection' + i"
+                [attr.aria-controls]="'#logicDeviceGroupSection' + i"
+                class="btn-outline-circle transform-rotate-show btn-circle-size-32">
+                <i class="zmdi zmdi-chevron-right"></i>
+              </button>
+            </div>
+          </header>
+      
+          <section [attr.id]="'logicDeviceGroupSection' + i"
+            class="section-body-content section-panel-two-columns-settings show">
+      
+            <ng-container *ngIf="data.Id === 'Objects'">
+              <div class="row no-gutters-2 border-bottom-1">
+                <div class="col-2">
+                  <h6>Объекты</h6>
+                </div>
+                <div class="col pu-check-body">
+                  <button-ro5 [class]="'btn btn-outline-secondary'" (click)="onClickedAddEntities(data)">
+                    {{ _entityUnits[data.Id] != null ? 'Редактировать' : 'Добавить' }}
+                  </button-ro5>
+                </div>
+              </div>              
+            </ng-container>
+
+            <ng-container *ngIf="data.Id === 'LogicDevices'">
+              <div class="row no-gutters-2 border-bottom-1">
+                <div class="col-2">
+                  <h6>Оборудование</h6>
+                </div>
+                <div class="col pu-check-body">
+                  <button-ro5 [class]="'btn btn-outline-secondary'" (click)="onClickedAddEntities(data)">
+                    {{ _entityUnits[data.Id] != null ? 'Редактировать' : 'Добавить' }}
+                  </button-ro5>
+                </div>
+              </div>              
+            </ng-container>
+
+            <ng-container *ngIf="data.Id === 'Devices'">
+              <div class="row no-gutters-2 border-bottom-1">
+                <div class="col-2">
+                  <h6>Устройства</h6>
+                </div>
+                <div class="col pu-check-body">
+                  <button-ro5 [class]="'btn btn-outline-secondary'" (click)="onClickedAddEntities(data)">
+                    {{ _entityUnits[data.Id] != null ? 'Редактировать' : 'Добавить' }}
+                  </button-ro5>
+                </div>
+              </div>              
+            </ng-container>
+
+            <ng-container *ngIf="data.IdHierarchy != null">
+              <div class="row no-gutters-2 border-bottom-1">
+                <div class="col-2">
+                  <h6>Узлы иерархии</h6>
+                </div>
+                <div class="col pu-check-body">
+                  <button-ro5 [class]="'btn btn-outline-secondary'" (click)="onClickedAddEntities(data)">
+                    {{ _entityUnits[data.Id] != null ? 'Редактировать' : 'Добавить' }}
+                  </button-ro5>
+                </div>
+              </div>              
+            </ng-container>
+
+            <div class="row no-gutters-2 border-bottom-1">
+              <div class="col-2">
+                <h6>Свойства</h6>
+              </div>
+              <div class="col" [ngClass]="{'details-row-view background': formReactive[data.Id].IsPropertyEdit}">
+                <div class="row no-gutters col-wrappanel" *ngIf="!formReactive[data.Id].IsPropertyEdit">
+                  <div class="col-auto">
+                    <button-ro5 
+                      [class]="'btn btn-outline-secondary'"
+                      (click)="formReactive[data.Id].IsPropertyEdit = true">
+                      {{ formReactive[data.Id]?.Props != null ? 'Редактировать' : 'Добавить' }}
+                    </button-ro5>
+                  </div>
+                  <div class="col-auto">
+                    <button-ro5 
+                      *ngIf="formReactive[data.Id]?.Props != null"
+                      [class]="'btn btn-primary'"
+                      data-toggle="collapse" 
+                      [attr.data-target]="'#propertiesSection' + data.Id"
+                      [attr.aria-controls]="'#propertiesSection' + data.Id">
+                      Показать
+                    </button-ro5>
+                  </div>
+                </div>
+                <section [ngStyle]="{'display': formReactive[data.Id].IsPropertyEdit ? 'block' : 'none'}">
+                  <app-exp-imp-property-tree
+                    [valuesSelect]="formReactive[data.Id].Props"
+                    [entitiesProps]="entitiesTypePropsReact[data.Id]"
+                    (save)="formReactive[data.Id].IsPropertyEdit = false; formReactive[data.Id].Props = $event;"
+                    (cancel)="formReactive[data.Id].IsPropertyEdit = false"
+                  ></app-exp-imp-property-tree>
+                </section>
+                <section [attr.id]="'propertiesSection' + data.Id" class="collapse">
+                  <ng-template [ngTemplateOutlet]="propertycontainer"
+                    [ngTemplateOutletContext]="{ items: formReactive[data.Id].Props, edit: formReactive[data.Id].IsPropertyEdit }">
+                  </ng-template>
+                </section>                                 
+              </div>
+            </div>
+
+            <ng-container *ngIf="data.Id === 'LogicDevices'">
+              <div class="row no-gutters-2 border-bottom-1">
+                <div class="col-2">
+                  <h6>Теги</h6>
+                </div>
+                <div class="col" [ngClass]="{'details-row-view background': formReactive['Tags'].IsPropertyEdit }">
+                  <div class="row no-gutters col-wrappanel" *ngIf="!formReactive['Tags'].IsPropertyEdit">
+                    <div class="col-auto">
+                      <button-ro5                        
+                        [class]="'btn btn-outline-secondary'"
+                        (click)="formReactive['Tags'].IsPropertyEdit = true">
+                        {{ formReactive['Tags'].Props != null ? 'Редактировать свойства тегов' : 'Добавить свойства тегов' }}
+                      </button-ro5>
+                    </div>
+                    <div class="col-auto">
+                      <button-ro5 
+                        *ngIf="formReactive['Tags']?.Props != null"
+                        [class]="'btn btn-primary'"
+                        data-toggle="collapse" 
+                        [attr.data-target]="'#tagsSection'"
+                        [attr.aria-controls]="'#tagsSection'">
+                        Показать
+                      </button-ro5>
+                    </div>
+                  </div>
+                  <section [ngStyle]="{'display': formReactive['Tags'].IsPropertyEdit ? 'block' : 'none'}">
+                    <app-exp-imp-property-tree
+                      [valuesSelect]="formReactive['Tags'].Props"
+                      [entitiesProps]="entitiesTypePropsReact['Tags']"
+                      (save)="formReactive['Tags'].IsPropertyEdit = false; formReactive['Tags'].Props = $event;"
+                      (cancel)="formReactive['Tags'].IsPropertyEdit = false"
+                    ></app-exp-imp-property-tree>
+                  </section>
+                  <section [attr.id]="'tagsSection'" class="collapse">
+                    <ng-template [ngTemplateOutlet]="propertycontainer"
+                      [ngTemplateOutletContext]="{ items: formReactive['Tags'].Props, edit: formReactive['Tags'].IsPropertyEdit }">
+                    </ng-template>
+                  </section>                  
+                </div>
+              </div>              
+            </ng-container>
+
+            <ng-container *ngIf="data.Id === 'Devices'">
+              <div class="row no-gutters-2 border-bottom-1">
+                <div class="col-2">
+                  <h6>Запросы</h6>
+                </div>
+                <div class="col" [ngClass]="{'details-row-view background': formReactive['DeviceQueries'].IsPropertyEdit}">
+                  <div class="row no-gutters col-wrappanel" *ngIf="!formReactive['DeviceQueries'].IsPropertyEdit">
+                    <div class="col-auto">
+                      <button-ro5                        
+                        [class]="'btn btn-outline-secondary'"
+                        (click)="formReactive['DeviceQueries'].IsPropertyEdit = true">
+                        {{ formReactive['DeviceQueries'].Props != null ? 'Редактировать свойства запросов' : 'Добавить свойства запросов' }}
+                      </button-ro5>
+                    </div>
+                    <div class="col-auto">
+                      <button-ro5 
+                        *ngIf="formReactive['DeviceQueries']?.Props != null"
+                        [class]="'btn btn-primary'"
+                        data-toggle="collapse" 
+                        [attr.data-target]="'#deviceQueriesSection'"
+                        [attr.aria-controls]="'#deviceQueriesSection'">
+                        Показать
+                      </button-ro5>
+                    </div>
+                  </div>
+                  <section [ngStyle]="{'display': formReactive['DeviceQueries'].IsPropertyEdit ? 'block' : 'none'}">
+                    <app-exp-imp-property-tree
+                      [valuesSelect]="formReactive['DeviceQueries'].Props"
+                      [entitiesProps]="entitiesTypePropsReact['DeviceQueries']"
+                      (save)="formReactive['DeviceQueries'].IsPropertyEdit = false; formReactive['DeviceQueries'].Props = $event;"
+                      (cancel)="formReactive['DeviceQueries'].IsPropertyEdit = false"
+                    ></app-exp-imp-property-tree>
+                  </section>
+                  <section [attr.id]="'deviceQueriesSection'" class="collapse">
+                    <ng-template [ngTemplateOutlet]="propertycontainer"
+                      [ngTemplateOutletContext]="{ items: formReactive['DeviceQueries'].Props, edit: formReactive['DeviceQueries'].IsPropertyEdit }">
+                    </ng-template>
+                  </section>                  
+                </div>
+              </div>              
+            </ng-container>
+      
+          </section>
+        </ng-container>      
+        
+      </section>
+    
+      <!-- <footer class="section-footer-content">
+        <div class="row no-gutters-2 align-items-center">
+          <div class="col">
+            <div class="row no-gutters col-wrappanel align-items-center">
+              <div class="col-auto">
+                <button-ro5 [class]="'btn-primary'" (onclick)="save()">
+                  Сохранить
+                </button-ro5>
+              </div>
+              <div class="col-auto">
+                <button-ro5 [class]="'btn-outline-secondary'" (onclick)="cancel()">
+                  Отмена
+                </button-ro5>
+              </div>
+            </div>
+          </div>
+        </div>
+      </footer> -->
+
+      <footer class="section-footer-content" [ngStyle]="{ 'cursor': isCreateValidSuccess ? 'not-allowed' : 'default' }">
+        <div class="row no-gutters col-wrappanel align-items-center justify-content-end" [ngClass]="{ 'item-display-disabled' : isCreateValidSuccess }" 
+             [ngSwitch]="isShowTemplateSavePanel"
+             style="margin-right: 15px">
+             <div class="col-auto" *ngSwitchCase="false">
+              <button [disabled]="saveComplete" 
+                [ngStyle]="{ 'cursor': (saveComplete) ? 'not-allowed' : 'default' }"
+                class="btn button-apply button-settemplate-left" [ngClass]="{'drop-radius':typeForm !== 'import-files'}" (click)="save()">
+                Поставить в очередь
+              </button>
+              <button *appCanAccess="typeForm === 'export' ? 'CMG_EXPORT_USE_FAVORITES' : 'CMG_IMPORT_USE_FAVORITES'"
+                [disabled]="saveComplete" class="btn btn-darkgreen button-settemplate-right"
+                [ngStyle]="{ 'cursor': (saveComplete) ? 'not-allowed' : 'default' }"
+                placement="top" ngbTooltip="Добавить в шаблон"                                        
+                (click)="isShowTemplateSavePanel = true">
+                <i class="zmdi zmdi-star"></i>
+               </button>
+            </div>
+            <div class="col" *ngSwitchCase="true" style="padding-left: 10px">
+                <div class="row no-gutters col-wrappanel align-items-center">
+                    <div class="col">
+                        <input-box #inputNameTemplate class="allowance-input-width"
+                                   [placeholder]="'Название шаблона'"
+                                   [maxlength]="128"
+                                   [isFocus]="true"
+                                   [isEnableValidate]="true"
+                                   [(value)]="__value"
+                                   (isCheckValidValue)="isValidSaveTemplate = $event"></input-box>
+                    </div>
+                    <div class="col-auto" [ngStyle]="{ 'cursor': (!isValidSaveTemplate || saveComplete) ? 'not-allowed' : 'default' }">
+                        <button style="height: 40px; width: 250px;" [ngClass]="{ 'item-display-disabled' : (!isValidSaveTemplate || saveComplete)}"
+                                type="button" class="btn btn-primary" (click)="saveTemplate((inputNameTemplate || {}).value)">
+                            Сохранить
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-auto">
+                <button 
+                [ngStyle]="{ 'cursor': (saveComplete) ? 'not-allowed' : 'default' }"
+                [disabled]="saveComplete" style="height: 40px; width:150px" type="button" class="btn btn-outline-secondary" (click)="cancel()"> Отмена </button>
+            </div>
+        </div>
+      </footer>
+    </div>
+  </div>
+</div>
+<ng-template #propertycontainer let-items="items" let-edit="edit">
+  <ng-container
+    *ngIf="edit === false && items != null && items.length">
+    <br>
+    <div class="d-flex flex-wrap align-items-center">
+      <ng-container *ngFor="let data of items; let i=index;">
+        <div class="p-2">{{ data?.Name }}</div>
+      </ng-container>
+    </div>    
+  </ng-container>
+</ng-template>
+

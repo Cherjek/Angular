@@ -1,0 +1,128 @@
+﻿<div [attr.id]="ControlId" class="list-view-ro5">
+    <header *ngIf="!IsHeaderCompact" class="row no-gutters align-items-center border-bottom-1">
+        <div class="col" *ngIf="IsSelected">
+            <check-box-ro5 
+                [ngClass]="{ 'visible' : (isNotAllItemsSelect || isAllItemsSelect || atLeastOneIndeterminated)}" 
+                [indeterminate]="isNotAllItemsSelect || atLeastOneIndeterminated" 
+                [checked]="isAllItemsSelect" 
+                [label]="labelHeadText" 
+                [disabled]="itemsLength() === 0"
+                (onClick)="onAllCheckClick($event)" 
+                class="form-check-item bold-text"></check-box-ro5>
+        </div>
+        <div class="col" *ngIf="!IsSelected">
+            <span class="bold-text">{{ labelHeadText }}</span>
+        </div>
+        <div *ngIf="IsRemoved && (IsSelected && (isNotAllItemsSelect || isAllItemsSelect || atLeastOneIndeterminated))" class="col-auto">
+            
+            <ng-template #RemoveAllConfirmation>
+                <div class="row no-gutters">
+                    <div class="col confirm-remove-panel">
+                        <div class="row no-gutters">
+                            <div class="col">
+                                Будут удалены все записи. Удалить?
+                            </div>
+                        </div>
+                        <div class="row no-gutters col-wrappanel align-items-center justify-content-end">
+                            <div class="col-auto">
+                                <button type="button" class="btn btn-outline-secondary" (click)="removeAllItems();p.close()"> Да </button>            
+                            </div>
+                            <div class="col-auto">
+                                <button type="button" class="btn btn-outline-secondary" (click)="p.close()"> Отмена </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ng-template>
+            <button type="button"
+                    data-placement="bottom-right"
+                    triggers="manual"
+                    [ngbPopover]="RemoveAllConfirmation"
+                    #p="ngbPopover"
+                    (click)="verifyRemove(p)" class="btn btn-outline-secondary">
+                Убрать
+            </button>
+
+        </div>
+        <div class="col-auto">
+            <button type="button" class="btn btn-outline-secondary" data-toggle="collapse" [attr.data-target]="'#searchPanel_' + ControlId" [ngClass]="{'active':isSearchShow}" (click)="isSearchShow=!isSearchShow">
+                <i class="zmdi zmdi-search"></i>
+            </button>
+        </div>
+    </header>
+    <!--COMPACT HEADER-->
+    <header *ngIf="IsHeaderCompact" class="row no-gutters align-items-center border-bottom-1">
+        <div class="col-auto" *ngIf="IsSelected">
+            <check-box-ro5 [ngClass]="{ 'visible' : (isNotAllItemsSelect || isAllItemsSelect || atLeastOneIndeterminated)}"
+                           [indeterminate]="isNotAllItemsSelect || atLeastOneIndeterminated"
+                           [checked]="isAllItemsSelect"
+                           [disabled]="itemsLength() === 0"
+                           (onClick)="onAllCheckClick($event)"
+                           class="form-check-item bold-text"></check-box-ro5>
+        </div>
+        <div class="col" style="padding: 0 !important;" [ngClass]="{ 'header-compact__with-check': IsSelected }">
+            <input-box #InputSearch [type]="'search'" [(value)]="__search" (valueChange)="searchTextInput($event)"></input-box>
+        </div>
+    </header>
+
+    <div [attr.id]="'searchPanel_' + ControlId" class="border-bottom-1 collapse">
+        <div class="row no-gutters-2 align-items-center">
+            <div class="col item-list-margin">
+                <input-box #InputSearch [type]="'search'" [(value)]="__search" (valueChange)="searchTextInput($event)"></input-box>
+            </div>
+        </div>        
+    </div>
+    
+    <section class="section-body-content">
+
+        <ng-container *ngIf="!this.loadingGrid">
+            <div *ngIf="isNotDataItems" class="row no-gutters align-items-center not-data-items">
+                <div class="col">
+                    Нет данных
+                </div>
+            </div>
+        </ng-container>        
+
+        <virtual-scroller class="virtualScrollBody"
+                        [parentScroll]="parentScroll"
+                        [items]="DataSource | filterListRow:KeyField:Filter | searchRow:SearchFilter:getFieldsSearch():'Data' | orderListRow:DisplayField:orderListEnable"
+                        (vsUpdate)="updateVirtualScrollItems($event)">
+
+            <div class="row no-gutters-2 align-items-center border-bottom-1 hover-list-row" *ngFor="let item of visibleScrollElements; let index = index;"
+                 [ngClass]="{ 'focused-list-row': item.IsFocused, 'selected-list-row': item.IsCheck }"
+                 (click)="itemClick(item, $event, index)">
+                <div class="col item-list-margin">
+                    <div class="d-flex item-row-checkbox">
+                        <div class="list-column-check"
+                             (mouseenter)="mouseenterCheckColumn($event)" 
+                             (mouseleave)="mouseleaveCheckColumn($event)"
+                             (click)="rowCheckClick(item, $event)">
+                            <check-box-ro5 class="form-check-item"
+                                           [ngClass]="{ 'visible' : (item.IsCheck || isItemsSelectMoreThenOne), 'light-visible': isNotAllItemsSelect && !isItemsSelectMoreThenOne }"
+                                           *ngIf="IsSelected" [indeterminate]="item.IsIndeterminate" [checked]="item.IsCheck" (onClick)="itemCheck($event)"></check-box-ro5>
+                        </div>
+                        <div class="overflow-hidden flex-grow-1">
+                            <div class="">
+                                <ng-template [ngTemplateOutlet]="RowTemplate ? RowTemplate : DefRowTemplate"
+                                             [ngTemplateOutletContext]="{ listView: listView, key: item[KeyField], item: item, rowId: 'expanded_' + ControlId + '_' + item.Data[KeyField] }">
+                                </ng-template>
+                            </div>
+                            <div class="row no-gutters" *ngIf="AdditionalField">
+                                <div class="col">
+                                    <div class="text-info-additional">
+                                        <div [innerHtml]="item.Data[AdditionalField] | markerText:SearchFilter"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </virtual-scroller>
+    </section>
+</div>
+
+<ng-template #DefRowTemplate let-item="item" let-field="field">
+    <div [innerHtml]="item.Data[DisplayField] | pipeNoName | markerText:SearchFilter"></div>
+</ng-template>
+

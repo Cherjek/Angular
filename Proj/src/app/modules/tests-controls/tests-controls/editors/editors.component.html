@@ -1,0 +1,219 @@
+<div class="row no-gutters-2">
+    <div class="col-12">
+        
+        <div class="row">
+            <div class="col-4">
+                <h3>Checkbox radio</h3>
+
+                <check-box-ro5 *ngFor="let radio of radioCheckItems; index as i" 
+                    [label]="radio.name" 
+                    typeInput="radio"
+                    name="selectRadioGroup" 
+                    [checked]="radioCheckIndex === i" 
+                    (onClick)="radioCheckIndex = i">
+                </check-box-ro5>
+
+                <br>
+
+                <h3>Checkbox single</h3>
+
+                <check-box-ro5
+                    [checked]="true"
+                    label="Категория"
+                    (onClick)="$event">
+                </check-box-ro5>
+
+                <br>
+
+                <check-box-ro5
+                    [indeterminate]="true"
+                    label="Категория"
+                    (onClick)="$event">
+                </check-box-ro5>
+
+            </div>
+            <div class="col-4">
+                <h3>ComboBox</h3>
+                        
+                <combo-box-ro5 
+                       keyField="id"
+                       valueField="name"
+                       [value]="comboBoxValue"
+                       [itemsInput]="comboBoxItems"
+                       (onSelected)="comboBoxValue = $event;"
+                       (event)="eventCellComboboxDropDown($event, item, column)"></combo-box-ro5>
+            </div>
+            <div class="col-4">
+                <h3>ToggleSwitch</h3>
+
+                <toggle-switch 
+                    [checked]="true" 
+                    [checkedRunnerColorClass]="'runner-color-checked-green'"
+                    [checkedSliderColorClass]="'slider-color-checked-green'" 
+                    (onCheck)="$event"></toggle-switch>
+
+                <br>
+
+                <toggle-switch 
+                    [checked]="true" 
+                    [checkedRunnerColorClass]="'runner-color-checked-blue'"
+                    [checkedSliderColorClass]="'slider-color-checked-blue'" 
+                    (onCheck)="$event"></toggle-switch>
+                        
+            </div>
+        </div>
+        
+    </div>    
+    <div class="col-12">
+        <br>
+        <hr>
+    </div>
+    <div class="col-6">
+        
+        <h3>InputBox</h3>
+        
+        <div class="row">
+            <div class="col-auto" style="width: 250px;">
+                <h4>Search</h4>
+                <input-box [type]="'search'"
+                           [isFocus]="true"
+                           [isFullSize]="true"
+                           [(value)]="value"
+                           (valueChange)="value = $event"></input-box>
+            </div>
+        </div>
+
+        <br>
+        <br>        
+
+        <div class="row">
+            <div class="col-auto" style="width: 250px;">
+                <h4>Input value</h4>
+                
+                <span>String</span>
+                <input-box [placeholder]="'Значение...'" [(value)]="valueText"></input-box>
+                <span>Int</span>
+                <input-box [placeholder]="'Значение...'" [type]="'number'" [(value)]="valueInt"></input-box>
+                <span>Float</span>
+                <input-box [placeholder]="'Значение...'" [type]="'number'" [(value)]="valueFloat"></input-box>
+            </div>
+        </div>
+
+        
+    </div>
+    <div class="col-6">
+        
+        <h3>Chips</h3>
+        
+        <div class="row">
+            <div class="col">
+                <chips-ro5 [itemsInput]="valuesChips"
+                           (removeAllChips)="valuesChipsSelect = [];"></chips-ro5>
+            </div>
+        </div>
+        
+    </div> 
+    <div class="col-12">
+        <br>
+        <hr>
+    </div>
+    <div class="col-12">
+        
+        <h3>DatePicker</h3>
+        
+        <div class="row">
+            <div class="col-4">
+                <h4>Interval</h4>
+                <date-picker-ro5 [(fromDate)]="fromDate"
+                                     [(toDate)]="toDate"
+                                     [min]="minDate"
+                                     [max]="maxDate"
+                                     [fastButtonType]="0"
+                                     [fastPanel]="true"
+                                     [isDefFast]="true"
+                                     [positionCalendar]="'top'"></date-picker-ro5>
+            </div>
+
+            <div class="col-4">
+                <h4>Single date without fast panel</h4>
+                <date-picker-ro5     [(fromDate)]="fromDate2"
+                                     [isIntervalMode]="false"></date-picker-ro5>
+            </div>
+
+            <div class="col-4">
+                <h4>Month calendar</h4>
+                <date-picker-ro5     [(fromDate)]="fromDate3"
+                                     [isMonthMode]="true"></date-picker-ro5>
+            </div>
+        </div>
+        
+    </div> 
+    <div class="col-12">
+        <br>
+        <hr>
+    </div>
+    <div class="col-12">
+        
+        <h3>DatePickerNgb</h3>
+        
+        <div class="row">
+            <div class="col-auto">
+                <date-picker-ngb-ro5
+                                         [(fromDate)]="fromDate"
+                                         [(toDate)]="toDate"
+                                         (fromDateChange)="changeSelectView = true"
+                                         (toDateChange)="changeSelectView = true"
+                                         [isVertical]="false"
+                                         [fastPanel]="true"></date-picker-ngb-ro5>
+            </div>
+        </div>
+        
+    </div>
+    <div class="col-12">
+        <br>
+        <hr>
+    </div>
+    <div class="col-12">
+        
+        <h3>CalendarPicker</h3>
+        
+        <div class="row">
+            <div class="col-auto">
+                <h4>Month</h4>
+                <rom-calendar-picker-ro5 [(values)]="selectedMonths" [calendarPickerType]="calendarPickerTypes.Months">
+                </rom-calendar-picker-ro5>
+            </div>
+        </div>
+
+        <br>
+
+        <div class="row">
+            <div class="col-auto">
+                <h4>Dates</h4>
+                <rom-calendar-picker-ro5 [(values)]="selectedMonths" [calendarPickerType]="calendarPickerTypes.Dates">
+                </rom-calendar-picker-ro5>
+            </div>
+        </div>
+
+        <br>
+
+        <div class="row">
+            <div class="col-auto">
+                <h4>Weeks</h4>
+                <rom-calendar-picker-ro5 [(values)]="selectedMonths" [calendarPickerType]="calendarPickerTypes.Weeks">
+                </rom-calendar-picker-ro5>
+            </div>
+        </div>
+
+        <br>
+
+        <div class="row">
+            <div class="col-auto">
+                <h4>Weeks</h4>
+                <rom-calendar-picker-ro5 [(values)]="selectedMonths" [calendarPickerType]="calendarPickerTypes.NumberOrder">
+                </rom-calendar-picker-ro5>
+            </div>
+        </div>
+        
+    </div> 
+</div>

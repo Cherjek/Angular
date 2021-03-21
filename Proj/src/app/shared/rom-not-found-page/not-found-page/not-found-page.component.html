@@ -1,0 +1,6 @@
+﻿<div class="main-view-content main_view_queue not-found-content d-flex flex-column align-items-center justify-content-start">
+    <h3 *ngIf="error?.message"> {{error?.message}} <span *ngIf="error?.code">( ошибка {{ error?.code }} )</span></h3>
+    <button-ro5 (onclick)="back()" [class]="'btn btn-outline-secondary mt-3'">Вернуться к предыдущей странице</button-ro5>
+</div>
+
+

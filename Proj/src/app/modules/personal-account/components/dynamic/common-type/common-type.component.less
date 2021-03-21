@@ -1,0 +1,130 @@
+.panel-height {
+    max-height: 6.2vh;
+    min-height: 6.2vh;
+    height: 6.2vh;
+}
+.unit {
+    background-color: rgb(255, 247, 230);
+    .panel-height;
+}
+
+.table-common {
+    min-width: 600px;
+}
+
+.table-common, .table-common > table {
+    /*min-width: 26vw;*/
+    width: 100%;
+}
+
+.container-main {
+    //display: flex;
+    //flex-direction: column;
+    height: 100%;
+    width: 100%;
+}
+
+.container-body {
+    //flex: 1 1 auto;
+    overflow-x: auto;
+}
+
+.ld-type-img {
+    width: 1.25vw;
+}
+
+//@landscapeHeaderHeight: 3.5rem;
+//@landscapeHeaderFontSize: 2rem;
+@landscapeUnitFontSize: 1.5rem;
+//@landscapeLDFontSize: 1.3rem;
+//@landscapeMenuItemFontSize: 1rem;
+//@landscapeMenuItemHeight: 3rem;
+//@reportsHeaderHeight: 4rem;
+@media screen and (orientation:landscape) {
+    .unit {
+        font-size: @landscapeUnitFontSize;
+    }
+    /*.logic-device {
+    font-size: @landscapeLDFontSize;
+
+    color: black;
+  }
+
+  .date-picker {
+    background-color: #edf2f8;
+  }*/
+}
+
+//@portraitHeaderHeight: 4rem;
+//@portraitHeaderFontSize: 2.5rem;
+@portraitUnitFontSize: 2rem;
+//@portraitLDFontSize: 1.7rem;
+
+//@portraitMainMenuHeight: 2.5rem;
+//@portraitMenuItemFontSize: 1rem;
+@media screen and (orientation:portrait) {
+    .unit {
+        font-size: @portraitUnitFontSize;
+    }
+
+  /*.logic-device {
+    font-size: @portraitLDFontSize;
+
+    color: black;
+  }
+
+  .date-picker {
+    background-color: #edf2f8;
+  }*/
+}
+
+.outline-none {
+  outline: none;
+}
+
+.border-bottom-1-dotted {
+  border-bottom: 1px dotted;
+}
+
+.h-padding {
+  padding: 0 .5rem;
+}
+.v-padding {
+  padding: .5rem;
+}
+
+@small-0: 200px;
+@medium-0: 650px;
+@small: 1000px;
+@medium: 1500px;
+@large: 1900px;
+
+@media screen and (min-width: @small-0) and (max-width: @medium-0) {
+    .ld-type-img {
+        width: 20px;
+    }
+}
+
+@media screen and (min-width: @medium-0 + 1px) and (max-width: @small) {
+    .ld-type-img {
+        width: 24px;
+    }
+}
+
+@media screen and (min-width: @small + 1px) and (max-width: @medium) {
+    .ld-type-img {
+        width: 28px;
+    }
+}
+
+@media screen and (min-width: @medium + 1px) and (max-width: @large) {
+    .ld-type-img {
+        width: 32px;
+    }
+}
+
+@media screen and (min-width: @large + 1px) {
+    .ld-type-img {
+        width: 36px;
+    }
+}

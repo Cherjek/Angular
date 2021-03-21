@@ -1,0 +1,140 @@
+<message-popup [(messages)]="errors"></message-popup>
+<loader-ro5 [(loading)]="loadingContent"></loader-ro5>
+<header class="main-content-header row">
+    <div class="col">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3>Экспорт и импорт</h3>
+            </div>            
+        </div>
+    </div>
+</header>
+<div class="main-view-content">
+    <div class="col-filter-ro5 border-right-1">
+        <frame-filters-custompanel
+            (onApplyFilter)="onApplyFilter($event)"
+            [service]="filtersContainerService"
+            [isAsyncCallbackStart]="loadingContent">
+        </frame-filters-custompanel>
+    </div>
+
+    <div class="col col-content-ro5 border-right-1">
+        <header class="section-header-content row">
+            <div class="col">
+                <h5>Задания</h5>
+            </div>
+            <div class="col-auto">
+              <button-ro5 class="btn-outline-secondary" (onclick)="Ro5DataGrid.exportToExcel()">
+                  {{ Ro5DataGrid.SelectionRow?.isItemsSelect ? 'Экспорт выбранных в Excel' : 'Экспорт в Excel' }}
+              </button-ro5>
+            </div>
+        </header>
+
+        <data-grid-ro5 #Ro5DataGrid
+          [HeaderActionTemplate]="headerActionTemplate"
+          (onActionButtonClicked)="onActionButtonClicked($event)">
+          <ng-template #headerActionTemplate>          
+            <div class="row no-gutters-2">
+              <div class="col"></div>
+              <div class="col-auto" *appCanAccess="'CMG_EXPORT_START'">
+                <ng-template [ngTemplateOutlet]="dropDownButtonMenu"
+                  [ngTemplateOutletContext]="{ items: exportTemplateMenu, submenu: [{Id:-1,Name:'Новый экспорт'}], buttonName: 'Экспорт', type: 1, disabled: false, rule: 'CMG_EXPORT_USE_FAVORITES' }">
+                </ng-template>
+              </div>
+              <div class="col-auto" *appCanAccess="'CMG_IMPORT_START'">
+                <ng-template [ngTemplateOutlet]="dropDownButtonMenu"
+                  [ngTemplateOutletContext]="{ items: importTemplateMenu, submenu: [{Id:-1,Name:'Новый импорт'}], buttonName: 'Импорт', type: 2, disabled: false, rule: 'CMG_IMPORT_USE_FAVORITES' }">
+                </ng-template>
+              </div>
+            </div>
+          </ng-template>
+          <ng-template #progressStatusTemplate let-value="value" let-item="item">
+            <div [ngStyle]="{ 'color': item.State.Code === NameStatusError ? 'red' : 'inherit' }"
+                style="display: inline-block" [innerHTML]="item?.State?.Name | markerText:dataGrid.SearchFilter"
+                container="body" placement="top" [ngbTooltip]="(item['Progress'] | number:'1.1-2') + '%'"></div>
+          </ng-template>
+          <ng-template #cellTemplateFile let-value="value" let-item="item" let-column="column">
+            <a *ngIf="value" href="javascript:void(0)" (click)="downloadFile(item); $event.stopPropagation()">Скачать</a>
+          </ng-template>
+          <ng-template #cellUserName let-item="item" let-column="column">
+            <span [title]="item[column.Name]?.Name" [innerHTML]="item[column.Name]?.Name | markerText: dataGrid.SearchFilter">
+            </span>
+          </ng-template>
+          <ng-template #nameTemplate let-item="item" let-column="column">
+            <a [routerLink]="['/property-update/export-import/result/' + (item.IsExport ? '1':'2') + '/' + item.Id]" 
+               [title]="item?.Name" 
+               [innerHTML]="item.Name | markerText: dataGrid.SearchFilter">
+            </a>
+          </ng-template>
+        </data-grid-ro5>
+    </div>
+</div>
+
+<ng-template #dropDownButtonMenu let-items="items" let-submenu="submenu" let-buttonName="buttonName" let-type="type" let-disabled="disabled" let-rule="rule">
+  <button-ro5 
+      [class]="'button-apply'" 
+      placement="bottom"
+      container="body"
+      triggers="manual" 
+      [disabled]="disabled" 
+      [autoClose]="'outside'" 
+      #popupAnalyze="ngbPopover"
+      [ngbPopover]="contextMenuAnalyze" 
+      (onclick)="popupAnalyze.open()">
+      {{ buttonName }}
+      <i class="zmdi zmdi-caret-down"></i>
+  </button-ro5>
+  <ng-template #contextMenuAnalyze>
+      <div class="pu-context-menu-analyze">
+      
+        <ng-container *ngIf="items?.length">
+          <ul class="nav list-box-vertical border-bottom-1" *appCanAccess="rule">
+            <li class="background-gray" *ngFor="let template of items" style="background-image: none; padding-bottom: 5px">
+              <div class="row no-gutters row-no-wrap align-items-baseline">
+                <div class="col-10">
+                  <a class="nav-link" [innerHTML]="template.Name" (click)="setNewFromTemplate(type, template.Id)"></a>
+                </div>
+                <div class="col-1" placement="top" container="body" ngbTooltip="Удалить">
+                  <button class="btn-outline-circle btn-circle-size-24" data-toggle="collapse"
+                    [attr.data-target]="'#templateValidation' + template.Id">
+                    <i class="zmdi zmdi-delete"></i>
+                  </button>
+                </div>
+              </div>
+              <div style="width: 100%" id="templateValidation{{template.Id}}" class="collapse">
+                <div class="row no-gutters align-items-center justify-content-end">
+                  <div class="col-auto">
+                    <div class="row no-gutters col-wrappanel">
+                      <div class="col-auto">Вы уверены?</div>
+                      <div class="col-auto">
+                        <button class="btn-outline-circle btn-circle-size-24" (click)="deleteFromTemplate(type, template.Id)">
+                          <i class="zmdi zmdi-check"></i>
+                        </button>
+                      </div>
+                      <div class="col-auto">
+                        <button class="btn-outline-circle btn-circle-size-24" data-toggle="collapse"
+                          [attr.data-target]="'#templateValidation' + template.Id">
+                          <i class="zmdi zmdi-close"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </ng-container>
+      
+        <ul class="nav list-box-vertical">
+          <ng-container *ngFor="let _menu of submenu">
+            <li class="background-gray" style="background-image: none;" (click)="subMenuClick(type, _menu.Id)">
+              <div class="row no-gutters-2 align-items-center">
+                <a class="nav-link">{{ _menu.Name }}</a>
+              </div>
+            </li>
+          </ng-container>
+        </ul>
+      
+      </div>
+  </ng-template>
+</ng-template>

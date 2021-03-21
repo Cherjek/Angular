@@ -1,0 +1,88 @@
+<div>
+  <div class="row no-gutters align-items-center">
+    <div class="col-1">
+      <div>Месяцы: </div>
+    </div>
+    <div [ngSwitch]="isPropEdit">
+      <rom-calendar-picker-ro5 [(values)]="selectedMonths" *ngSwitchCase="true" [calendarPickerType]="calendarPickerTypes.Months">
+      </rom-calendar-picker-ro5>
+      <div *ngSwitchDefault>{{selectedMonths | dateStringify: 'month'}}</div>
+    </div>
+  </div>
+  <hr>
+  <div class="row no-gutters align-items-center">
+    <div class="col-1 align-items-center justify-content-center">
+      <div>День: </div>
+    </div>
+    <div [ngSwitch]="isPropEdit">
+
+      <combo-box-ro5 *ngSwitchCase="true" [keyField]="'Id'" [valueField]="'Name'" [value]="typeDaysValue" [itemsInput]="typeDays"
+        (onSelected)="typeDaysValue = $event; byDays = ($event == null ? undefined : $event?.Id === 1)"></combo-box-ro5>
+
+      <span *ngSwitchDefault>
+          {{ typeDaysValue.Name }}
+      </span>
+
+    </div>
+  </div>
+  <!-- <hr> -->
+  <br>
+  <ng-container *ngIf="typeDaysValue != null">
+    <div class="row no-gutters align-items-center">
+        <div class="col-1 align-items-center justify-content-center">
+          <!-- <span>{{ typeDaysValue.Name + ': ' }}</span> -->
+        </div>
+        <div>
+
+            <div [ngSwitch]="typeDaysValueCode">
+              <div *ngSwitchCase="'dayMonth'">
+
+                <ng-container [ngSwitch]="isPropEdit">
+                    <ng-container *ngSwitchCase="true">
+                        <rom-calendar-picker-ro5 [(values)]="selectedMonthDays" [calendarPickerType]="calendarPickerTypes.Dates">
+                        </rom-calendar-picker-ro5>
+                    </ng-container>
+                    <ng-container *ngSwitchDefault>
+                        <span>{{selectedMonthDays | dateStringify:'customMonth'}}</span>
+                    </ng-container>
+                </ng-container>
+                  
+              </div>
+              <div *ngSwitchCase="'dayWeek'">
+
+                  <ng-container [ngSwitch]="isPropEdit">
+                  <ng-container *ngSwitchCase="true">
+                      <rom-calendar-picker-ro5 
+                          [(values)]="selectedWeekDays" 
+                          [calendarPickerType]="calendarPickerTypes.Weeks">
+                      </rom-calendar-picker-ro5>
+                  </ng-container>
+                  <ng-container *ngSwitchDefault>
+                      <span>{{selectedWeekDays | dateStringify : 'week'}}</span>
+                  </ng-container>
+                  </ng-container>            
+
+              </div>
+            </div>      
+        
+
+        </div>
+    </div>
+    <hr>
+    <ng-container *ngIf="!byDays">
+      <div class="row no-gutters align-items-center" >
+          <div *ngIf="typeDaysValueCode == 'dayWeek' || !isPropEdit" class="col-1 align-items-center justify-content-center">
+          <div>Порядковый номер недели: </div>
+          </div>
+          <div *ngIf="isPropEdit && typeDaysValueCode == 'dayWeek'">
+          <rom-calendar-picker-ro5 [(values)]="selectedOrders" [calendarPickerType]="calendarPickerTypes.NumberOrder">
+          </rom-calendar-picker-ro5>
+          </div>
+          <div *ngIf="!isPropEdit">{{selectedOrders | dateStringify:'customOrders'}}</div>          
+      </div>    
+      <hr>
+    </ng-container>    
+  </ng-container>
+  
+  <rom-settings-time-params #timeParams [data]="data?.Time" [isPropEdit]="isPropEdit"></rom-settings-time-params>
+</div>

@@ -1,0 +1,96 @@
+﻿<message-popup [(messages)]="errorsContentForm"></message-popup>
+<loader-ro5 [(loading)]="loadingContentPanel"></loader-ro5>
+
+<data-grid-ro5 #Ro5DataGrid
+               [KeyField]="'UniqueId'"
+               [HeaderActionTemplate]="headerAction"
+               [DataSource]="DataSource"
+               [SelectionRowMode]="DGSelectionRowMode.Multiple"
+               (onActionButtonClicked)="onActionButtonClicked($event)"
+               (onEditingCellApply)="onGridEditingCellApply($event)"
+               (onError)="errorsContentForm = $event">
+
+    <ng-template #headerAction>
+        <div *ngIf="Ro5DataGrid.SelectionRow.isItemsSelect; else defButtonAction" class="row no-gutters-2">
+            <div class="row no-gutters col-wrappanel">
+                <div class="col-auto">
+                    <button type="button" class="btn btn-outline-secondary" (click)="dataGrid.exportToExcel()">Экспорт выбранных</button>
+                </div>
+                <div class="col-auto">
+                    <button type="button" class="btn btn-outline-secondary" (click)="dataGrid.copyToClipboard()">Копировать в буфер</button>
+                </div>
+                <div class="col-auto" *appCanAccess="'DP_DELETE_VALUE'">
+
+                    <ng-template #popFormContent>
+                        <div style="font-size: 14px">
+                            <div class="row no-gutters" style="margin: 15px 0">
+                                <div class="col">
+                                    Вы уверены, что хотите удалить все выбранные значение?
+                                </div>
+                            </div>
+                            <div class="row no-gutters">
+                                <div class="col-auto">
+                                    <button type="button" class="btn btn-primary" (click)="deleteAllValues();popUpFormActionButton.close()">
+                                        Удалить
+                                    </button>
+                                </div>
+                                <div class="col-auto" style="margin-left: 10px">
+                                    <button type="button" class="btn btn-outline-secondary" (click)="popUpFormActionButton.close()">
+                                        Отмена
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+
+                    <button type="button" class="btn btn-outline-secondary btn-remove"
+                            data-container="body" data-placement="bottom"
+                            #popUpFormActionButton="ngbPopover" [ngbPopover]="popFormContent"
+                            (click)="$event.stopPropagation();">
+                        Удалить значения
+                    </button>
+                </div>
+            </div>
+        </div>
+        <ng-template #defButtonAction>
+            <div class="row no-gutters justify-content-end">
+                <div class="col">
+                    <button style="float: right" type="button" class="btn btn-outline-secondary" (click)="dataGrid.exportToExcel()">Экспорт</button>
+                </div>
+            </div>
+        </ng-template>
+    </ng-template>
+
+    <ng-template #cellUnit let-item="item">
+        <div class="row no-gutters">
+            <div class="col">
+                <div [innerHtml]="item.LogicDeviceDisplayText | markerText:dataGrid.SearchFilter"></div>
+            </div>
+        </div>
+        <div class="row no-gutters">
+            <div class="col">
+                <div class="text-info-additional" [innerHtml]="item.UnitDisplayText | markerText:dataGrid.SearchFilter"></div>
+            </div>
+        </div>
+    </ng-template>
+
+    <ng-template #cellTag let-item="item">
+        <div class="row no-gutters">
+            <div class="col">
+                <span [innerHtml]="item.TagCode | markerText:dataGrid.SearchFilter"></span>&nbsp;&nbsp;<span class="text-info-additional" [innerHtml]="item.TagName | markerText:dataGrid.SearchFilter"></span>
+            </div>
+        </div>
+    </ng-template>
+
+    <ng-template #cellValue let-item="item">
+        <div class="row no-gutters justify-content-end">
+            <div class="col" [ngSwitch]="item.ValueType">
+                <span style="border-bottom: 1px dotted; cursor: pointer;" *ngSwitchCase="'ValueFloat'" [innerHtml]="item.Value | decimalFormat | markerText:dataGrid.SearchFilter:1"></span>
+                <span style="border-bottom: 1px dotted; cursor: pointer;" *ngSwitchCase="'ValueBool'" [innerHtml]="(item.Value ? '1' : '0') | markerText:dataGrid.SearchFilter"></span>
+                <span style="border-bottom: 1px dotted; cursor: pointer;" *ngSwitchCase="'ValueInt'" [innerHtml]="item.Value | markerText:dataGrid.SearchFilter"></span>
+                <span style="border-bottom: 1px dotted; cursor: pointer;" *ngSwitchDefault [innerHtml]="item.Value | markerText:dataGrid.SearchFilter"></span>
+            </div>
+        </div>
+    </ng-template>
+
+</data-grid-ro5>

@@ -1,0 +1,4 @@
+<li *ngIf="navItem.isVisible !== false" class="nav-item"
+    [ngClass]="{'active' : isActive }">
+    <a class="nav-link">{{ navItem.name }}</a>
+</li>

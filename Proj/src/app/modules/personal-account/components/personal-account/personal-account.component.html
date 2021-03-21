@@ -1,0 +1,161 @@
+<loader-ro5 [(loading)]="loadingContentPanel"></loader-ro5>
+<header class="main-content-header row">
+    <div class="col-auto">
+        <button (click)="router.navigate(['login'])" class="btn btn-outline-secondary button-main-header"
+                placement="bottom" [ngbTooltip]="'Выход'">
+            <i class="zmdi zmdi-square-right zmdi-hc-rotate-180"></i>
+        </button>
+    </div>
+    <div class="col"> <h3> Личный кабинет </h3> </div>
+</header>
+
+<div class="main-view-content overflow background-color-white">
+    
+    <div class="col">
+        
+        <div class="main-menu-background">
+        </div>
+
+        <div class="content no-gutters">
+
+            <div class="main-menu col-auto">
+                <div class="menu-items d-inline-flex h-100 flex-column border-right-1">
+                    <div class="reports-header row no-gutters align-items-center border-bottom-1 h-padding background-color-white">
+                        <span>
+                            Отчеты по оборудованию
+                        </span>
+                    </div>
+                    
+                    <div class="background-color-white">
+                        <disable-container [disabled]="isTableLoad">
+                            
+                            <ul class="nav flex-column list-box-vertical">
+                                <li *ngFor="let tab of tabs"
+                                    class="nav-item"
+                                    [ngClass]="{'active' : currentTab.Code == tab.Code }">
+                                    <div class="row no-gutters-2 align-items-center">
+                                        <a class="col nav-link" (click)="onTabClick(tab)">{{ tab.DisplayText }}</a>
+                                    </div>
+                                </li>
+                            </ul>
+
+                        </disable-container>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col">
+                <div class="main-menu-tab row no-gutters">
+                    <div class="col">
+                        
+                        <disable-container [disabled]="isTableLoad">
+                            
+                            <mat-tab-group [selectedIndex]="currentTabIndex"
+                                           [dynamicHeight]="true"
+                                           mat-stretch-tabs
+                                           (selectedTabChange)="clickPortraitType($event)">
+                                <mat-tab *ngFor="let tab of tabs; let i=index;">
+                                    <ng-template mat-tab-label>
+                                        <div class="mat-tab-label-content-custom">
+                                            <div class="row no-gutters-2">
+                                                <div class="col">
+                                                    {{ tab.DisplayText }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </ng-template>
+                                </mat-tab>
+                            </mat-tab-group>
+
+                        </disable-container>
+                        
+                    </div>
+                </div>
+                
+                <div class="row no-gutters">
+                    <div class="col">
+                        
+                        <message-popup [(messages)]="errors"></message-popup>
+                        
+                        <div #headerUnitLDContainer>
+                            <ng-container *ngIf="currentTab != null">
+
+                                <disable-container [disabled]="isTableLoad">
+
+                                    <!--Units-->
+                                    <div class="row no-gutters unit align-items-center h-padding v-padding border-bottom-1">
+                                        <div class="col-auto">
+                                            <span mat-button
+                                                  [matMenuTriggerFor]="unitMenu"
+                                                  [ngClass]="{ 'mat-dropdown--disabled' : currentTab?.UnitPresentationViews?.length < 2}"
+                                                  class="border-dashed-bottom-1">{{ currentTab.TabSelect.Unit?.Name }}&nbsp;&nbsp;<i class="zmdi zmdi-caret-down" *ngIf="currentTab.UnitPresentationViews.length > 1"></i></span>
+                                            <mat-menu #unitMenu="matMenu">
+                                                <ng-template [ngTemplateOutlet]="unitMenuTemplate"></ng-template>
+                                            </mat-menu>
+
+                                            <ng-template #unitMenuTemplate>
+                                                <ng-container *ngFor="let unit of currentTab.UnitPresentationViews">
+                                                    <button *ngIf="unit.Id !== currentTab.TabSelect.Unit.Id"
+                                                            mat-menu-item
+                                                            (click)="selectTabUnit(unit)"
+                                                            class="outline-none">
+                                                        {{ unit.Name }}
+                                                    </button>
+                                                </ng-container>
+                                            </ng-template>
+                                        </div>
+                                    </div>
+
+                                    <!--Logic Devices-->
+                                    <div class="row no-gutters logic-device align-items-center justify-content-between h-padding v-padding border-bottom-1" *ngIf="currentTab.Code !== commonCode">
+                                        <div class="col-auto" *ngIf="currentTab.TabSelect.Unit">
+                                            <span mat-button
+                                                  [matMenuTriggerFor]="ldMenu"
+                                                  [ngClass]="{ 'mat-dropdown--disabled' : currentTab?.TabSelect.Unit?.LogicDevices?.length < 2}"
+                                                  class="border-dashed-bottom-1">
+                                                {{ currentTab.TabSelect.LogicDevice?.Name }}&nbsp;&nbsp;<i class="zmdi zmdi-caret-down" *ngIf="currentTab.TabSelect.Unit.LogicDevices?.length > 1"></i>
+                                            </span>
+                                            <mat-menu #ldMenu="matMenu">
+                                                <ng-container *ngFor="let ld of currentTab.TabSelect.Unit.LogicDevices">
+                                                    <button *ngIf="ld.Id !== currentTab.TabSelect.LogicDevice.Id"
+                                                            mat-menu-item
+                                                            (click)="selectTabLogicDevice(ld)"
+                                                            class="outline-none">
+                                                        {{ ld.Name }}
+                                                    </button>
+                                                </ng-container>
+                                            </mat-menu>
+                                        </div>
+                                        <!--<div class="col-auto">
+                                            <button-ro5 [class]="'btn-outline-secondary'">
+                                                Включить <i class="zmdi zmdi-power"></i>
+                                            </button-ro5>
+                                        </div>-->
+                                        <div class="col-auto" *appCanAccess="'PA_RELAY_OFF'">
+                                            <button-ro5 [class]="'btn-outline-secondary border-danger'" [disabled]="true">
+                                                <span class="danger-color">Отключить&nbsp;&nbsp;<i class="zmdi zmdi-alert-triangle"></i></span>
+                                            </button-ro5>
+                                        </div>
+                                    </div>
+
+                                </disable-container>
+
+                            </ng-container>
+                        </div>
+                        
+                        <div class="details-container" #detailsContainer>
+                            <ng-template #detailsContentView="detailsContentViewHost" detailsContentViewHost>
+                            </ng-template>
+                        </div>
+
+                    </div>
+                </div>
+                
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

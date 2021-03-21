@@ -1,0 +1,11 @@
+<message-popup [(messages)]="errors"></message-popup>
+<loader-ro5 [(loading)]="loadingContent"></loader-ro5>
+<ahm-shared-properties
+    #propControl
+    permission="SDL_EDIT"
+    [isNew]="isNew"    
+    [properties]="properties"
+    (save)="save($event, propControl)"
+    (optionControlDropDown)="optionControlDropDown($event)"
+    [errorLoadEntity]="errorLoadEntity">
+</ahm-shared-properties>

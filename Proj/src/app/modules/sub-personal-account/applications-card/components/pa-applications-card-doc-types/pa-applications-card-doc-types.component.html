@@ -1,0 +1,30 @@
+<message-popup [(messages)]="errors"></message-popup>
+<loader-ro5 [(loading)]="loadingContent"></loader-ro5>
+<div class="main-view-content">
+
+  <div class="col col-content-ro5 border-right-1">
+    <header class="section-header-content row">
+      <div class="col-auto">
+        <h5>{{ 'DocumentTypesList' | transloco }}</h5>
+      </div>
+      <div class="col"></div>
+      <div class="col-auto" *appCanAccess="'CPA_EDIT_APP_DOCUMENT_TYPES'">
+        <button-ro5 [class]="'btn btn-primary'" (onclick)="addNewItem()">
+          + {{ 'Add' | transloco }}
+        </button-ro5>
+      </div>
+    </header>
+    <data-grid-ro5 #Ro5DataGrid (onActionButtonClicked)="onActionButtonClicked($event)">
+      <ng-template #typeNameColumnTemplate let-item="item">
+        <a [routerLink]="[
+                        '../../' + appId + '/doc-types/' + item.Id
+                    ]" [innerHTML]="item?.Name | markerText: dataGrid.SearchFilter">
+        </a>
+      </ng-template>
+      <ng-template #directionColumnTemplate let-item="item">
+        <span [innerHTML]="item?.DocumentDirectionType?.Name | markerText: dataGrid.SearchFilter">
+        </span>
+      </ng-template>
+    </data-grid-ro5>
+  </div>
+</div>

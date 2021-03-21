@@ -1,0 +1,27 @@
+<section>
+  <tree-view-ro5
+    *ngIf="entitiesProps != null"
+    [selectedValuesDetectChange]="valuesSelect"
+    [nodes]="entitiesProps"
+    (onSelectedChanged)="selectNodes = $event"
+  ></tree-view-ro5>
+</section>
+
+<div class="row no-gutters col-wrappanel align-items-center">
+  <div class="col-auto">
+    <button-ro5
+      [class]="'btn btn-primary'"
+      (onclick)="save.emit(selectNodes)"
+    >
+      Сохранить
+    </button-ro5>
+  </div>
+  <div class="col-auto">
+    <button-ro5
+      [class]="'btn btn-outline-secondary'"
+      (onclick)="cancel.emit()"
+    >
+      Отмена
+    </button-ro5>
+  </div>
+</div>

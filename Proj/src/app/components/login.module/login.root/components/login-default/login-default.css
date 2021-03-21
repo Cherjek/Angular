@@ -1,0 +1,25 @@
+﻿:host > [class*="row"] {
+    background-image: linear-gradient(to bottom, #458fd3, #275e8b);
+    height: calc(100%);
+}
+
+.login-bg {
+    width: 27.9em;
+    /*height: 19.9em;*/
+    object-fit: contain;
+    border-radius: 10px;
+    background-color: #ffffff;
+    box-shadow: 1px 1px 4px 3px rgba(0, 0, 0, 0.22);
+    padding: 25px 20px;
+}
+
+.login-box {
+    top: 0 !important;
+}
+
+.version-mark {
+    color: rgba(255, 255, 255, 0.3);
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+}

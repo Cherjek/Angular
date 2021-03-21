@@ -1,0 +1,31 @@
+<message-popup [(messages)]="errors"></message-popup>
+<loader-ro5 [(loading)]="loadingContent"></loader-ro5>
+<div class="main-view-content height-auto">
+    <div class="col col-content-ro5 border-right-1">
+        <header class="section-header-content row">
+            <div class="col-auto">
+                <h5>Список шагов</h5>
+            </div>
+            <div class="col"></div>
+            <div class="col-auto" *appCanAccess="'SDL_STEP_CREATE'">
+                <button-ro5 [class]="'btn btn-primary'" (onclick)="addNewStep()">
+                    + Добавить шаг
+                </button-ro5>
+            </div>
+        </header>
+
+        <data-grid-ro5 (onActionButtonClicked)="onActionButtonClicked($event)" #Ro5DataGrid>
+            <ng-template #typeNameColumnTemplate let-item="item" let-id="id">
+                <ng-template #disabledUnitLink>
+                    <a [innerHTML]="item.Name | pipeNoName | markerText:dataGrid.SearchFilter"></a>
+                </ng-template>
+
+                <a *appCanAccess="'SDL_STEP_VIEW'; else disabledUnitLink"
+                    href="javascript:void(0)" 
+                    (click)="navigateToStep(item)" 
+                    [innerHTML]="item.Name | pipeNoName | markerText: dataGrid.SearchFilter">
+                </a>
+            </ng-template>
+        </data-grid-ro5>
+    </div>
+</div>

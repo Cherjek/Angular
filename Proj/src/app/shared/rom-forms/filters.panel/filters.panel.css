@@ -1,0 +1,40 @@
+.header-filter-panel {
+    height: 40px;
+    background-color: #e2e6ef;
+    /*margin-top: 4px;
+    margin-bottom: 4px;*/
+}
+.content-padding-form {
+    padding: 7px 0;
+}
+.btn-collapse {
+    position: absolute;
+    z-index: 9;
+    top: 12px;
+    left: 8px
+}
+.header-collapse {
+    position: absolute;
+    top: 80px;
+    left: -15px
+}
+.collapse-panel {
+    width: 250px;
+}
+.collapse-panel.hidden {
+    width: 40px;
+    transition: width .10s ease-out;
+    background-color: #fff;
+}
+.collapse-panel.show {
+    width: 250px;
+    transition: width .15s ease-out;
+}
+.collapse-panel.hidden * {
+    visibility: hidden;
+}
+.collapse-panel.show > * {
+    visibility: visible;
+    transition: visibility .20s ease-out;
+    transition-delay: .20s;
+}

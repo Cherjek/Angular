@@ -1,0 +1,68 @@
+<div >
+  <label>Время срабатывания</label>
+  <div [ngSwitch]="isPropEdit" class="row no-gutters row-dom-item-padding-vertical align-items-center">
+    <div *ngSwitchCase="true" class="col-auto">
+      <check-box-ro5 *ngSwitchCase="true" 
+        [name]="'multiple'"  
+        [typeInput]="'radio'" 
+        [checked]="once"        
+        (onClick)="once = true">
+      </check-box-ro5>
+    </div>
+    <div *ngIf="!isPropEdit && once" class="col-auto align-items-center">Один раз: &nbsp;&nbsp;</div>
+    <div *ngIf="isPropEdit" (click)="once = true" class="col-auto align-items-center">Один раз: &nbsp;&nbsp;</div>
+    <div *ngSwitchCase="true" class="col-auto settings-one-time__input">
+      <div [ngStyle]="{ 'cursor': !once ? 'not-allowed' : 'default' }">
+        <div [ngClass]="{ 'item-display-disabled' : !once }">
+          <rom-time-picker-ro5 #timePicker 
+            [hour]="onceHour"
+            [minute]="onceMinute"
+            [second]="onceSecond"></rom-time-picker-ro5>
+        </div>
+      </div>
+    </div>
+    <div *ngSwitchCase="false">
+      <div *ngIf="data?.OneTime">
+          {{data.RunTime | date: "HH:mm:ss" }}
+      </div>
+    </div>
+  </div>
+  <div [ngSwitch]="isPropEdit" class="row no-gutters row-dom-item-padding-vertical align-items-center">
+    <div *ngSwitchCase="true" class="col-auto">
+      <check-box-ro5 
+        [name]="'multiple'" 
+        [typeInput]="'radio'" 
+        [checked]="!once"
+        (onClick)="once = false">
+      </check-box-ro5>
+    </div>
+    <div *ngIf="!isPropEdit && !once" class="col-auto">Каждые: &nbsp;&nbsp;&nbsp;&nbsp;</div>
+    <div *ngIf="isPropEdit" (click)="once = false" class="col-auto">Каждые: &nbsp;&nbsp;&nbsp;&nbsp;</div>
+    <div [ngStyle]="{ 'cursor': once ? 'not-allowed' : 'default' }">
+      <div [ngClass]="{ 'item-display-disabled' : once }">
+          
+          <div *ngSwitchCase="true" class="col-auto settings-every align-items-center">
+              <input-box class="settings-every__repeat" [(value)]="repeatValue" [min]="1" [type]="'number'"></input-box>
+              &nbsp;&nbsp;
+              <div class="settings-every__params"></div>
+              <combo-box-ro5 [keyField]="'Id'" [valueField]="'Name'" [value]="repeatTypeValue" [itemsInput]="repeatType"
+              (onSelected)="repeatTypeValue = $event;"></combo-box-ro5>
+               &nbsp;&nbsp;
+              с &nbsp;<rom-time-picker-ro5 #timePicker1
+              [hour]="fromMultHour"
+              [minute]="fromMultMinute"
+              [second]="fromMultSecond"></rom-time-picker-ro5>
+              &nbsp; по &nbsp; <rom-time-picker-ro5 #timePicker2 
+              [hour]="toMultHour"
+              [minute]="toMultMinute"
+              [second]="toMultSecond"></rom-time-picker-ro5>
+          </div>
+      </div>
+    </div>
+    <div *ngSwitchCase="false">
+        <div *ngIf="!data?.OneTime">
+            {{repeatValue}} {{repeatTypeValue?.Name}} с {{data?.StartTime | date: "HH:mm:ss"}} по {{data?.EndTime | date: "HH:mm:ss"}}
+        </div>
+    </div>
+  </div>
+</div>

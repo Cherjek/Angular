@@ -1,0 +1,223 @@
+﻿<message-popup [(messages)]="errorsFiltersForm"></message-popup>
+<loader-ro5 [(loading)]="loadingFilterPanel"></loader-ro5>
+
+<button class="btn-collapse btn-outline-circle transform-rotate-show btn-circle-size-24"
+        [ngClass]="{ 'collapsed' : !isFilterPanelShow, 'active' : isFilterPanelShow }"
+        (click)="isFilterPanelShow = !isFilterPanelShow">
+    <i class="zmdi zmdi-chevron-right"></i>
+</button>
+<h5 *ngIf="!isFilterPanelShow" class="header-collapse rotate-angle-90-plus">Фильтры</h5>
+
+<div class="collapse-panel col-content-flex-column"     
+     [ngClass]="{ 'hidden' : !isFilterPanelShow, 'show' : isFilterPanelShow }">
+
+    <header class="section-header-content row">
+        <div class="col" style="padding-left: 40px !important">
+            <h5>Фильтры</h5>
+        </div>
+        <div class="col-auto" *ngIf="isFilterDefChange && panelIndex === 1">
+            <button type="button" (click)="clearAllFilter()" class="btn btn-outline-secondary">Сброс</button>
+        </div>
+        <div class="col-auto" *ngIf="isUseFavorite">
+            <button type="button" class="btn btn-outline-star" placement="top" (click)="go2Favorites($event)" ngbTooltip="Избранное">
+                <i class="zmdi zmdi-star"></i>
+            </button>
+        </div>
+    </header>
+
+    <header class="section-header-content row">
+        <div *ngIf="panelIndex === 1" class="col" style="text-align: center">
+            <a href="javascript:void(0)" (click)="addNewFilter()">
+                + Добавить фильтр
+            </a>
+        </div>
+        <div *ngIf="panelIndex === 2" class="col">
+            <div class="row align-items-center">
+                <div class="col-auto">
+                    <button type="button" (click)="back2InitFilter()" class="btn btn-outline-secondary"> &larr; </button>
+                </div>
+                <div class="col-auto">
+                    <h4>Новый фильтр</h4>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="panelIndex === 3" class="col">
+            <div class="row align-items-center">
+                <div class="col-auto">
+                    <button type="button" (click)="back2NewFilter()" class="btn btn-outline-secondary"> &larr; </button>
+                </div>
+                <div class="col">
+                    <h4>Значения фильтра</h4>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="panelIndex === 4" class="col">
+            <div class="row align-items-center">
+                <div class="col-auto">
+                    <button type="button" (click)="panelIndex = 1;" class="btn btn-outline-secondary"> &larr; </button>
+                </div>
+                <div class="col">
+                    <h4> Избранное </h4>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section *ngIf="panelIndex === 1" class="section-body-content">
+
+        <!--Панель с списком добавляемых фильтров через "избранное"/"новый фильтр"-->
+        <div class="row no-gutters-2" style="background-color: #fff; padding: 10px 0;padding-top: 15px;" *ngIf="isNewFilterItemAdd">
+            <div class="col">
+
+                <div class="row no-gutters align-items-center" *ngFor="let filter of (FiltersContainer || {}).Filters; index as i" [ngClass]="{'ct-state-invisible':!filter.IsNew}"
+                     style="background-color: rgba(226,230,239,0.5); padding: 10px; border-radius: 3px; margin-bottom: 4px">
+                    <div class="col" *ngIf="filter.IsNew">
+                        <div class="row no-gutters">
+                            <div class="col">
+                                <h6>{{filter.Caption}}</h6>
+                            </div>
+                            <div>
+                                <button class="btn-outline-circle btn-circle-size-24" (click)="clearFilter(filter)">
+                                    <i class="zmdi zmdi-close"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row no-gutters">
+                            <div class="col">
+                                <div style="margin: 10px 0;">
+                                    <a class="new-filter-link" [innerHTML]="filter.SelectedOperation.Name + ': '
+                                       + (filter.FilterType === 'DateTime' ? (filter.getTextValues() | dateTimeFormat) : (filter.getTextValues() | markerText))"
+                                       (click)="changeNewFilterValue(filter)"></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!--Стандартная панель, дефолтные фильтры-->
+        <div class="row no-gutters-2 align-items-center" *ngFor="let filter of (FiltersContainer || {}).Filters; index as i" [ngClass]="{'ct-state-invisible':filter.IsNew}">
+            <div class="col" *ngIf="!filter.IsNew">
+                <div class="row row-no-wrap align-items-center header-filter-panel">
+                    <div class="col">
+                        <h6>{{filter.Caption}}</h6>
+                    </div>
+                    <div>
+                        <button class="btn-outline-circle btn-circle-size-24" (click)="clearFilter(filter)">
+                            <i class="zmdi zmdi-close"></i>
+                        </button>
+                    </div>
+                    <div style="padding-left: 5px;margin-right:15px;">
+                        <button class="btn-outline-circle btn-circle-size-24 transform-rotate" data-toggle="collapse" [attr.data-target]="'#itemObject' + i" [attr.aria-expanded]="true" [attr.aria-controls]="'itemObject' + i">
+                            <i class="zmdi zmdi-chevron-down"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="row no-gutters collapse show filter-body" [attr.id]="'itemObject' + i">
+                    <div class="col">
+                        <input-box *ngIf="filter.Search.IsSearch" [type]="'search'" [(value)]="filter.Search.SearchText"></input-box>
+
+                        <div [ngClass]="{ 'with-search-panel': filter.Search.IsSearch, 'without-search-panel': !filter.Search.IsSearch }">
+                            <span class="border-dashed-bottom-1"> {{ filter.SelectedOperation.Name }} </span>
+                        </div>
+
+                        <ng-template [ngTemplateOutlet]="filter.Template ? filter.Template :
+                                         filter.Lookup ?
+                                         (filter.Lookup.TreeOptions ? treeRowTemplate :
+                                            filter.Lookup.LookupField ? objectRowTemplate : valueRowTemplate) :
+                                         defaultRowTemplate"
+                                     [ngTemplateOutletContext]="{ $implicit: filter}">
+                        </ng-template>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section *ngIf="panelIndex > 1 && panelIndex < 4" class="section-new-filter section-body-content">
+        <new-filter [(panelIndex)]="panelIndex" [service]="service" (onAddFilter)="onAddFilter($event)" [curr_filter]="changableNewFilter"></new-filter>
+    </section>
+    <section *ngIf="panelIndex == 4" class="section-body-content">
+        <favorites [service]="service" (onSelectFavor)="onFavoriteSelect($event)"></favorites>
+    </section>
+
+    <footer *ngIf="panelIndex === 1" class="section-footer-content">
+        <div class="row no-gutters h-100">
+            <div class="col">
+                <div [ngStyle]="{ 'cursor': (isAsyncCallbackStart || !(isFilterChange)) ? 'not-allowed' : 'default' }" style="height: 100%">
+                    <button type="button" class="btn btn-primary full-size" (click)="applyFilter()" [ngClass]="{ 'item-display-disabled' : (isAsyncCallbackStart || !(isFilterChange)) }">
+                        Применить фильтр
+                    </button>
+                </div>
+            </div>
+            <div class="col-3" *ngIf="isUseFavorite" style="border-left: 1px dashed #fff;">
+                <div [ngStyle]="{ 'cursor': !isFilterDefChange ? 'not-allowed' : 'default' }" style="height: 100%">
+                    <button type="button" class="btn btn-primary full-size" placement="top" ngbTooltip="Добавить в избранное"
+                            [ngClass]="{ 'item-display-disabled' : !isFilterDefChange }"
+                            (click)="showSaveTemplate($event)">
+                        <i class="zmdi zmdi-star"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+</div>
+
+<div class="row no-gutters panel-save-template">
+    <div class="col">
+        <div class="row">
+            <div class="col">
+                Сохранение фильтра:
+            </div>
+        </div>
+        <div style="height: 10px;"></div>
+        <div class="row">
+            <div class="col">
+                <input-box [placeholder]="'Укажите название'" [(value)]="filterTemplateName"></input-box>
+            </div>
+        </div>
+        <div style="height: 10px;"></div>
+        <div class="row">
+            <div class="col-7">
+                <button type="button" class="btn btn-primary" (click)="confirmSaveTemplate()">
+                    Сохранить
+                </button>
+            </div>
+            <div class="col-5">
+                <button type="button" (click)="cancelSaveTemplate()" class="btn btn-outline-secondary">Отмена</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #defaultRowTemplate let-filter>
+    <input-box *ngIf="filter.EditorType == 0" [placeholder]="'Значение...'" [(value)]="filter.Data.Value"></input-box>
+    <input-box *ngIf="filter.EditorType == 1" [placeholder]="'Значение...'" [type]="'number'" [(value)]="filter.Data.Value"></input-box>
+
+    <date-picker-ro5 *ngIf="filter.EditorType == 2" 
+                     [(fromDate)]="filter.Data.Value.FromDate" 
+                     [(toDate)]="filter.Data.Value.ToDate" 
+                     [isVertical]="true" 
+                     [isDefFast]="false" 
+                     [isIntervalMode]="filter.Data.Value.IsIntervalMode"
+                     [min]="filter.Data.Value.Min"
+                     [max]="filter.Data.Value.Max"
+                     [positionDiv]="'fixed'"></date-picker-ro5>
+
+    <div style="width: 100%; height: 10px;"></div>
+</ng-template>
+
+<ng-template #objectRowTemplate let-filter>
+    <filter-array-component [filter]="filter" [isClear]="filter.isClear"></filter-array-component>    
+</ng-template>
+
+<ng-template #treeRowTemplate let-filter>
+    <tree-view-ro5 [options]="filter.Lookup.TreeOptions"
+                   [noName]="constants.NO_NAME"
+                   [selectedValuesDetectChange]="filter.Value"
+                   [nodes]="filter.Data"
+                   (onSelectedChanged)="filter.Value = $event"></tree-view-ro5>
+</ng-template>

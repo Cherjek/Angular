@@ -1,0 +1,47 @@
+<header class="main-content-header row">
+    <div class="col-auto">
+        <backward-button></backward-button>
+    </div>
+    <div class="col main-header-text">
+        <h3> Свойства {{ entity?.Name.toLowerCase() }} </h3>
+    </div>
+</header>
+<div class="main-view-content">
+    <div class="col">
+        <div class="main-view-content height-auto main-view-result">
+            <div class="col col-content-ro5">
+                <div class="col-content-flex-column">
+                    <message-popup [(messages)]="errors"></message-popup>
+                    <loader-ro5 [(loading)]="loadingPanel"></loader-ro5>
+
+                    <section class="section-body-content settings-container padding-panel">
+                      <tree-view-ro5
+                        *ngIf="entity != null"
+                        [selectedValuesDetectChange]="valuesSelect"
+                        [nodes]="entity?.PropertyTypes"
+                        (onSelectedChanged)="selectNodes = $event"></tree-view-ro5>
+                    </section>
+
+                    <footer class="section-footer-content">
+                      <div class="row no-gutters-2 align-items-center">
+                        <div class="col">
+                          <div class="row no-gutters col-wrappanel align-items-center">
+                            <div class="col-auto">
+                              <button-ro5 [class]="'btn btn-primary'" (onclick)="save()">
+                                Сохранить
+                              </button-ro5>
+                            </div>
+                            <div class="col-auto">
+                              <button-ro5 [class]="'btn btn-outline-secondary'" (onclick)="cancel()">
+                                Отмена
+                              </button-ro5>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </footer>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,34 @@
+<message-popup [(messages)]="errorsContentForm"></message-popup>
+<loader-ro5 [(loading)]="loadingContentPanel"></loader-ro5>
+<div class="main-view-content height-auto">
+  <div class="col col-content-ro5 border-right-1">
+    <header class="section-header-content row">
+      <div class="col-auto">
+        <h5>Иерархия: {{ notificationHierarchy?.Hierarchy?.Name }}</h5>
+      </div>
+      <div class="col"></div>
+      <div class="col-auto" *appCanAccess="'ES_NTF_HIERARCHY_EDIT'">
+        <button-ro5 [class]="'btn btn-primary'" (onclick)="changeHierarchies()">
+          Изменить
+        </button-ro5>
+      </div>
+    </header>
+
+    <data-grid-ro5 #Ro5DataGrid
+        KeyField="Id"
+        [Columns]="[{ Name: 'DisplayName', CellTemplate: nameTemplate, Caption: 'Узлы' }]"
+        [DataSource]="notificationHierarchy?.Nodes">
+        <ng-template #nameTemplate let-item="item" let-id="id" let-value="value">
+            <ng-container *appCanAccess="'HH_NODE_VIEW'; else disabledUnitLink">
+              <a 
+              [routerLink]="['../../../../hierarchies-module/node-card/', id]"
+              [queryParams]="{ idHierarchy: notificationHierarchy?.Hierarchy?.Id }" 
+              [innerHTML]="value | pipeNoName | markerText: dataGrid.SearchFilter"></a>
+            </ng-container>
+            <ng-template #disabledUnitLink>
+                <a [innerHTML]="value | pipeNoName | markerText:dataGrid.SearchFilter"></a>
+            </ng-template>
+        </ng-template>
+    </data-grid-ro5>
+  </div>
+</div>

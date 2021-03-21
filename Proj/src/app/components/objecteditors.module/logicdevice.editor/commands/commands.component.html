@@ -1,0 +1,34 @@
+<div class="main-view-content height-auto">
+    <message-popup [(messages)]="errors"></message-popup>
+    <loader-ro5 [(loading)]="loadingContent"></loader-ro5>
+    <div class="col col-content-ro5 border-right-1">
+        <header class="section-header-content row">
+            <div class="col-auto">
+                <h5> Команды управления </h5>
+            </div>
+            <div class="col"></div>
+            <div class="col-auto" *appCanAccess="'OE_CREATE_COMMAND'">
+                <button-ro5 [class]="'btn btn-primary'" (onclick)="addCommand()">
+                    + Добавить команду управления
+                </button-ro5>
+            </div>
+        </header>
+        <div class="main-view-content height-auto">
+            <div class="col col-content-ro5 border-right-1">
+                <data-grid-ro5 #Ro5DataGrid 
+                    (onActionButtonClicked)="onDGRowActionBtnClick($event)">
+                    
+                    <ng-template #cellNameCommand let-item="item">
+                      <ng-template #disabledLink>
+                        <a [innerHTML]="item?.CommandType?.Name | pipeNoName | markerText:dataGrid.SearchFilter"></a>
+                      </ng-template>
+                      <a *appCanAccess="'OE_VIEW_COMMAND'; else disabledLink" 
+                          [routerLink]="['/commands-module/logic-device/' + idLogicDevice + '/command/' + item.Id +'/property']"
+                            [innerHTML]="item?.CommandType?.Name | pipeNoName | markerText:dataGrid.SearchFilter"></a>
+                    </ng-template>
+
+                </data-grid-ro5>
+            </div>
+        </div>
+    </div>
+</div>

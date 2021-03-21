@@ -1,0 +1,132 @@
+<div class="main-view-content height-auto main-view-result">
+    <div 
+        romHotkeys
+        (onEsc)="cancel()"
+        (onCtrlSave) = "saveObject()"
+        [editMode]="isPropEdit"
+        class="col col-content-ro5">
+        <div class="col-content-flex-column">
+            <message-popup [messages]="errorsPropertyPanel"></message-popup>
+
+            <header class="section-header-content row no-gutters" *ngIf="!isNew">
+                <div class="col">
+                    <h5> Cвойства устройства </h5>
+                </div>
+                <div class="col-auto">
+                    <button class="btn btn-outline-secondary" *ngIf="isPropEdit" (click)="rollbackPropertyChanges(propertiesEditorPanel)"> Отменить изменения </button>
+
+                    <ng-container *appCanAccess="{ keySource: unitId, source: 'Units', value: 'OE_EDIT_DEVICE' }">
+                        <button class="btn btn-primary" *ngIf="!isPropEdit" (click)="changeProperties(propertiesEditorPanel)"> Изменить свойства </button>
+                    </ng-container>
+
+                </div>
+            </header>
+            <header class="section-header-grouppanel-expander row no-gutters">
+                <div class="col">
+                    <h5> Устройство </h5>
+                </div>
+                <div class="col-auto">
+                    <i *ngIf="loadingPropertyPanel" class="zmdi zmdi-spinner zmdi-hc-3x zmdi-hc-spin"></i>
+                </div>
+            </header>
+
+            <section class="section-panel-two-columns-settings" *ngIf="deviceConnect == null">
+                <div class="row no-gutters-2 border-bottom-1">
+                    <div class="col-2">
+                        <span> Подключен к </span>
+                    </div>
+                    <div class="col-10">
+                        <ng-container [ngSwitch]="deviceView != null && deviceView.ParentDevice != null">
+                            <ng-container *ngSwitchCase="true">
+
+                                <ng-container [ngSwitch]="isPropEdit">
+
+                                    <ng-container *ngSwitchCase="false">
+                                        <!--Здесь должна быть цепочка устройств parent с ссылками-->
+                                        <ng-template #disabledLink>
+                                            <a [innerHTML]="deviceView.ParentDevice.Name | pipeNoName | markerText"></a>
+                                        </ng-template>
+                                        <a *appCanAccess="{ keySource: unitId, source: 'Units', value: 'OC_VIEW_DEVICE_CARD' }; else disabledLink"
+                                           href="javascript:void(0)"
+                                           (click)="navigateParentDevice()"
+                                           [innerHTML]="deviceView.ParentDevice.Name | pipeNoName | markerText"></a>
+
+                                    </ng-container>
+
+                                    <ng-container *ngSwitchCase="true">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col-5">
+                                                {{ deviceView.ParentDevice.Name | pipeNoName }}
+                                            </div>
+                                            <div class="col-auto margin-left-10">
+                                                <button class="btn-outline-circle btn-circle-size-32" container="body" ngbTooltip="Отключить" placement="top" type="button" (click)="deviceView.ParentDevice = null">
+                                                    <i class="zmdi zmdi-delete"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </ng-container>
+
+                                </ng-container>
+
+                            </ng-container>
+                            <ng-container *ngSwitchCase="false">
+
+                                <ng-container [ngSwitch]="isPropEdit">
+
+                                    <ng-container *ngSwitchCase="false">
+                                        <span> [Не подключен] </span>
+                                    </ng-container>
+
+                                    <ng-container *ngSwitchCase="true">
+                                        <button class="btn btn-primary"
+                                                type="button"
+                                                (click)="connectDevice()">
+                                            Подключить
+                                        </button>
+                                    </ng-container>
+
+                                </ng-container>
+
+                            </ng-container>
+                        </ng-container>
+                    </div>
+                    <!--<div class="col-10">
+                <button class="btn btn-primary" (click)="connectDevice()">
+                    Подключить существующее
+                </button>
+                <button class="btn button-apply" style="margin-left: 8px" (click)="createDevice()">
+                    Создать новое
+                </button>
+            </div>-->
+                </div>
+            </section>
+
+            <section class="section-body-content settings-container">
+                <properties-editor-panel #propertiesEditorPanel
+                                         [properties]="properties"
+                                         [isEdit]="isPropEdit"
+                                         [service]="deviceEditorPropertiesService">
+                </properties-editor-panel>
+            </section>
+
+            <footer class="section-footer-content" *ngIf="isPropEdit">
+                <div class="row no-gutters-2 align-items-center">
+                    <div class="col">
+                        <div class="row no-gutters col-wrappanel align-items-center">
+                            <div class="col-auto">
+                                <button type="button" class="btn btn-primary" (click)="saveObject(propertiesEditorPanel.getEditProperties());">
+                                    {{ !isNew ? 'Сохранить' : 'Создать устройство' }}
+                                </button>
+                            </div>
+                            <div class="col-auto">
+                                <button type="button" class="btn btn-outline-secondary" (click)="cancel(propertiesEditorPanel)">
+                                    Отмена
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+</div>

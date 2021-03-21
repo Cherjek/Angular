@@ -1,0 +1,24 @@
+.time-input {
+    border: none;
+    outline: none;
+    margin-right: 5px;
+
+    &:focus {
+        .time--picker {}
+    }
+}
+
+.time--picker {
+    &:focus {
+        outline: lightblue auto 1px;
+        outline-color: lightblue;
+        outline-style: auto;
+        outline-width: 1px;
+    }
+    display: flex;
+
+}
+
+input[type=number]::-webkit-inner-spin-button {
+  opacity: 1;
+}

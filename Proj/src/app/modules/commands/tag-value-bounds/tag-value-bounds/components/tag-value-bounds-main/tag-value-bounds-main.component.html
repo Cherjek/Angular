@@ -1,0 +1,42 @@
+<message-popup [(messages)]="errors"></message-popup>
+<loader-ro5 [(loading)]="loadingContent"></loader-ro5>
+<header class="main-content-header row">
+    <div class="col">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3>Виды ограничений</h3>
+            </div>
+        </div>
+    </div>
+</header>
+<div class="main-view-content">
+
+    <div class="col col-content-ro5 border-right-1">
+        <header class="section-header-content row">
+            <div class="col-auto">
+                <h5>Виды ограничений</h5>
+            </div>
+            <div class="col"></div>
+            <div class="col-auto" *ngIf="isAdd">
+                <button-ro5 [class]="'btn btn-primary'" (onclick)="addNewItem()">
+                    + Добавить
+                </button-ro5>
+            </div>
+        </header>
+
+        <data-grid-ro5 #Ro5DataGrid (onActionButtonClicked)="onActionButtonClicked($event)">
+            <ng-template #typeNameColumnTemplate let-item="item">
+                <a [routerLink]="[
+                        '../../commands-module/bounds/' + item.Id
+                    ]" [innerHTML]="item.Name | markerText: dataGrid.SearchFilter">
+                </a>
+            </ng-template>
+            <ng-template #userGroupTemplate let-item="item">
+                <div [title]="item?.Bounds?.Type" [innerHTML]="item?.Bounds?.Type | markerText: dataGrid.SearchFilter"></div>
+            </ng-template>
+            <ng-template #missingEventsTemplate let-item="item">
+                <div [title]="item?.GenerateMissedEvents" [innerHTML]="(item?.GenerateMissedEvents ? 'Да' : 'Нет') | markerText: dataGrid.SearchFilter"></div>
+            </ng-template>
+        </data-grid-ro5>
+    </div>
+</div>

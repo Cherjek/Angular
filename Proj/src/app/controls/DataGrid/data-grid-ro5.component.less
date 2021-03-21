@@ -1,0 +1,156 @@
+﻿.data-grid-ro5 {
+    width: 100%;
+}
+.data-grid-ro5 .not-data-items {
+    position: absolute;
+    width: 100%;
+    height: 100px;
+    text-align: center;
+    font-size: 18px;
+    z-index: 1;
+}
+.calculate-header-width {
+    /* Firefox */
+    width: -moz-calc(100% - 17px);
+    /* WebKit */
+    width: -webkit-calc(100% - 17px);
+    /* Opera */
+    width: -o-calc(100% - 17px);
+    /* Standard */
+    width: calc(100% - 17px);
+}
+.data-grid-with-max {
+    width: 100%;
+    min-width: 450px;
+}
+.data-grid-header > .col > div {
+    height: 50px;
+}
+.data-grid-header > .col > div > div {
+    cursor: pointer;
+}
+.data-grid-header .inline-flex-style {
+    display: inline-flex;
+}
+.data-grid-header .data-grid-header-col-template {
+    width: 100%;
+}
+.data-grid-header .sort-icon {
+    width: 24px;
+    padding: 0 6px;
+}
+.data-grid-header .table-header-cell {
+    font-weight: 600;
+}
+.data-grid-cell-header-inline {
+  overflow: hidden;
+}
+.data-grid-cell-header {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.data-grid-content.table-data-row .table-data-cell {
+    width: 100%;
+    word-break: break-word;
+    min-height: 42px;
+    padding-top: 11px;
+    padding-bottom: 11px;
+}
+.data-grid-content.table-data-row .table-data-cell > div {
+    display: inline-block;
+}
+.data-grid-content.table-data-row:nth-child(2n) {
+    background-color: #f6f7f9;
+}
+/*.data-grid-ro5 th.text-align-center,
+.data-grid-ro5 .table-data-cell.text-align-center {
+    text-align: center;
+}
+.data-grid-ro5 th.text-align-left,
+.data-grid-ro5 .table-data-cell.text-align-left {
+    text-align: left;
+}
+.data-grid-ro5 th.text-align-rigth,
+.data-grid-ro5 .table-data-cell.text-align-rigth {
+    text-align: right;
+}*/
+.text-align-center {
+    text-align: center;
+}
+.text-align-left {
+    text-align: left;
+}
+.text-align-right {
+    text-align: right;
+}
+.table-column-check {
+    min-height: 42px;
+    padding: 11px 0;
+}
+.table-column-detail, .table-column-action {
+    width: 32px;
+    min-width: 32px;
+    margin-right: 10px;
+}
+.table-column-detail > button, .table-column-action > button {
+    /*float: right;
+    right: 15px;*/
+}
+.table-column-detail, .table-column-action {
+    padding: 5px 0;
+}
+.row-detail {
+    margin-left: -10px;
+}
+.table-data-row-detail {
+    position: relative;
+    text-align: left;
+}
+.table-column-status {
+    width: 12px;
+    min-width: 12px;
+    border-right: 3px solid rgba(0, 0, 0, 0);
+}
+.table-column-dragdrop {
+    width: 40px;
+}
+.table-column-dragdrop .cursor-grab{
+    cursor: grab;
+}
+.inline-celledit-control {
+    position: absolute;
+    flex-wrap: nowrap;
+    height: 35px;
+    left: 0;
+    top: 0;
+    margin-top: -15px;
+    z-index: 9
+}
+.inline-celledit-control .input-control-edit {
+    width: 150px;
+    min-width: 150px;
+    margin-left: -8px;
+}
+.inline-celledit-control > [class*=col-]:not(:nth-child(1)) {
+    margin-left: 7px
+}
+.dotted-cell-editing > div {
+    border-bottom: 1px dotted;
+    cursor: pointer;
+}
+/* если Width задан, нужно понизить у div grow до 0, чтобы Width работал */
+// .flex-width-style-not-null {
+//     flex: 0 1 auto;
+// }
+.data-grid-header-title {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+// .data-grid-item-row {
+//     align-items: center;
+// }
+.data-grid-custom-action-button {
+    width: inherit;
+}

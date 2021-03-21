@@ -1,0 +1,12 @@
+﻿<div style="width: 100%; height: 100%; background-color: #fff;" *ngIf="loadHtml; else loadingStop">  
+</div>
+<ng-template #loadingStop>
+  <ng-container *ngIf="formHtml; else default">
+    <login-custom (onSubmit)="validateAndLogin($event)">
+      <div [innerHtml]="formHtml"></div>
+    </login-custom>
+  </ng-container>
+  <ng-template #default>
+    <login-default (onSubmit)="validateAndLogin($event)"></login-default>
+  </ng-template>
+</ng-template>

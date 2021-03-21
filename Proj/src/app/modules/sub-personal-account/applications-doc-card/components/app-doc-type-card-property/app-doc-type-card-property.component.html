@@ -1,0 +1,11 @@
+<message-popup [(messages)]="errors"></message-popup>
+<loader-ro5 [(loading)]="loadingContent"></loader-ro5>
+<ahm-shared-properties
+    #propControl
+    permission="CPA_EDIT_APP_DOCUMENT_TYPES"
+    [isNew]="isNew"    
+    [properties]="properties"
+    (optionControlDropDown)="optionControlDropDown($event)"
+    (save)="save($event, propControl)"
+    [errorLoadEntity]="errorLoadEntity">
+</ahm-shared-properties>

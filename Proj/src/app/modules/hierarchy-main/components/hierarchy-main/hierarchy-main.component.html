@@ -1,0 +1,524 @@
+<div class="main-view-component">
+
+    <div class="col border-right-1">
+        
+        <header class="main-content-header row hierarchy-header">
+            <div class="col">
+                <div *ngIf="!hierarchyEmty; else hierarchyEmptyHeaderTemplate" class="row align-items-center justify-content-between">
+                    <div class="col-auto">
+                        <h3 mat-button 
+                            [matMenuTriggerFor]="unitMenu"
+                            [ngClass]="{ 'mat-dropdown--disabled' : hierarchies?.length < 2}" 
+                            class="border-dashed-white-bottom-1">
+                            {{ hierarchySelect?.Name }}&nbsp;&nbsp;<i class="zmdi zmdi-caret-down" *ngIf="hierarchies?.length > 1"></i>                    
+                        </h3>
+                        <mat-menu #unitMenu="matMenu">
+                            <ng-template [ngTemplateOutlet]="unitMenuTemplate"></ng-template>
+                        </mat-menu>                    
+                        <ng-template #unitMenuTemplate>
+                            <ng-container *ngFor="let hierarchy of hierarchies">
+                                <button *ngIf="hierarchy.Id !== hierarchySelect.Id" mat-menu-item (click)="hierarchySelect = hierarchy; changeHierarchy()"
+                                    class="outline-none">
+                                    {{ hierarchy.Name | pipeNoName }}
+                                </button>
+                            </ng-container>
+                        </ng-template>
+                    </div>
+                    <div>
+                        <navigate-menu-ro5 
+                            #NavigateMenu 
+                            [items]="menuTabHeader"
+                            [isTabView]="true"                                           
+                            (onNavSelectChanged)="onNavSelectChanged($event)"></navigate-menu-ro5>
+                    </div>
+                </div>
+                <ng-template #hierarchyEmptyHeaderTemplate>
+                    <h3>Иерархии не заведены</h3>
+                </ng-template>
+            </div>
+        </header>
+
+        <ng-container *ngIf="!hierarchyEmty; else hierarchyEmtyTemplate">
+            <message-popup [(messages)]="errorsContentForm"></message-popup>
+            <loader-ro5 [(loading)]="loadingContentPanel"></loader-ro5>
+            <div *ngIf="changeHierarchyComplete; else templateLoadStart" class="main-view-content">
+                <div [ngStyle]="{'flex': isMap ? '0 0 auto': '1 1 auto'}" class="col-filter-ro5 border-right-1">
+                    <frame-filters-custompanel 
+                        (onApplyFilter)="onApplyFilter($event)" 
+                        [service]="hierarchyFilterContainerService"
+                        [isUseFavorite]="true" 
+                        [isAsyncCallbackStart]="loadingContentPanel">
+                    </frame-filters-custompanel>
+                </div>
+                
+                <div [hidden]="isMap" class="col col-content-ro5">
+                    <data-grid-ro5 #Ro5DataGrid
+                                [HeaderTemplate]="GridHeaderTemplate"
+                                [RowsTemplate]="GridRowTemplate"
+                                [SelectionRowMode]="DGSelectionRowMode.Multiple"
+                                [DetailRow]="{ components: DetailsRowComponents }"
+                                (onAllRowsSelected)="onGridRowsSelected($event)"                               
+                                (onRowClick)="onGridRowClick($event)"
+                                (onDataBinding)="onGridDataBinding($event)">
+                        <ng-template #GridRowTemplate let-item>
+
+                            <div class="row">
+                                <div class="col-auto reset--flex" [ngSwitch]="isNodesTab()">
+
+                                    <!--<div class="hm-row-data-text">-->
+                                    <ng-template #unitLabel let-nodes="nodes">
+                                        <div>
+                                            <ng-container *ngFor="let nodeItem of nodes; let i = index">
+                                                <span *ngIf="i">{{' ' + '⮞' + ' '}}</span>
+                                                <ng-container *appCanAccess="'HH_NODE_VIEW'; else disabledUnitLink">
+                                                    <a [routerLink]="['../hierarchies-module/node-card', nodeItem.Id]"
+                                                       [queryParams]="{ idHierarchy: hierarchySelect.Id }"
+                                                       [innerHTML]="(( nodeItem?.Name | pipeNoName | markerText:dataGrid.SearchFilter))"></a>
+                                                </ng-container>
+                                                <ng-template #disabledUnitLink>
+                                                    <a [innerHTML]="nodeItem?.Name | pipeNoName | markerText:dataGrid.SearchFilter"></a>
+                                                </ng-template>
+                                            </ng-container>
+                                        </div>
+                                    </ng-template>
+
+                                    <ng-container *ngSwitchCase="true">
+
+                                        <ng-template [ngTemplateOutlet]="unitLabel" [ngTemplateOutletContext]="{ nodes: item?.Nodes }">
+                                        </ng-template>
+                                        <div class="row align-items-center action-panel">
+                                            <div class="col text-info-additional">
+                                                <div class="row no-gutters">
+                                                    <ng-container *appCanAccess="'HH_NODE_VIEW'">
+                                                        <ng-container *appCanAccess="'OC_VIEW_HIERARCHY_NODE_DATA'">
+                                                            <div class="col-auto">
+                                                                <div class="btn-action-panel"
+                                                                     [routerLink]="['../hierarchies-module/node-card', item.Id, 'current-data']"
+                                                                     [queryParams]="{ idHierarchy: hierarchySelect.Id }"
+                                                                     (click)="$event.stopPropagation();">
+                                                                    <a>Показания</a>
+                                                                </div>
+                                                            </div>
+                                                        </ng-container>
+                                                    </ng-container>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </ng-container>
+
+                                    <ng-container *ngSwitchCase="false">
+                                        <ng-template #disabledLdLink>
+                                            <a [innerHTML]="item[getObjectFieldName(FieldNameKey.DisplayText)] | markerText:dataGrid.SearchFilter"></a>
+                                        </ng-template>
+                                        <a *appCanAccess="'OC_VIEW_EQUIPMENT_CARD'; else disabledLdLink"
+                                           [routerLink]="['/ld-editor/', item.Id]"
+                                           [innerHTML]="item.DisplayName | pipeNoName | markerText:dataGrid.SearchFilter"></a>
+                                        <br>
+                                        <ng-template [ngTemplateOutlet]="unitLabel" [ngTemplateOutletContext]="{ nodes: item?.Nodes }">
+                                        </ng-template>
+                                        <br>
+                                        <div class="row align-items-center action-panel">
+                                            <div class="col text-info-additional">
+                                                <div class="row no-gutters">
+                                                    <ng-container *appCanAccess="'DA_ALLOW'">
+                                                        <ng-container *appCanAccess="{ keySource: item[getObjectFieldName(FieldNameKey.Key)], source: 'LogicDevices', value: 'DA_START' }">
+                                                            <div class="col-auto">
+                                                                <div class="btn-action-panel" (click)="setAnalyzeEx(item);$event.stopPropagation();">
+                                                                    <a> Анализ </a>
+                                                                </div>
+                                                            </div>
+                                                        </ng-container>
+                                                    </ng-container>
+                                                    <ng-container *appCanAccess="'DR_ALLOW'">
+                                                        <ng-container *appCanAccess="{ keySource: item[getObjectFieldName(FieldNameKey.Key)], source: 'LogicDevices', value: 'DR_START' }">
+                                                            <div class="col-auto">
+                                                                <div class="btn-action-panel" (click)="setReportEx(item);$event.stopPropagation();">
+                                                                    <a> Отчет </a>
+                                                                </div>
+                                                            </div>
+                                                        </ng-container>
+                                                    </ng-container>
+                                                    <div class="col-auto" *appCanAccess="{ keySource: item[getObjectFieldName(FieldNameKey.Key)], source: 'LogicDevices', value: 'DP_ALLOW' }">
+                                                        <div class="btn-action-panel" (click)="setDataCreateEx(item);$event.stopPropagation();">
+                                                            <a> Данные </a>
+                                                        </div>
+                                                    </div>
+                                                    <ng-container *appCanAccess="'DQ_ALLOW'">
+                                                        <ng-container *appCanAccess="{ keySource: item[getObjectFieldName(FieldNameKey.Key)], source: 'LogicDevices', value: 'DQ_START' }">
+                                                            <div class="col-auto">
+                                                                <div class="btn-action-panel" (click)="setRequestCreateEx(item);$event.stopPropagation();">
+                                                                    <a> Запрос </a>
+                                                                </div>
+                                                            </div>
+                                                        </ng-container>
+                                                    </ng-container>
+                                                    <ng-container *appCanAccess="'CMD_ALLOW'">
+                                                        <ng-container *appCanAccess="{ keySource: item[getObjectFieldName(FieldNameKey.Key)], source: 'LogicDevices', value: 'CMD_START' }">
+                                                            <div class="col-auto">
+                                                                <div class="btn-action-panel" (click)="setCommandCreateEx(item);$event.stopPropagation();">
+                                                                    <a> Управление </a>
+                                                                </div>
+                                                            </div>
+                                                        </ng-container>
+                                                    </ng-container>
+                                                    <ng-container *appCanAccess="'OC_VIEW_EQUIPMENT_CARD'">
+                                                        <ng-container *appCanAccess="{ keySource: item[getObjectFieldName(FieldNameKey.Key)], source: 'LogicDevices', value: 'OC_VIEW_EQUIPMENT_DATA' }">
+                                                            <div class="col-auto">
+                                                                <div class="btn-action-panel"
+                                                                     [routerLink]="['../ld-editor/', item.Id, 'current-data']"
+                                                                     [queryParams]="{ idHierarchy: hierarchySelect.Id }"
+                                                                     (click)="$event.stopPropagation();">
+                                                                    <a>Показания</a>
+                                                                </div>
+                                                            </div>
+                                                        </ng-container>
+                                                    </ng-container>
+                                                    <ng-container *appCanAccess="{ keySource: item[getObjectFieldName(FieldNameKey.Key)], source: 'LogicDevices', value: 'TC_START' }">
+                                                        <div class="col-auto">
+                                                            <div class="btn-action-panel" (click)="setTKCreateEx(item);$event.stopPropagation();">
+                                                                <a> Расчёты ТК </a>
+                                                            </div>
+                                                        </div>
+                                                    </ng-container>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </ng-container>
+                                    <!--</div>-->
+
+                                    <div class="row-label-state" *ngIf="item?.SubSystemsStates?.length" style="cursor: pointer;" (click)="$event.stopPropagation();">
+                                        <ng-container *appCanAccess="isNodesTab() ? 'ES_HIERARCHY_NODE_ACKNOWLEDGE_VIEW' : 'ES_LOGIC_DEVICE_ACKNOWLEDGE_VIEW'">
+                                            <i *ngIf="item?.SubSystemsStates | isDataState:'Acknowledged':false"
+                                               (click)="goToJournal(item, 1)"
+                                               class="zmdi zmdi-alert-circle" style="color: #DC143C"></i>
+                                        </ng-container>
+                                        <ng-container *appCanAccess="isNodesTab() ? 'ES_HIERARCHY_NODE_STATE_VIEW' : 'ES_LOGIC_DEVICE_STATE_VIEW'">
+                                            <ng-container *appCanAccess="isNodesTab() ? 'ES_HIERARCHY_NODE_DR_VIEW' : 'ES_LOGIC_DEVICE_DR_VIEW'; else disableDataRotten">
+                                                <i (click)="goToJournal(item)"
+                                                   placement="left"
+                                                   [ngbTooltip]="tipContent"
+                                                   container="body"
+                                                   tooltipClass="tooltipClass"
+                                                   class="{{'hm-subsys-status-triangle '+ 'zmdi ' + ((item?.SubSystemsStates | isDataState:'IsDataRotten') ? 'zmdi-network-outline' : 'zmdi-network') }}"
+                                                   [style.color]="item?.SubSystemsStates | colorState:hierarchyMainStatesService?.stateType">
+                                                </i>
+                                            </ng-container>
+                                            <ng-template #disableDataRotten>
+                                                <i (click)="goToJournal(item)"
+                                                   placement="left"
+                                                   [ngbTooltip]="tipContent"
+                                                   container="body"
+                                                   tooltipClass="tooltipClass"
+                                                   class="hm-subsys-status-triangle zmdi zmdi-network"
+                                                   [style.color]="item?.SubSystemsStates | colorState:hierarchyMainStatesService?.stateType">
+                                                </i>
+                                            </ng-template>
+                                            <ng-template #tipContent>
+                                                <ng-container *ngFor="let state of item?.SubSystemsStates">
+                                                    <div class="row no-gutters col-wrappanel" style="flex-wrap: nowrap;" *ngIf="state != null">
+                                                        <div class="col-auto" [innerHtml]="hierarchyMainStatesService?.subSystems | valueFromArray:state?.IdSubSystem:1">
+                                                        </div>
+                                                        <div class="col-auto">
+                                                            <ng-container *appCanAccess="isNodesTab() ? 'ES_HIERARCHY_NODE_ACKNOWLEDGE_VIEW' : 'ES_LOGIC_DEVICE_ACKNOWLEDGE_VIEW'">
+                                                                <i *ngIf="!state?.Acknowledged" class="zmdi zmdi-alert-circle" style="color: #DC143C"></i>
+                                                            </ng-container>
+                                                            <ng-container *appCanAccess="isNodesTab() ? 'ES_HIERARCHY_NODE_DR_VIEW' : 'ES_LOGIC_DEVICE_DR_VIEW'; else disableDataRottentTooltip">
+                                                                <i class="{{ 'zmdi ' + ((state?.IsDataRotten) ? 'zmdi-network-outline' : 'zmdi-network') + ' ' + (hierarchyMainStatesService?.stateType | valueFromArray:state?.IdStateType:3) }}"></i>
+                                                            </ng-container>
+                                                            <ng-template #disableDataRottentTooltip>
+                                                                <i class="{{ 'zmdi zmdi-network ' + (hierarchyMainStatesService?.stateType | valueFromArray:state?.IdStateType:3) }}"></i>
+                                                            </ng-template>
+                                                        </div>
+                                                        <!-- <div class="col-auto" [innerHtml]="hierarchyMainStatesService?.stateType | valueFromArray:state?.IdStateType:2">
+                        </div>
+                        <div class="col-auto">
+                          {{ state?.IsDataRotten ? 'Не актуально' : 'Актуально' }}
+                        </div>
+                        <div class="col-auto">
+                          {{ state?.Acknowledged ? 'Квитировано' : 'Не квитировано' }}
+                        </div> -->
+                                                    </div>
+                                                </ng-container>
+                                            </ng-template>
+                                        </ng-container>
+                                    </div>
+
+                                    <!-- <div>
+      {{ item?.SubSystemsStates | json }}
+    </div> -->
+                                </div>
+                            </div>
+                        </ng-template>
+
+                        <ng-template #GridHeaderTemplate>
+                            <header class="row no-gutters align-items-center">
+                                <div class="col-auto" *ngIf="Ro5DataGrid.SelectionRow.isItemsSelect">
+                                    <button-ro5 class="btn-orange" (onclick)="toObjectsPanel()">
+                                        В корзину
+                                    </button-ro5>
+                                </div>
+                                <div class="col">
+                                    <div class="row no-gutters col-wrappanel filter-status align-items-center">
+                                        <div *appCanAccess="'HH_CREATE'" class="col-auto" [ngSwitch]="getObjectFieldName(FieldNameKey.Key)">
+                                            <button-ro5 *ngSwitchCase="'IdUnit'" class="btn-primary" (onclick)="router.navigateByUrl('/object-editor/new/properties')">
+                                                Создать иерархию
+                                            </button-ro5>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                  <custom-state-filter
+                                    (changeFilterState)="globalFilterState=$event;loadTabData();"
+                                    [subSystems]="hierarchyMainStatesService?.subSystems"
+                                    [stateType]="hierarchyMainStatesService?.stateType"></custom-state-filter>
+                                </div>
+                            </header>
+                        </ng-template>
+                    </data-grid-ro5>
+                </div>
+            <div [hidden]="!isMap">
+                <rom-hierarchy-map #romMapComp (onDataFilter) = "globalFilterState = $event;" [dataSource]="bigDataSource" ></rom-hierarchy-map>
+            </div>
+            </div>        
+            
+            <ng-template #templateLoadStart>            
+                <loader-ro5 [loading]="(errorsContentForm || []).length === 0"></loader-ro5>
+                <div class="main-view-content load-panel"></div>
+            </ng-template>
+        </ng-container>   
+        
+        <ng-template #hierarchyEmtyTemplate>            
+            <div class="main-view-content">
+                <div class="col col-content-ro5">
+                    <div class="row no-gutters-2 justify-content-center message-margin__top_bottom">
+                        <div class="col-auto">
+                            <h4>Иерархии не заведены</h4>
+                        </div>
+                    </div>
+                </div>                
+            </div>
+        </ng-template>
+    </div>
+
+
+    <div *ngIf="changeHierarchyComplete" class="col-auto col-basket" [ngClass]="{'show' : (basketItems || []).length }">
+
+        <header class="main-content-header row">
+            <div class="col">
+                <h4>Корзина</h4>
+            </div>
+            <div class="col-auto">
+                <button-ro5 (onclick)="clearAllBasket()" [class]="'btn-outline-secondary button-main-header'">
+                    Сброс
+                </button-ro5>
+            </div>
+        </header>
+
+        <div class="col-objects-ro5">
+                        
+            <message-popup [(messages)]="errorsBasketForm"></message-popup>
+            <ng-container *ngIf="treeListItems">
+                <treelist-checked-panel [TabViewMode]="true"
+                                        [TreeListItems]="treeListItems"
+                                        [Tree]="basketItems | filterRow:changeDetection" 
+                                        ChildDataName="LogicDevices" 
+                                        KeyField="Id"
+                                        DisplayField="DisplayName"
+                                        AdditionalField="DisplayNameNodeView" 
+                                        [OffsetBottom]="50"
+                                        (removeListItems)="removeListItems($event)"></treelist-checked-panel>
+            </ng-container>
+        </div>
+
+        <footer class="section-footer-content">
+        
+            <loader-ro5 [(loading)]="loadingCheckAccessCommand"></loader-ro5>
+
+            <div class="d-flex flex-wrap align-items-center">
+                <div class="p-1" *appCanAccess="['DA_ALLOW']"
+                    container="body"
+                    ngbTooltip="{{ isBasketAnalyzeNotAccess ? 'У одного или нескольких оборудований недостаточно прав' : null }}">
+        
+                    <ng-container *appCanAccess="{ operator: 'Equal', value: 'DA_USE_FAVORITES' }">
+                        <button-ro5 *ngIf="!validationTemplates?.length" [class]="'button-apply'" (onclick)="setNewAnalyze()"
+                            [disabled]="isBasketAnalyzeNotAccess">
+                            Анализ
+                        </button-ro5>
+        
+                        <ng-container *ngIf="validationTemplates?.length">
+                            <ng-template [ngTemplateOutlet]="dropDownButtonMenu"
+                                [ngTemplateOutletContext]="{ items: validationTemplates, buttonName: 'Анализ', type: 1, disabled: isBasketAnalyzeNotAccess }">
+                            </ng-template>
+                        </ng-container>
+        
+                    </ng-container>
+        
+                    <ng-container *appCanAccess="{ operator: 'NotEqual', value: 'DA_USE_FAVORITES' }">
+                        <button-ro5 [class]="'button-apply'" [disabled]="isBasketAnalyzeNotAccess" (onclick)="setNewAnalyze()">
+                            Анализ
+                        </button-ro5>
+                    </ng-container>
+        
+                </div>
+                <div class="p-1" *appCanAccess="['DR_ALLOW']"
+                    container="body"
+                    ngbTooltip="{{ isBasketReportNotAccess ? 'У одного или нескольких оборудований недостаточно прав' : null }}">
+                    <button-ro5 [class]="'button-apply'" [disabled]="isBasketReportNotAccess" (onclick)="setNewReport()">
+                        Отчет
+                    </button-ro5>
+                </div>
+                <div class="p-1"
+                    container="body"
+                    ngbTooltip="{{ isBasketDataNotAccess ? 'У одного или нескольких оборудований недостаточно прав' : null }}">
+                    <button-ro5 [class]="'button-apply'" [disabled]="isBasketDataNotAccess" (onclick)="setNewDataCreate()">
+                        Данные
+                    </button-ro5>
+                </div>
+                <div class="p-1" *appCanAccess="['DQ_ALLOW']"
+                    container="body"
+                    ngbTooltip="{{ isBasketDataQueryNotAccess ? 'У одного или нескольких оборудований недостаточно прав' : null }}">
+
+                    <ng-container *appCanAccess="{ operator: 'Equal', value: 'DQ_USE_FAVORITES' }">
+                        <button-ro5 *ngIf="!dataQueueTemplates?.length" 
+                            [class]="'button-apply'" 
+                            (onclick)="setNewRequestCreate()"
+                            [disabled]="isBasketDataQueryNotAccess">
+                            Запрос
+                        </button-ro5>
+        
+                        <ng-container *ngIf="dataQueueTemplates?.length">
+                            <ng-template [ngTemplateOutlet]="dropDownButtonMenu"
+                                [ngTemplateOutletContext]="{ items: dataQueueTemplates, buttonName: 'Запрос', type: 2, disabled: isBasketDataQueryNotAccess }">
+                            </ng-template>
+                        </ng-container>
+        
+                    </ng-container>
+        
+                    <ng-container *appCanAccess="{ operator: 'NotEqual', value: 'DQ_USE_FAVORITES' }">
+                        <button-ro5 [class]="'button-apply'" [disabled]="isBasketDataQueryNotAccess" (onclick)="setNewRequestCreate()">
+                            Запрос
+                        </button-ro5>
+                    </ng-container>
+
+                </div>   
+                <div class="p-1" *appCanAccess="['CMD_ALLOW']"
+                    container="body"
+                    ngbTooltip="{{ isBasketCommandNotAccess ? 'У одного или нескольких оборудований недостаточно прав' : null }}">
+
+                    <button-ro5 
+                        [class]="'button-apply'" 
+                        [disabled]="isBasketCommandNotAccess"
+                        (onclick)="setNewCommandCreate()">
+                        Управление
+                    </button-ro5>
+
+                </div>
+                <div class="p-1" *appCanAccess="['TC_START']"
+                    container="body"
+                    ngbTooltip="{{ isBasketTariffCalcNotAccess ? 'У одного или нескольких оборудований недостаточно прав' : null }}">
+                    
+                    <ng-container *appCanAccess="{ operator: 'Equal', value: 'TC_USE_FAVORITES' }">
+                      <button-ro5 *ngIf="!tariffCalculationTemplates?.length" 
+                          [class]="'button-apply'" 
+                          (onclick)="setNewTKCreate()"
+                          [disabled]="isBasketTariffCalcNotAccess">
+                          Расчёты ТК
+                      </button-ro5>
+      
+                      <ng-container *ngIf="tariffCalculationTemplates?.length">
+                          <ng-template [ngTemplateOutlet]="dropDownButtonMenu"
+                              [ngTemplateOutletContext]="{ items: tariffCalculationTemplates, buttonName: 'Расчёт ТК', buttonNewName: 'Новый расчёт ТК', type: 3, disabled: isBasketTariffCalcNotAccess }">
+                          </ng-template>
+                      </ng-container>
+      
+                    </ng-container>
+      
+                    <ng-container *appCanAccess="{ operator: 'NotEqual', value: 'TC_USE_FAVORITES' }">
+                        <button-ro5 [class]="'button-apply'" 
+                          [disabled]="isBasketTariffCalcNotAccess" 
+                          (onclick)="setNewTKCreate()">
+                          Расчёты ТК
+                        </button-ro5>
+                    </ng-container>
+
+                </div>
+            </div>
+
+        </footer>
+    </div>
+
+</div>
+
+<ng-template #dropDownButtonMenu let-items="items" let-buttonName="buttonName" let-buttonNewName="buttonNewName" let-type="type" let-disabled="disabled">
+  <button-ro5 
+      [class]="'button-apply'" 
+      placement="top-right"
+      container="body"
+      triggers="manual" 
+      [disabled]="disabled" 
+      [autoClose]="'outside'" 
+      #popupAnalyze="ngbPopover"
+      [ngbPopover]="contextMenuAnalyze" 
+      (onclick)="popupAnalyze.open()">
+      {{ buttonName }}
+      <i class="zmdi zmdi-caret-down"></i>
+  </button-ro5>
+  <ng-template #contextMenuAnalyze>
+      <div style="position: relative; font-size: 14px; max-height: 350px; width: 200px; overflow-y: auto; overflow-x: hidden;">
+          <loader-ro5 [(loading)]="loadingValidTemplatePanel"></loader-ro5>
+  
+          <ul class="nav list-box-vertical">
+              <li class="background-gray" *ngFor="let template of items"
+                  style="background-image: none; padding-bottom: 5px">
+                  <div class="row no-gutters row-no-wrap align-items-baseline">
+                      <div class="col-10">
+                        <a class="nav-link" 
+                          [innerHTML]="template.Name"
+                          (click)="setNewFromTemplate(type, template.Id)"></a>
+                      </div>
+                      <div class="col-1" placement="top" container="body" ngbTooltip="Удалить">
+                          <button class="btn-outline-circle btn-circle-size-24" 
+                              data-toggle="collapse"
+                              [attr.data-target]="'#templateValidation' + template.Id">
+                              <i class="zmdi zmdi-delete"></i>
+                          </button>
+                      </div>
+                  </div>
+                  <div style="width: 100%" id="templateValidation{{template.Id}}" class="collapse">
+                      <div class="row no-gutters align-items-center justify-content-end">
+                        <div class="col-auto">
+                            <div class="row no-gutters col-wrappanel">
+                                <div class="col-auto">Вы уверены?</div>
+                                <div class="col-auto">
+                                  <button class="btn-outline-circle btn-circle-size-24"
+                                      (click)="deleteFromTemplate(type, template.Id)">
+                                      <i class="zmdi zmdi-check"></i>
+                                  </button>
+                                </div>
+                                <div class="col-auto">
+                                  <button class="btn-outline-circle btn-circle-size-24" data-toggle="collapse"
+                                      [attr.data-target]="'#templateValidation' + template.Id">
+                                      <i class="zmdi zmdi-close"></i>
+                                  </button>
+                                </div>
+                            </div>
+                        </div>
+                      </div>
+                  </div>
+              </li>
+          </ul>
+  
+          <ul class="nav list-box-vertical border-top-1">
+              <li class="background-gray" 
+                  style="background-image: none;" 
+                  (click)="setNewFromPanelTemplate(type)">
+                  <div class="row no-gutters-2 align-items-center">
+                      <a class="nav-link">{{ buttonNewName || ('Новый ' + buttonName.toLowerCase()) }}</a>
+                  </div>
+              </li>
+          </ul>
+  
+      </div>
+  </ng-template>
+</ng-template>

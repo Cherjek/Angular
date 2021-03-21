@@ -1,0 +1,58 @@
+﻿<message-popup [messages]="errors"></message-popup>
+
+<div style="/*margin: 25px 10px*/">
+    <div class="row no-gutters border-bottom-1 align-items-center" *ngFor="let item of data;">
+        <div class="col">
+            <div class="row no-gutters-2 align-items-center" style="height: 50px;">
+                <div class="col">
+                    <span class="title"> Название устройства </span>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="row no-gutters-2 align-items-center" style="height: 50px;">
+                <div class="col">
+                    <span class="title"> Тип устройства </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <header class="row border-bottom-1">
+        <div class="col">
+            <h6>Название устройства</h6>
+        </div>
+        <div class="col">
+            <h6>Тип устройства</h6>
+        </div>
+    </header>
+    <div class="row no-gutters border-bottom-1 align-items-center" *ngFor="let item of dataSource; let i=index;">
+        <div class="col">
+            <div class="row no-gutters-2 align-items-center" style="height: 50px;">
+                <div class="col">
+                    <ng-template #disabledLink>
+                        <a [innerHTML]="item.DeviceDisplayText | pipeNoName"></a>
+                    </ng-template>
+                    <ng-container *appCanAccess="{ keySource: unitId, source: 'Units', value: 'OC_VIEW_DEVICE_CARD' }; else disabledLink">
+                        <a *appCanAccess="{ keySource: unitId, source: 'Units', value: 'OC_VIEW_DEVICE_PROPERTIES' }; else disabledLink"
+                           [routerLink]="['/device-editor/' + item['IdDevice'] + '/properties']"
+                           [queryParams]="{ unitId: unitId }"
+                           [innerHTML]="item.DeviceDisplayText | pipeNoName"></a>
+                    </ng-container>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="row no-gutters-2 align-items-center" style="height: 50px;">
+                <div class="col">
+                    <span>{{ item.DeviceTypeDisplayText }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row no-gutters align-items-center justify-content-center" *ngIf="(dataSource || []).length === 0" style="height: 50px;">
+        <div class="col-auto">
+            Нет данных
+        </div>
+    </div>
+</div>

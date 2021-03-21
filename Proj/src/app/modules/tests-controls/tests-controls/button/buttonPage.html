@@ -1,0 +1,175 @@
+﻿<div class="row no-gutters-2">
+    <div class="col-12">
+        
+        <h3>Стили кнопок</h3>
+        
+        <div class="row">
+            <div class="col-auto">
+                <button-ro5 [class]="'button-apply'">
+                    class button-apply
+                </button-ro5>
+            </div>
+            <div class="col-auto">
+                <button-ro5 [class]="'btn-primary'">
+                    class button-primary
+                </button-ro5>
+            </div>
+            <div class="col-auto">
+                <button-ro5 [class]="'btn-darkgreen'">
+                    class btn-darkgreen
+                </button-ro5>
+            </div>
+            <div class="col-auto">
+                <button-ro5 [class]="'btn-orange'">
+                    class btn-orange
+                </button-ro5>
+            </div>
+            <div class="col-auto">
+                <button-ro5 [class]="'btn-outline-secondary'">
+                    class btn-outline-secondary
+                </button-ro5>
+            </div>
+            <div class="col-auto">
+                <button-ro5 [class]="'btn-outline-star'">
+                    <i class="zmdi zmdi-star"></i>
+                </button-ro5>
+            </div>
+            <div class="col-auto">
+                <button-ro5 [class]="'btn-outline-circle btn-circle-size-32'">
+                    <i class="zmdi zmdi-chevron-down"></i>
+                </button-ro5>
+            </div>
+            <div class="col-auto">
+                <button-ro5 [class]="'btn-outline-circle btn-circle-size-24'">
+                    <i class="zmdi zmdi-chevron-down"></i>
+                </button-ro5>
+            </div>
+        </div>
+        
+    </div>    
+    <div class="col-12">
+        <br>
+    </div>
+    <div class="col-12">
+        <h3>Варианты использования</h3>
+
+        <div class="row">
+            <div class="col-auto">
+                <button-ro5 [disabled]="true"
+                            [class]="'button-apply'">
+                    Button disabled
+                </button-ro5>
+            </div>
+            <div class="col-auto" style="width: 250px; height: 150px">
+                <button-ro5 [isFullSize]="true"
+                            [class]="'btn-primary'">
+                    Button full size
+                </button-ro5>
+            </div>
+            <div class="col-auto">
+                <button-ro5 [tooltip]="'Tooltip!!!'"
+                            (click)="_alert('click!!!')"
+                            [class]="'btn-darkgreen'">
+                    Button with tooltip and click event
+                </button-ro5>
+            </div>
+            <div class="col-auto">
+                <button-ro5 [tooltip]="'Template body!!!'"
+                            (click)="_alert('Template body!!!')"
+                            [class]="'btn-orange'">
+                    
+                    <i class="zmdi zmdi-account"></i>
+                    <span>Новый пользователь</span>
+
+                </button-ro5>
+            </div>
+            <!--<div class="col-auto">
+                <button-ro5 [text]="'class btn-outline-secondary'"
+                            [class]="'btn-outline-secondary'"></button-ro5>
+            </div>
+            <div class="col-auto">
+                <button-ro5 [icon]="'zmdi-star'"
+                            [class]="'btn-outline-star'"></button-ro5>
+            </div>
+            <div class="col-auto">
+                <button-ro5 [icon]="'zmdi-chevron-down'"
+                            [class]="'btn-outline-circle btn-circle-size-32'"></button-ro5>
+            </div>
+            <div class="col-auto">
+                <button-ro5 [icon]="'zmdi-chevron-down'"
+                            [class]="'btn-outline-circle btn-circle-size-24'"></button-ro5>
+            </div>-->
+        </div>
+    </div>
+    <div class="col-12">
+        <br>
+    </div>    
+    <div class="col-12">
+        <h3>Drop down кнопки</h3>
+
+        <div class="row no-gutters-2">
+            <div class="col-auto">
+                <dropdown-box-ro5 #dropdownBox 
+                keyField="Id" 
+                valueField="Code" 
+                additionalField="Name" 
+                [isSelected]="true"
+                [itemsInput]="[ { Id: 1, Name: 'Тег оборудования 1', Code: 'Tag1' }, { Id: 2, Name: 'Тег оборудования 2', Code: 'Tag2' } ]" 
+                [footerTemplate]="footerTemplate" 
+                [buttonText]="'Добавить теги'"
+                (event)="onViewLogicTagType($event)">
+                </dropdown-box-ro5>
+            </div>
+            <div class="col-auto">
+                <dropdown-box-ro5 #dropdownBox 
+                keyField="Id" 
+                valueField="Code" 
+                additionalField="Name" 
+                [isSelected]="false"
+                [itemsInput]="[ { Id: 1, Name: 'Тег оборудования 1', Code: 'Tag1' }, { Id: 2, Name: 'Тег оборудования 2', Code: 'Tag2' } ]" 
+                [buttonText]="'Добавить теги'"
+                [BttnColorClass]="'btn-primary'"
+                (event)="onViewLogicTagType($event)">
+                </dropdown-box-ro5>
+            </div>
+            
+        
+            <ng-template #footerTemplate>
+                <footer class="section-footer-content">
+                    <div class="row no-gutters-2 align-items-center">
+                        <div class="col">
+                            <div class="row no-gutters align-items-center col-wrappanel" style="flex-wrap: nowrap">
+                                <div class="col-auto">
+                                    <button class="btn btn-primary">Добавить</button>
+                                </div>
+                                <div class="col-auto">
+                                    <button class="btn btn-outline-secondary">Отмена</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </footer>
+            </ng-template>
+        </div>
+    </div>
+    <div class="col-12">
+        <br>
+    </div>
+    <div class="col-12">
+        <h3>Context Button кнопка</h3>
+
+        <div class="row no-gutters-2">
+            <div class="col-auto">
+                <context-button class="context-button"
+                                [items]="[
+                                    {
+                                        code: 'delete',
+                                        name: 'Удалить',
+                                        confirm: { text: 'Вы уверены, что хотите удалить?', apply: 'Удалить' }
+                                    }
+                                ]"
+                                (onItemClick)="contextButtonHeaderClick($event)"></context-button>
+            </div>
+        </div>
+    </div>
+</div>

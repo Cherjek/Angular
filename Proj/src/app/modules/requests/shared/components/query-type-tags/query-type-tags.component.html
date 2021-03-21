@@ -1,0 +1,161 @@
+<section class="section-body-content section-panel-two-columns-settings">
+
+    <header class="row no-gutters-2 section-header-grouppanel-expander">
+        <div class="col">
+            <h5>Типы запросов</h5>
+        </div>
+    </header>
+
+    <div class="row no-gutters-2 border-bottom-1" *ngFor="let item of queryTypeTags">
+        <div class="col-2">
+            <h6>{{item.QueryType.Name}}</h6>
+        </div>
+        <div class="col" [ngClass]="{'details-row-view background': formEditItems[item.QueryType.Id].edit }">
+            <!--Tags View-->
+            <ng-container [ngSwitch]="item.AllTagCodes" *ngIf="!formEditItems[item.QueryType.Id].edit">
+                <ng-container *ngSwitchCase="true">
+                    <table class="view-tag-panel">
+                        <tbody>
+                            <tr class="item-row-checkbox">
+                                <td>
+                                    <span class="tag-info-label">
+                                        Все теги
+                                    </span>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn-outline-circle btn-circle-size-32" placement="top"
+                                        container="body" ngbTooltip="Удалить"
+                                        (click)="item.AllTagCodes = false; formEditItems[item.QueryType.Id].tags = []">
+                                        <i class="zmdi zmdi-delete"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </ng-container>
+                <ng-container *ngSwitchDefault>
+                    <table class="view-tag-panel">
+                        <tbody>
+                            <tr *ngFor="let tag of formEditItems[item.QueryType.Id].tags" class="item-row-checkbox">
+                                <td>
+                                    <span class="tag-info-label">
+                                        {{tag.Code}}
+                                    </span>
+                                    <span class="text-info-additional">
+                                        {{ tag.Name }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn-outline-circle btn-circle-size-32" placement="top"
+                                        container="body" ngbTooltip="Удалить" (click)="removeTag(tag, item.QueryType.Id)">
+                                        <i class="zmdi zmdi-delete"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </ng-container>
+            </ng-container>
+
+
+
+            <!--Tags Edit-->
+            <div [attr.id]="'folder' + item.QueryType.Id" class="collapse">
+                <div class="row no-gutters">
+                    <div class="col">
+                        <div class="row no-gutters align-items-center edit-issue-header">
+                            <div class="col">
+                                <h5>Теги "{{ item.QueryType.Name }}"</h5>
+                            </div>
+                            <div class="col-auto">
+                                <button type="button" class="btn-outline-circle btn-circle-size-32" data-toggle="collapse"
+                                    [attr.data-target]="'#folder' + item.QueryType.Id"
+                                    (click)="formEditItems[item.QueryType.Id].edit = false;">
+                                    <i class="zmdi zmdi-close"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row no-gutters">
+                            <div class="col">
+                                <!--Tags-->
+                                <div style="display: none" #listView="listViewFilter" listViewFilter
+                                    [DataSource]="formEditItems[item.QueryType.Id].edit ? item.TagCodes : []">
+                                </div>
+                                <div *ngIf="listView.Length > 1" class="row no-gutters row-dom-item-padding-vertical">
+                                    <div class="col-auto">
+                                        <check-box-ro5 
+                                            [indeterminate]="listView.IsNotAllSelect"
+                                            [checked]="listView.IsAllSelect" 
+                                            (onClick)="listView.checked($event.checked)">
+                                        </check-box-ro5>
+                                    </div>
+                                    <div class="col-auto"
+                                        (click)="listView.checked(listView.IsAllSelect ? false : listView.IsNotAllSelect ? false : true)">
+                                        Все
+                                    </div>
+                                </div>
+                                <div class="row no-gutters row-dom-item-padding-vertical"
+                                    *ngFor="let listItem of listView.DataSource; index as i">
+                                    <div class="col-auto">
+                                        <check-box-ro5 [checked]="listItem.IsCheck"
+                                            (onClick)="listItem.IsCheck = $event.checked;listView.updateChecked();">
+                                        </check-box-ro5>
+                                    </div>
+                                    <div class="col-10"
+                                        (click)="listItem.IsCheck = !listItem.IsCheck;listView.updateChecked();">
+                                        <div class="row no-gutters col-wrappanel align-items-end item-row-checkbox">
+                                            <div class="col-auto">
+                                                <span>
+                                                    {{ listItem.Code }}
+                                                </span>
+                                            </div>
+                                            <div class="col-auto">
+                                                <span class="text-info-additional">
+                                                    {{ listItem.Name }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <br>
+
+                        <div class="row no-gutters col-wrappanel">
+                            <div class="col-auto">
+                                <button type="button" class="btn btn-primary" data-toggle="collapse"
+                                    [attr.data-target]="'#folder' + item.QueryType.Id"
+                                    (click)="item.AllTagCodes = false; saveTags(item.QueryType.Id, listView.IsAllSelect, listView.getChecked())">Сохранить</button>
+                            </div>
+                            <div class="col-auto">
+                                <button type="button" class="btn btn-outline-secondary" data-toggle="collapse"
+                                    [attr.data-target]="'#folder' + item.QueryType.Id"
+                                    (click)="formEditItems[item.QueryType.Id].edit = false">Отмена</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row no-gutters col-wrappanel">
+                <div class="col-auto">
+                    <button type="button" class="btn btn-outline-secondary" data-toggle="collapse"
+                        [attr.data-target]="'#folder' + item.QueryType.Id"
+                        [ngStyle]="{'display': formEditItems[item.QueryType.Id].edit ? 'none' : '' }"
+                        (click)="updateList(item)">
+                        Редактировать
+                    </button>
+                </div>
+                <div class="col-auto">
+                    <button type="button" class="btn btn-primary"
+                        [ngStyle]="{'display': formEditItems[item.QueryType.Id].edit ? 'none' : '' }"
+                        (click)="item.AllTagCodes = true; formEditItems[item.QueryType.Id].tags = []">
+                        Все теги
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>

@@ -1,0 +1,15 @@
+<header class="main-content-header row">
+  <div class="col-auto">
+    <backward-button></backward-button>
+  </div>
+  <div class="col main-header-text">
+    <h3> Импорт/Экспорт </h3>
+  </div>
+</header>
+<div class="main-view-content">
+  <div class="col">
+    <loader-ro5 [(loading)]="loadingPanel"></loader-ro5>
+    <message-popup [(messages)]="headerErrors"></message-popup>
+    <router-outlet></router-outlet>
+  </div>
+</div>

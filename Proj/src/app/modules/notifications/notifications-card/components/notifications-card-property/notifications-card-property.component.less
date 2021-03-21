@@ -1,0 +1,38 @@
+.rom-preceding-parent {
+    display: flex;
+}
+
+.rom-preceding-text {
+    width: 25%;
+}
+
+.rom-preceding-text-title {
+    width: 25%;
+}
+
+@supports(display: grid) {
+    .rom-preceding-parent {
+        display: grid;
+        grid-template-columns: 1fr 4fr;
+    }
+
+    .rom-preceding-text {
+        width: inherit;
+    }
+
+    .rom-preceding-text-title {
+        width: inherit;
+    }
+}
+
+.rom-notif-item {
+    overflow-wrap: anywhere;
+}
+
+.rom-no-border--bottom {
+    border-bottom: none !important;
+}
+
+.rom-border--top {
+    border-top: 1px solid rgba(52, 63, 85, 0.21);
+}

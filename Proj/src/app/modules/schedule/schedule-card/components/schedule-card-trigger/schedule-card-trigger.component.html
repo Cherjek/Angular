@@ -1,0 +1,152 @@
+<div class="main-view-content height-auto">
+        <div class="col col-content-ro5 border-right-1">
+                
+            <message-popup [(messages)]="errors"></message-popup>
+            <loader-ro5 [(loading)]="loadingContent"></loader-ro5>
+            <div class="col-content-flex-column" *ngIf="data">
+                <section class="section-body-content section-panel-two-columns-settings">
+                    <header class="section-header-content row">
+                        <div class="col">
+                            <h5> Настройка расписания срабатывания </h5>
+                        </div>
+                        <div class="col-auto" [ngSwitch]="isPropEdit">
+                            <ng-container *ngSwitchCase="true">
+                                <button-ro5 [class]="'btn-outline-secondary'" (onclick)="cancel()">
+                                    Отменить изменения
+                                </button-ro5>
+                            </ng-container>
+                            <ng-container *ngSwitchCase="false">
+                                <button-ro5 *appCanAccess="'SDL_TRIGGER_EDIT'" class="btn-primary" (onclick)="isPropEdit = !isPropEdit">
+                                    Изменить
+                                </button-ro5>
+                            </ng-container>
+                        </div>
+                    </header>
+
+                    <div class="row no-gutters-2 border-bottom-1">
+                        <div class="col-2">
+                            Активность
+                        </div>
+                        <div class="col-10 word-break-all">
+                            <ng-container [ngSwitch]="isPropEdit">
+                                <ng-container *ngSwitchCase="true">
+                                    <toggle-switch  
+                                    [checked]="active"
+                                    [checkedRunnerColorClass]="'runner-color-checked-green'"
+                                    [checkedSliderColorClass]="'slider-color-checked-green'"
+                                    (onCheck)="active = $event"></toggle-switch>
+                                </ng-container>
+                                <ng-container *ngSwitchDefault>{{active ? 'Да': 'Нет'}}</ng-container>
+                            </ng-container>
+                        </div>
+                    </div>
+                    <div class="row no-gutters-2 border-bottom-1">
+                        <div class="col-2">
+                            Бессрочно
+                        </div>
+                        <div class="col-10 word-break-all">
+                            <ng-container [ngSwitch]="isPropEdit">
+                                <ng-container *ngSwitchCase="true">
+                                    <toggle-switch  
+                                    [checked]="useDateBounds"
+                                    [checkedRunnerColorClass]="'runner-color-checked-green'"
+                                    [checkedSliderColorClass]="'slider-color-checked-green'"
+                                    (onCheck)="useDateBounds = $event"></toggle-switch>
+                                </ng-container>
+                                <ng-container *ngSwitchDefault>{{ useDateBounds ? 'Да': 'Нет'}}</ng-container>
+                            </ng-container>
+                        </div>
+                    </div>
+                    <div *ngIf="!useDateBounds" class="row no-gutters-2 border-bottom-1">
+                        <div class="col-2">
+                            Дата и время начала действия
+                        </div>
+                        <div class="col-10 word-break-all border-stretch--date">
+                            <ng-container [ngSwitch]="isPropEdit">
+                                <ng-container *ngSwitchCase="true">
+                                    <date-picker-ro5 
+                                        [isIntervalMode]="false"
+                                        [max] = "endDate"
+                                        [(fromDate)]="startDate">
+                                    </date-picker-ro5>
+                                </ng-container>
+                                <ng-container *ngSwitchDefault>{{startDate | dateTimeFormat}}</ng-container>
+                            </ng-container>
+                        </div>
+                    </div>
+                    <div *ngIf="!useDateBounds" class="row no-gutters-2 border-bottom-1">
+                        <div class="col-2">
+                            Дата и время окончания действия
+                        </div>
+                        <div class="col-10 word-break-all border-stretch--date">
+                            <ng-container [ngSwitch]="isPropEdit">
+                                <ng-container *ngSwitchCase="true">
+                                    <date-picker-ro5 
+                                        [isIntervalMode]="false"
+                                        [min] = "startDate"
+                                        [(fromDate)]="endDate">
+                                    </date-picker-ro5>
+                                </ng-container>
+                                <ng-container *ngSwitchDefault>{{endDate | dateTimeFormat}}</ng-container>
+                            </ng-container>
+                        </div>
+                    </div>
+                    <div class="row no-gutters-2 border-bottom-1">
+                        <div class="col-2">
+                            Тип расписания
+                        </div>
+                        <div class="col-10 word-break-all border-stretch--type">
+                            <ng-container [ngSwitch]="isPropEdit">
+                                <combo-box-ro5 *ngSwitchCase="true"
+                                    [keyField]="'Id'"
+                                    [valueField]="'Name'"
+                                    [value]="data?.TriggerType"
+                                    [itemsInput]="typeValues"
+                                    (onSelected)="data.TriggerType = $event; componentCode = $event?.Code"
+                                    (event)="optionControlDropDown($event, prop)"></combo-box-ro5>
+
+                                <ng-container *ngSwitchDefault>{{data?.TriggerType?.Name}}</ng-container>
+                            </ng-container>
+                        </div>
+                    </div>
+                    <div class="row no-gutters-2 border-bottom-1" *ngIf="data && data.TriggerType && componentCode !== 'Continuous'">
+                        <div class="col-2">
+                            Настройка
+                        </div>
+                        <div class="col-10 word-break-all">
+                                <ng-container [ngSwitch]="componentCode">
+                                        <rom-settings-onetime [data]="data?.OneTime" #childComp [isPropEdit]="isPropEdit" *ngSwitchCase="'OneTime'">
+                                        </rom-settings-onetime>
+                                        <rom-settings-daily #childComp [data]="data?.Daily" [isPropEdit]="isPropEdit" *ngSwitchCase="'Daily'"></rom-settings-daily>
+                                        <rom-settings-weekly #childComp [data]="data?.Weekly" [isPropEdit]="isPropEdit" *ngSwitchCase="'Weekly'"></rom-settings-weekly>
+                                        <rom-settings-monthly #childComp [data]="data?.Monthly" [isPropEdit]="isPropEdit" *ngSwitchCase="'Monthly'">
+                                        </rom-settings-monthly>
+                                        <!-- <rom-settings-continuous *ngSwitchCase="'Continuous'"></rom-settings-continuous> -->
+                                    </ng-container>
+                        </div>
+                    </div>
+                </section>
+
+                <footer class="section-footer-content" *ngIf="isPropEdit">
+                    <div class="row no-gutters-2 align-items-center">
+                        <div class="col">
+                            <div class="row no-gutters col-wrappanel align-items-center">
+                                <div class="col-auto">
+                                    <button-ro5 [class]="'btn-primary'" (onclick)="save()">                                    
+                                        {{ 'Сохранить' }}
+                                    </button-ro5>
+                                </div>
+                                <div class="col-auto">
+                                    <button-ro5 [class]="'btn-outline-secondary'" (onclick)="cancel()">
+                                        Отмена
+                                    </button-ro5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+    
+        </div>
+    </div>
+

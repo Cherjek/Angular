@@ -1,0 +1,158 @@
+<div class="main-view-component">
+
+    <div class="col border-right-1">
+
+        <header class="main-content-header row align-items-center">
+            <div class="col-auto">
+                <backward-button></backward-button>
+            </div>
+            <div class="col">
+                <h3> Настройка представления данных </h3>
+            </div>
+        </header>
+
+        <div class="main-view-content">
+            <div class="col col-content-ro5">
+
+                <header class="section-header-content row" style="position: relative; z-index: 1;">
+                    <div class="col-auto p-0">
+                        <div class="dropdown" style="height: 100%">
+                            <button class="dropdown-toggle"
+                                style="height: 100%; border: none; background-color: transparent" type="button"
+                                id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                aria-expanded="false">
+                                {{ filterBy?.name }}
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <ng-container *ngFor="let item of filterData; index as i;">
+                                    <div *ngIf="filterBy.name != item.name" 
+                                        class="dropdown-item"
+                                        (click)="filterBy = item; focusSearch(inputSearch)">
+                                        {{ item?.name }}
+                                    </div>
+                                </ng-container>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="line-height: 48px">|</div>
+                    <div class="col p-0">
+                        <input-box #inputSearch
+                            [type]="'search'"
+                            [isFocus]="true" 
+                            [isFullSize]="true" 
+                            [(value)]="dataGridFilterQuery"
+                            (valueChange)="filterQuery = $event">
+                        </input-box>
+                    </div>
+                </header>
+
+                <header *ngIf="!dataGridFilterQuery?.length" class="row no-gutters-2 align-items-center col-content-ro5 border-bottom-1 z-index-0">
+                    <div class="col-auto"
+                        [ngSwitch]="treelistCheckedPanel?.CountCheckTotal != null && treelistCheckedPanel?.CountCheckTotal > 0">
+                        <h6 *ngSwitchCase="true">
+                            Выбрано тегов: {{ treelistCheckedPanel?.CountCheckTotal }}
+                            из {{ treelistCheckedPanel?.CountTotal }}
+                        </h6>
+                        <h6 *ngSwitchCase="false">Всего тегов: {{ treelistCheckedPanel?.CountTotal || 0 }}</h6>
+                    </div>
+                    <div class="col-auto"
+                        *ngIf="treelistCheckedPanel?.CountCheckTotal !== null && treelistCheckedPanel?.CountCheckTotal > 0">
+                        <button-ro5 [class]="'btn-orange'" (onclick)="onBasketItemAdd()">
+                            Добавить теги в корзину
+                        </button-ro5>
+                    </div>
+                </header>
+
+                <loader-ro5 [(loading)]="loadingContentPanel"></loader-ro5>
+                <message-popup [(messages)]="errors"></message-popup>
+
+                <div class="col-content-flex-column" class="content-flex-height50">
+
+                    <section class="section-body-content" #sectionTreeList>
+
+                        <ng-container *ngIf="!dataGridFilterQuery?.length; else showDataGrid">
+                            <ng-container *ngIf="treeListItems">
+                                <treelist-checked-panel 
+                                    #treelistCheckedPanel [TreeListItems]="treeListItems"
+                                    [Tree]="tagsTree | filterRow:changeDetection" 
+                                    [KeyField]="'Id'" 
+                                    [DisplayField]="'DisplayName'"
+                                    (onCountTotalChange)="tlcPanel.countTotal = $event"
+                                    (onCountCheckTotalChange)="tlcPanel.countCheckTotal = $event">
+                                </treelist-checked-panel>
+                            </ng-container>
+                        </ng-container>
+                        <ng-template #showDataGrid>
+                            <rom-data-presentation-grid 
+                                [nodesNameFiled]="nodesNameFiled"
+                                [filterByKey]="filterBy.key"
+                                [filterQuery]="filterQuery" 
+                                [dataTreeSource]="tagsTree"                                
+                                (onBasketMove)="onBasketMove($event)">
+                            </rom-data-presentation-grid>
+                        </ng-template>
+
+                    </section>
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+
+    <div class="col-auto col-basket col-objects-ro5" [ngClass]="{'show' : tagsListBasket?.length }">
+        <div class="col-content-flex-column">
+            <header class="main-content-header row align-items-center">
+                <div class="col">
+                    <h4> Корзина тегов </h4>
+                </div>
+                <div class="col-auto justify-content-end">
+                    <button-ro5 [class]="'btn-outline-secondary button-main-header'" (onclick)="dropAllTags()">
+                        Сброс
+                    </button-ro5>
+                </div>
+            </header>            
+
+            <section class="section-body-content">
+                    <loader-ro5 [(loading)]="loadingBasket"></loader-ro5>
+                    <message-popup [(messages)]="basketErrors"></message-popup>
+
+                    <list-view-ro5 #listView
+                                KeyField="Id"
+                                DisplayField="ConcatField"
+                                [OffsetBottom]="247"
+                                [DataSource]="tagsListBasket"
+                                [RowTemplate]="tagRowTemplate"
+                                [IsSelected]="true"
+                                [IsRemoved]="true"                               
+                                (OnRemoveListItem)="clearItemsBasket($event)"></list-view-ro5>     
+                    <ng-template #tagRowTemplate let-item="item" let-id="id">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <span [innerHtml]="item.Data.Code | markerText:listView.SearchFilter"></span>
+                                <br>
+                                <span class="text-info-additional" [innerHtml]="item.Data.Name | markerText:listView.SearchFilter"></span>
+                                <br>
+                                <span class="text-info-additional" [innerHtml]="item.Data.LogicDeviceName | markerText:listView.SearchFilter"></span>
+                                <br>
+                                <span class="text-info-additional" [innerHtml]="item.Data.NodeName | markerText:listView.SearchFilter"></span>                                
+                            </div>
+                        </div>
+                    </ng-template>
+                    
+            </section>
+
+            <div class="section-footer-content">
+                <rom-basket-footer 
+                    [tags]="tagsListBasket"
+                    [PropertyForm]="{
+                    IsHeaderWhiteStyle: false,
+                    IsShowData: true,
+                    IsCompareData: false
+                }"></rom-basket-footer>
+            </div>
+        </div>
+    </div>
+
+</div>

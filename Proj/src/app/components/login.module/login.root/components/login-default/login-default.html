@@ -1,0 +1,49 @@
+﻿<div class="row no-gutters justify-content-center align-items-center">
+    <div class="col-auto login-box">
+        <div class="login-bg" (keydown)="keyDown($event)">
+            <div class="row no-gutters align-items-center">
+                <div class="col" style="font-size: 22px">Вход в систему</div>
+                <div class="col-auto">
+                    <img src="assets/logo@3x.png" style="width: 47px; height: 39.5px" />
+                </div>
+            </div>
+
+            <div class="row no-gutters align-items-center justify-content-center" style="color: red; height: 25px">{{ errorText }}</div>
+
+            <div class="row no-gutters" style="margin-bottom: 15px">
+                <div class="col">
+                    <input-box #loginInput [placeholder]="'Логин'"
+                               [isEnableValidate]="true"
+                               (isCheckValidValue)="isLoginValid = $event"
+                               [(value)]="login"
+                               (valueChange)="errorText = null"></input-box>
+                </div>
+            </div>
+
+            <div class="row no-gutters" style="margin-bottom: 15px">
+                <div class="col">
+                    <input-box #passInput [placeholder]="'Пароль'"
+                               [isEnableValidate]="true"
+                               [type]="'password'"
+                               (isCheckValidValue)="isPassValid = $event"
+                               [(value)]="password"
+                               (valueChange)="errorText = null"></input-box>
+                </div>
+            </div>
+
+            <div class="row no-gutters">
+                <div class="col"></div>
+                <div class="col-auto" [ngStyle]="{ 'cursor': asyncStart ? 'not-allowed' : 'default' }">
+                    <button type="button" style="width: 173px" class="btn button-apply" [ngClass]="{ 'item-display-disabled' : asyncStart }" (click)="validateAndLogin();" [ngSwitch]="asyncStart">
+                        <span *ngSwitchCase="false">Войти</span>
+                        <i *ngSwitchCase="true" class="zmdi zmdi-spinner zmdi-hc-2x zmdi-hc-spin white"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="version-mark">
+    <h6>v17.0.2</h6>
+</div>
+

@@ -1,0 +1,68 @@
+<div class="main-view-content height-auto">
+    <div class="col col-content-ro5 border-right-1">
+        <header class="section-header-content row">
+            <div class="col-auto">
+                <h5>Свойства типа устройства</h5>
+            </div>
+            <div class="col"></div>
+            <div class="col-auto" *appCanAccess="'CFG_DEVICE_EDIT_PROPERTIES'">
+                <dropdown-box-ro5 #dropdownBox 
+                    keyField="Id" 
+                    valueField="Name" 
+                    [isSelected]="true"
+                    [itemsInput]="referenceProperties" 
+                    [footerTemplate]="footerTemplate" 
+                    buttonText="Добавить свойства"
+                    [BttnColorClass]="'btn-primary'">
+                    <ng-template #footerTemplate>
+                        <footer class="section-footer-content">
+                            <div class="row no-gutters-2 align-items-center">
+                                <div class="col">
+                                    <div class="row no-gutters align-items-center col-wrappanel"
+                                        style="flex-wrap: nowrap">
+                                        <div class="col-auto">
+                                            <button-ro5 [class]="'btn btn-primary'"
+                                                (onclick)="addProperties(dropdownBox.getSelectedRows()); dropdownBox.close()">
+                                                Добавить
+                                            </button-ro5>
+                                        </div>
+                                        <div class="col-auto">
+                                            <button-ro5 [class]="'btn btn-outline-secondary'"
+                                                (onclick)="dropdownBox.close()">
+                                                Отмена
+                                            </button-ro5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </footer>
+                    </ng-template>
+                </dropdown-box-ro5>
+            </div>
+        </header>
+
+        <message-popup [(messages)]="errors"></message-popup>
+        <loader-ro5 [(loading)]="loadingContentPanel"></loader-ro5>
+
+        <data-grid-ro5 #Ro5DataGrid 
+            [HeaderActionTemplate]="HeaderActionTemplate"
+            [SelectionRowMode]="DGSelectionRowMode.Multiple" 
+            (onActionButtonClicked)="onDGRowActionBttnClick($event)">
+
+            <ng-template #HeaderActionTemplate>
+
+                <div class="row no-gutters-2">
+                    <div class="col">
+                        <datagrid-header-temp-def 
+                            [dataGrid]="dataGrid"
+                            (deletedRows)="deleteProperties(Ro5DataGrid.getSelectDataRows());">
+                        </datagrid-header-temp-def>
+                    </div>
+                </div>
+
+            </ng-template>
+
+        </data-grid-ro5>
+    </div>
+
+</div>

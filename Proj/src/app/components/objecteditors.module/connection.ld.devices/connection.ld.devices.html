@@ -1,0 +1,46 @@
+<header class="main-content-header row">
+    <div class="col-auto">
+        <backward-button></backward-button>
+    </div>
+    <div class="col main-header-text">
+        <h3> Выберите устройство для подключения </h3>
+    </div>
+</header>
+<div class="main-view-content height-auto">
+    <loader-ro5 [(loading)]="loadingContentPanel"></loader-ro5>
+    <message-popup [messages]="errors"></message-popup>
+
+    <div class="col col-content-ro5">
+        <data-grid-ro5 #Ro5DataGrid 
+                       [HeaderActionTemplate]="headerAction"
+                       [ngClass]="{ 'ct-state-invisible' : !devicesLength }">
+            
+            <ng-template #headerAction></ng-template>
+            
+            <ng-template #cellDevice let-item="item">
+                <span [innerHTML]="item['DisplayName'] | pipeNoName | markerText:dataGrid.SearchFilter"></span>
+            </ng-template>
+
+            <ng-template #colLogicDevices let-item="item">
+                    <div class="row">
+                        <div class="col text-align-left">
+                            <div *ngFor="let ld of item['LogicDevices']" class="cell-ld--div_margin-bottom">
+                                <span [innerHTML]="ld['DisplayName'] | pipeNoName | markerText:dataGrid.SearchFilter" [ngClass]="{'no-connections': ld['DisplayName']=='Нет подключения'}"></span>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <button type="button" class="btn btn-primary" (click)="connectDevice(item)">
+                                Подключить
+                            </button>
+                        </div>
+                    </div>
+            </ng-template>
+        </data-grid-ro5>
+
+        <div *ngIf="!devicesLength && !loadingContentPanel" class="row no-gutters-2 justify-content-center message-margin__top_bottom">
+            <div class="col" style="text-align: center">
+                <h4> В объекте нет устройств, подходящих для подключения </h4>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,37 @@
+<header class="main-content-header row">
+  <div class="col-auto">
+    <backward-button></backward-button>
+  </div>
+  <div class="col main-header-text">
+    <h3 *ngIf="logicDeviceData != null"> {{logicDeviceData?.Name | pipeNoName}} </h3>
+    <div class="row no-gutters">
+        <div *ngIf="logicDeviceData as logic" class="col-auto label-info">
+            {{logic.State.Name}}.
+            <span *ngIf="logic.StartDate && logic.FinishDate">
+                С {{logic.StartDate | dateTimeFormat }} по
+                {{logic.FinishDate | dateTimeFormat}}
+            </span>
+        </div>
+        <ng-container *ngIf="Hierarchy != null">
+            <div class="col-auto label-info">
+                , Иерархия: &nbsp;
+            </div>
+            <div class="col-auto label-info">
+                <a [routerLink]="[
+                            '../../../hierarchies-module/hierarchy-card/' + Hierarchy['Id']
+                            ]" [innerHTML]="Hierarchy['Name'] | pipeNoName">
+                </a>
+            </div>
+        </ng-container>
+    </div>    
+  </div>
+  <div class="main-header-navigation">
+
+    <ng-template #templateNavItem let-navItem="navItem">
+      <rom-forms__navigate-item-template [navItem]="navItem"></rom-forms__navigate-item-template>
+    </ng-template>
+
+    <navigate-menu-ro5 [templateNavItem]="templateNavItem" [items]="menuItems"></navigate-menu-ro5>
+  </div>
+</header>
+<router-outlet></router-outlet>

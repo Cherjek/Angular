@@ -1,0 +1,20 @@
+<header class="section-header-content row">
+    <div class="col-auto">
+        <h5> Список модулей </h5>
+    </div>
+</header>
+
+<list-view-ro5 #listView
+               [KeyField]="'Id'"
+               [RowTemplate]="listViewRow"
+               [DataSource]="accessList"
+               [DisplayField]="'Name'"
+               [IsFocused]="true"
+               (OnItemClick)="toggleActive.emit($event.index)">
+    <ng-template #listViewRow let-item="item">
+        <div class="row align-items-center">
+            <div class="col" [innerHtml]="item.Data[listView.DisplayField] | markerText:listView.SearchFilter"></div>
+            <i class="zmdi zmdi-chevron-right zmdi-hc-2x col-auto"></i>
+        </div>
+    </ng-template>
+</list-view-ro5>

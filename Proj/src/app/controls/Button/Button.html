@@ -1,0 +1,8 @@
+﻿<div [ngStyle]="{ 'cursor': disabled ? 'not-allowed' : 'default' }" [ngClass]="{ 'full-size' : isFullSize }">
+    <button #button type="button" class="btn" placement="top" ngbTooltip="{{ tooltip }}"
+            [ngClass]="{ 'item-display-disabled' : disabled, 'full-size' : isFullSize }" (click)="onclick.emit($event)">
+        
+        <ng-content></ng-content>
+
+    </button>
+</div>

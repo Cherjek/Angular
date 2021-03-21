@@ -1,0 +1,30 @@
+.main-view-result {
+    
+}
+
+.main-view-result .detail-template {
+    color: #585E6C;
+}
+
+.main-view-result .detail-template-caption-column {
+    background-color: #EFECD6;
+}
+
+.section-issue {
+    flex: 1 1 auto;
+    background-color: #fff;
+    width: 250px;
+}
+
+.issues-notfound-label {
+    background-color: #fff;
+    padding-top: 60px;
+}
+
+.issues-notfound-label i {
+    color: #28a745;
+}
+
+.main-view-result .col-content-ro5 header h5 {
+    margin-left: 10px;
+}

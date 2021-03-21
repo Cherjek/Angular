@@ -1,0 +1,69 @@
+<header class="main-content-header row">
+    <div class="col">
+        <h3> Задания </h3>
+    </div>
+    <div>
+        <ng-template #templateNavItem let-navItem="navItem" let-navigate="navigate">
+            <rom-forms__navigate-item-template 
+                [isTabView]="navigate.isTabView" 
+                activeTab="validation"
+                (click)="navigate.onItemClick(navItem)"
+                [navItem]="navItem"></rom-forms__navigate-item-template>
+        </ng-template>
+    
+        <navigate-menu-ro5 
+            #NavigateMenu
+            [templateNavItem]="templateNavItem" 
+            [items]="Menu"
+            [isTabView]="true"
+            (onNavSelectChanged)="onNavSelectChanged($event)"></navigate-menu-ro5>
+    </div>
+</header>
+<div class="main-view-content main_view_queue">
+    <div class="col-filter-ro5 border-right-1">
+        <frame-filters-panel #Ro5FiltersPanel (onApplyFilter)="onApplyFilter($event)" [isAsyncCallbackStart]="loadingContentPanel"></frame-filters-panel>
+        <ng-template #FilterIntervalControlTemplate let-filter>
+            <ng-container *ngFor="let data of filter.Data; index as i">
+                <div class="row no-gutters row-dom-item-padding-vertical">
+                    <div class="col-auto" (click)="onItemDateIntervalClick(filter, i)">
+                        <check-box-ro5 [typeInput]="'radio'"
+                                       [name]="'radio_interval'"
+                                       [checked]="data.IsCheck"></check-box-ro5>
+                    </div>
+                    <div class="col-auto" (click)="onItemDateIntervalClick(filter, i)">{{ data.Value[filter.Lookup.LookupField.DisplayField] }}</div>
+                </div>
+                <!--<hr class="hr-custom" />-->
+                <div class="row no-gutters row-dom-item-padding-vertical" *ngIf="i > 0 && filter.Data[i].IsCheck">
+                    <div class="col">
+                        <date-picker-ro5 [(fromDate)]="filter.Data[i].Value.Date.FromDate"
+                                         [(toDate)]="filter.Data[i].Value.Date.ToDate"
+                                         [isVertical]="true"
+                                         [positionDiv]="'fixed'"></date-picker-ro5>
+                    </div>
+                </div>
+            </ng-container>
+        </ng-template>
+    </div>
+    <div class="col col-content-ro5">
+
+        <message-popup [(messages)]="errorsContentValidationForms"></message-popup>
+        <loader-ro5 [(loading)]="loadingContentPanel"></loader-ro5>
+
+        <data-grid-ro5 #Ro5DataGrid
+                       (onDataBinding)="onGridDataBinding($event)"
+                       (onActionButtonClicked)="onActionButtonClicked($event)">
+            <ng-template #CellTemplateProgressTooltip let-value="value" let-item="item">
+                <div [ngStyle]="{ 'color': item.Status === NameStatusError ? 'red' : 'inherit' }"
+                     style="display: inline-block"
+                     [innerHTML]="value | markerText:dataGrid.SearchFilter" container="body" placement="top" [ngbTooltip]="(item['Progress'] | number:'1.1-2') + '%'"></div>
+            </ng-template>
+            <ng-template #CellTemplateLinkToDetail let-value="value" let-id="id" let-item="item">
+                <a [routerLink]="['/validation/result/' + id + '/' + (item.IsFinished ? 'main' : 'log')]"
+                   (click)="dataGridCurrentItemService.setCurrentItem(item)"
+                   [innerHTML]="value | markerText:dataGrid.SearchFilter"></a>
+            </ng-template>
+        </data-grid-ro5>
+
+    </div>
+</div>
+

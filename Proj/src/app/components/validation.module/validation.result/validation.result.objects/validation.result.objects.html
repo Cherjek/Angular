@@ -1,0 +1,25 @@
+﻿<div class="main-view-content height-auto main_view_create">
+    <div class="col col-content-ro5">
+        <message-popup [(messages)]="errorsObjectsValidationForms"></message-popup>
+        <loader-ro5 [(loading)]="loadingContentPanel"></loader-ro5>
+    
+        <ng-container *ngIf="JobObjects != null">
+            <frame-objects-panel #ObjectsPanel [DataSource]="JobObjects"></frame-objects-panel>
+        </ng-container>
+    
+        <ng-container *ngIf="Nodes != null">
+            <treelist-checked-panel
+                #treePanel 
+                [TabViewMode]="true"
+                [TreeListItems]="treePanel.TreeListItems || treeListCheckedService.getTreeListItems(['Узлы', 'Оборудование'])"
+                [Tree]="Nodes | filterRow:changeDetection" 
+                [IsSelected]="false"
+                ChildDataName="LogicDevices" 
+                KeyField="Id"
+                DisplayField="DisplayName" 
+                AdditionalField="DisplayNameNodeView"></treelist-checked-panel>
+        </ng-container>
+    
+    </div>
+</div>
+

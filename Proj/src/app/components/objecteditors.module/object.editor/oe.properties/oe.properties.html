@@ -1,0 +1,58 @@
+<div class="main-view-content height-auto main-view-result">
+    <div class="col col-content-ro5">
+        <div class="col-content-flex-column">
+            <message-popup [messages]="errorsPropertyPanel"></message-popup>
+
+            <header class="section-header-content row no-gutters" *ngIf="!isNew">
+                <div class="col">
+                    <h5> Cвойства </h5>
+                </div>
+                <div class="col-auto">
+                    <button class="btn btn-outline-secondary" *ngIf="isPropEdit" (click)="rollbackPropertyChanges(propertiesEditorPanel)"> Отменить изменения </button>
+                    
+                    <ng-container *appCanAccess="{ keySource: entityId, source: 'Units', value: 'OE_EDIT_OBJECT' }">
+                        <button class="btn btn-primary" *ngIf="!isPropEdit" (click)="changeProperties()"> Изменить свойства </button>
+                    </ng-container>
+                    
+                </div>
+            </header>
+
+            <header class="section-header-grouppanel-expander row no-gutters">
+                <div class="col">
+                    <h5>Объект</h5>
+                </div>
+                <div class="col-auto">                    
+                    <i *ngIf="loadingPropertyPanel" class="zmdi zmdi-spinner zmdi-hc-3x zmdi-hc-spin"></i>
+                </div>
+            </header>
+
+            <section class="section-body-content settings-container">
+                <properties-editor-panel
+                    #propertiesEditorPanel
+                    [properties]="properties"
+                    [isEdit]="isPropEdit"
+                    [service]="objectEditorPropertiesService">
+                </properties-editor-panel>
+            </section>
+
+            <footer class="section-footer-content" *ngIf="isPropEdit">
+                <div class="row no-gutters-2 align-items-center">
+                    <div class="col">
+                        <div class="row no-gutters col-wrappanel align-items-center">
+                            <div class="col-auto">
+                                <button type="button" class="btn btn-primary" (click)="saveObject(propertiesEditorPanel.getEditProperties());">
+                                    {{ !isNew ? 'Сохранить' : 'Создать объект' }}
+                                </button>
+                            </div>
+                            <div class="col-auto">
+                                <button type="button" class="btn btn-outline-secondary" (click)="!isNew ? rollbackPropertyChanges(propertiesEditorPanel) : back2Objects()">
+                                    Отмена
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>                
+            </footer>
+        </div>
+    </div>
+</div>

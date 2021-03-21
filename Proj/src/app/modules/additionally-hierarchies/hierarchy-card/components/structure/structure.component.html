@@ -1,0 +1,39 @@
+<message-popup [(messages)]="errors"></message-popup>
+<loader-ro5 [(loading)]="loadingContent"></loader-ro5>
+
+<div class="main-view-content height-auto">
+    <div class="col col-content-ro5">
+        
+        <header class="section-header-content row">
+            <div class="col">
+                <h5> Узлы </h5>
+            </div>
+            <div class="col-auto" *appCanAccess="'HH_NODE_CREATE'">
+                <button-ro5 class="btn-primary" (onclick)="addNode()">
+                    + Добавить узел иерархии
+                </button-ro5>
+            </div>
+        </header>
+
+        <div class="col-content-flex-column">
+            <section class="section-body-content settings-container">       
+        
+                <ng-template #nodeTemplate let-node>
+                    <a href="javascript:void(0)" (click)="onNavigate(node)">{{ node.name | pipeNoName }}</a>
+                </ng-template>
+                <mat-tree-ro5 *ngIf='treeNodes != null' 
+                    nodeId='Id' 
+                    nodeName='Name' 
+                    childPropertyName='Nodes'
+                    [nodeTemplate]="nodeTemplate"
+                    [data]="treeNodes"
+                    [actionButtons]="matTreeActionButtons"
+                    (actionMenuClick)="actionMenuTreeClick($event)">
+                </mat-tree-ro5>             
+
+            </section>
+        </div>
+             
+        
+    </div>
+</div>

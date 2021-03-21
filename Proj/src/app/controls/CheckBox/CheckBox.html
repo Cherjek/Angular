@@ -1,0 +1,18 @@
+﻿<div class="row no-gutters">
+    <div class="col-auto">
+        <div class="row no-gutters">
+            <div class="col-auto"
+                 [ngStyle]="{ 'cursor': disabled ? 'not-allowed' : 'default' }">
+                <input *ngIf="TypeInputControl === TypeInput.Checkbox" type="checkbox" [checked]="checked" />
+                <input *ngIf="TypeInputControl === TypeInput.Radio" [attr.name]="'radiogroup_' + name" type="radio" [checked]="checked" />
+                <label (click)="labelClick($event)" [ngClass]="{ 'item-display-disabled' : disabled }">
+                    <i *ngIf="TypeInputControl === TypeInput.Checkbox" class="zmdi zmdi-check zmdi-hc-2x" [ngClass]="{'indeterminate': !checked && indeterminate, 'disabled': disabled }"></i>
+                    <i *ngIf="TypeInputControl === TypeInput.Radio" class="zmdi zmdi-circle" [ngClass]="{ 'disabled' : disabled }"></i>
+                </label>
+            </div>
+            <div class="col-auto" (click)="labelClick($event)">
+                <span [innerHtml]="label||''"></span>
+            </div>
+        </div>
+    </div>
+</div>

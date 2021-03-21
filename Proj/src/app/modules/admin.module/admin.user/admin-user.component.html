@@ -1,0 +1,33 @@
+<header class="main-content-header row">
+    <div class="col-auto">
+        <backward-button></backward-button>
+    </div>
+    <div class="col main-header-text" [ngSwitch]="!newUser">
+        <div *ngSwitchCase="true">
+            <h3> Пользователь </h3>
+            <div *ngIf="GlobalValues.Page" class="label-info"> {{ GlobalValues.Page.adminUserName }} </div>
+        </div>
+        <h3 *ngSwitchCase="false"> Новый пользователь </h3>
+    </div>
+    <ng-container *ngIf="!noUser">
+        <div class="main-header-navigation">
+            <navigate-menu-ro5 [items]="menuItems"></navigate-menu-ro5>
+        </div>
+        <ng-container *appCanAccess="'ADM_DELETE_USER'">
+            <context-button class="context-button"
+                            [items]="contextButtonItems"
+                            (onItemClick)="contextButtonHeaderClick($event)">
+            </context-button>
+        </ng-container>
+    </ng-container>
+</header>
+<div class="main-view-content">
+    <div class="col">
+        <loader-ro5 [(loading)]="loadingContentPanel"></loader-ro5>
+        <message-popup [messages]="errors"></message-popup>
+        <router-outlet></router-outlet>
+    </div>
+</div>
+
+
+

@@ -1,0 +1,17 @@
+.favorite-row {
+    cursor: pointer;
+}
+.favorite-row > div:first-child {
+    padding: 10px 0;
+}
+.favorite-row .detail > div {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+.favorite-row > div:first-child:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+.favorite-row .col-icon {
+    padding-right: 0;
+}
+

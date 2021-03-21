@@ -1,0 +1,50 @@
+<div class="main-view-content">
+  <loader-ro5 [(loading)]="loadingContentPanel"></loader-ro5>
+  <div class="col col-content-ro5 col-content-flex-column">
+
+    <section class="section-body-content section-panel-two-columns-settings validate-create"
+      *ngIf="managementParamsData as param">
+      <div class="row no-gutters-2 border-bottom-1">
+        <div class="col-2">
+          <h6>Период</h6>
+        </div>
+        <div class="col">
+          <table>
+            <tr>
+              <ng-container *ngIf="param.StartDate != null">
+                <td>{{param.StartDate | dateTimeFormat }}</td>
+              </ng-container>
+              <ng-container *ngIf="param.FinishDate != null">
+                <td>&nbsp;-&nbsp;</td>
+                <td>{{param.FinishDate | dateTimeFormat}}</td>
+              </ng-container>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="row no-gutters-2 border-bottom-1">
+        <div class="col-2">
+          <h6>Название</h6>
+        </div>
+        <div class="col">{{param.Name | pipeNoName}}</div>
+      </div>
+      <div class="row no-gutters-2 border-bottom-1">
+        <div class="col-2">
+          <h6>Название команды</h6>
+        </div>
+        <div class="col">{{param.Command?.Name | pipeNoName}}</div>
+      </div>
+      <div *ngIf="param.Parameters?.length" class="row no-gutters-2 border-bottom-1">
+        <div class="col-2">
+          <h6>Параметры</h6>
+        </div>
+        <div class="col">
+          <div *ngFor="let item of param?.Parameters">
+              {{item?.Name + ' '}} : {{' '+item?.Value}}
+          </div>
+        </div>
+      </div>
+
+    </section>
+  </div>
+</div>

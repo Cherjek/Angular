@@ -1,0 +1,64 @@
+.btn-action-panel {
+    padding: 5px 4px;
+}
+
+.btn-action-panel:hover {
+    background-color: #418bca;
+    color: #fff;
+}
+.action-panel {
+    margin-left: -20px;
+    margin-top: 10px;
+}
+
+.col-basket {
+    width: 0;
+    transition: width .15s ease-out;
+    left: 100px;
+    transition: left .15s ease-out;
+}
+.col-basket.show {
+    left: 0;
+    width: 330px;
+    transition: width .15s ease-out;
+}
+
+.filter-status {
+    float: right;
+    margin-right: -43px;
+}
+.filter-status > div > div {
+    width: 26px;
+    height: 51px;
+    align-items: center !important;
+    justify-content: center !important;
+}
+.filter-status > div > div:hover {
+    background-color: rgba(234, 238, 244, 0.6);
+}
+.filter-status > div > div.active {
+    background-color: rgba(234, 238, 244, 1);
+}
+.filter-status .dropdown-button-status {
+    display: flex;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 26px;
+    height: 16px;
+    opacity: 0;
+}
+.filter-status > div > div:hover .dropdown-button-status {    
+    opacity: 1;
+    color: #ccd1db;
+}
+.filter-status > div > div:hover .dropdown-button-status:hover,
+.filter-status > div > div .dropdown-button-status.active {    
+    opacity: 1;
+    color: #686c75;
+    background-color: rgba(216, 222, 233, 0.5);
+}
+.filter-status .dropdown-button-status {
+    align-items: center !important;
+    justify-content: center !important;
+}

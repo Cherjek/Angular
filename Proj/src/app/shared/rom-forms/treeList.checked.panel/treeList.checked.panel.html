@@ -1,0 +1,65 @@
+﻿<ng-container [ngSwitch]="TabViewMode">
+    <ng-container *ngSwitchCase="true">
+        <div class="section-header-content row no-gutters align-items-center">
+            <div class="col">
+                <navigate-menu-ro5 [items]="menuTabHeader"
+                                   [isTabView]="true"
+                                   (onNavSelectChanged)="navClick($event);resizeListView('TreeList_' + $event.code);"></navigate-menu-ro5>
+            </div>
+        </div>
+        <div class="row no-gutters">
+            <div class="col border-right-1" 
+                *ngFor="let list of TreeListItems; index as i;"
+                [ngClass]="{ 'display-none': i !== menuTabSelect.code }">
+                <list-view-ro5 *ngIf="mapTreeLevel != null"
+                               [KeyField]="KeyField"
+                               [DisplayField]="list.displayField || DisplayField"
+                               [AdditionalField]="list.additionalField || AdditionalField"
+                               [ControlId]="'TreeList_' + i"
+                               [ListItemSource]="mapTreeLevel.get(i) | sortTreeListData:'Position'"
+                               [IsSelected]="IsSelected"
+                               [IsFocused]="false"
+                               [IsRemoved]="IsRemoved"
+                               [OffsetBottom]="OffsetBottom"
+                               [ChangeDetection]="ChangeDetection"
+                               (OnItemClick)="onItemClick($event, i); onItemCheckClick($event, i); updateCheckTotal();"
+                               (OnRemoveListItem)="removeListItemsClick($event)">
+                </list-view-ro5>
+            </div>
+        </div>
+    </ng-container>
+    
+    <ng-container *ngSwitchDefault>
+        <div class="row no-gutters">
+            <div class="col border-right-1" 
+                *ngFor="let list of TreeListItems; index as i;">
+                <list-view-ro5 *ngIf="mapTreeLevel != null"
+                               [HeaderText]="list.headerText"
+                               [KeyField]="KeyField"
+                               [DisplayField]="list.displayField || DisplayField"
+                               [AdditionalField]="list.additionalField || AdditionalField"
+                               [ControlId]="'TreeList_' + i"
+                               [ListItemSource]="i === 0 ? (mapTreeLevel.get(i) || []) : (mapSelectTreeLevel.get(i - 1) || []).Child"
+                               [IsSelected]="true"
+                               [IsFocused]="true"
+                               [RowTemplate]="RowTemplate || rowTemplate"                               
+                               [OffsetBottom]="OffsetBottom"
+                               [ChangeDetection]="ChangeDetection"
+                               (OnItemClick)="onItemClick($event, i)"
+                               (OnItemCheckClick)="onItemCheckClick($event, i);updateCheckTotal();">
+
+                               <ng-template #rowTemplate let-item="item" let-listView="listView">
+                                    <div class="row">
+                                        <div class="col">
+                                            <div [innerHtml]="item.Data[listView.DisplayField] | markerText:listView.SearchFilter"></div>
+                                        </div>
+                                        <div class="col-auto" *ngIf="i < TreeListItems.length - 1">
+                                            <i class="zmdi zmdi-chevron-right zmdi-hc-2x"></i>
+                                        </div>
+                                    </div>
+                                </ng-template>
+                </list-view-ro5>
+            </div>
+        </div>
+    </ng-container>
+</ng-container>

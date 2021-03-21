@@ -1,0 +1,98 @@
+﻿<!--The content below is only a placeholder and can be replaced.-->
+<div class="container-fluid h-100 main-page-content">
+
+    <div class="row row-no-wrap h-100">
+
+        <div class="col-auto main-menu-bar" *ngIf="isAuth && !isPersonalArea && !isLogin">
+            <header class="row">
+                <div class="col-auto">
+                    <div placement="bottom-left"
+                         container="body"
+                         triggers="manual"
+                         [autoClose]="'outside'"
+                         #popupAnalyze="ngbPopover"
+                         [ngbPopover]="contextMenuLogin"
+                         (click)="popupAnalyze.open()"
+                         class="row no-gutters align-items-center justify-content-center border-circle"
+                         style="color: #fff; width: 40px; height: 40px; text-align: center;cursor: pointer">
+                        <i class="col-auto zmdi zmdi-account zmdi-hc-2x"></i>
+                    </div>
+                    <ng-template #contextMenuLogin>
+                        <div style="position: relative; font-size: 14px;">                           
+
+                            <ul class="nav list-box-vertical">
+                                <li class="background-gray"
+                                    style="background-image: none; padding-bottom: 5px">
+                                    <div class="row no-gutters-2 align-items-baseline">
+                                        <a class="col nav-link" (click)="exitApplication()">Выход</a>                                        
+                                    </div>                                    
+                                </li>
+                            </ul>
+
+                        </div>
+                    </ng-template>
+                </div>
+            </header>
+            <section class="section__main-menu" id="section-menu">
+                <nav>
+                    <ul #sidebar (click)="highlightSelectedNav()" class="nav flex-column list-box-vertical">
+                        <ng-container *ngFor="let item of getMenu(); index as i;">
+                            <ng-container *ngIf="!item.children?.length; else loadChildren">
+                                <li *appCanAccess="item.access" class="nav-item" routerLinkActive="active">
+                                    <a class="nav-link font-weight-normal" [routerLink]="item.url">{{item.title}}</a>                                            
+                                </li>
+                            </ng-container>
+
+                            <ng-template #loadChildren>
+                                <li class="nav-children" *appCanAccess="item.access">
+                                    <a data-toggle="collapse"
+                                        [href]="'#menu-item-'+i" role="button" [attr.aria-expanded]="false" [attr.aria-controls]="item.title"
+                                         class="nav-link font-weight-normal nav-title-button collapsed">
+                                         {{item.title}}
+                                        <div class="nav-btn-collapse">
+                                            <button class="btn-outline-circle btn-circle-size-24 transform-rotate nav-dropdown-btn">
+                                                <i class="zmdi zmdi-chevron-down nav-dropdown-btn__icon"></i>
+                                            </button>
+                                        </div>
+                                    </a>
+
+                                    <div class="collapse" [id]="'menu-item-' + i">
+                                        <ng-container *ngFor="let child of item?.children">
+
+                                            <li *appCanAccess="child.access" class="nav-item nav-child-item" routerLinkActive="active">
+                                                <a class="nav-link font-weight-normal" [routerLink]="child.url">{{child.title}}</a>                                        
+                                            </li>
+
+                                        </ng-container>
+                                    </div>
+                                </li>
+                            </ng-template>
+                        </ng-container>
+                    </ul>
+                </nav>
+            </section>
+            <section class="menu-logo-bar" *ngIf="notCustomTheme">
+                <img src="assets/icon.png" />
+            </section>
+        </div>
+        <div class="col main-content">
+            <main>
+                <div class="main-view-component">
+                    <div class="col border-right-1">
+                        <router-outlet></router-outlet>
+                    </div>
+                </div>
+                        
+            </main>
+        </div>
+        <div class="col-auto main-right-bar" *ngIf="isAuth && !isPersonalArea && !isLogin">
+            <header></header>
+            <section></section>
+        </div>
+    </div>
+
+</div>
+<div *ngIf="advertData">
+    <rom-sidebar [data]="advertData"></rom-sidebar>
+</div>
+<rom-loader></rom-loader>

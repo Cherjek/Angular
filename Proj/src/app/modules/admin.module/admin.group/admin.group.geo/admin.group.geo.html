@@ -1,0 +1,39 @@
+﻿<div class="main-view-content height-auto main-view-result">
+    <div class="col col-content-ro5">
+
+        <div class="col-content-flex-column">
+            <section class="section-body-content section-panel-two-columns-settings">
+
+                <message-popup [messages]="errors"></message-popup>
+                <loader-ro5 [(loading)]="loadingContentPanel"></loader-ro5>
+
+                <header class="row no-gutters border-bottom-1">
+                    <div class="col">
+                        <h5>География</h5>
+                    </div>
+                    <div class="col-auto" *appCanAccess="'ADM_EDIT_GROUP_GEO'">
+                        <button-ro5 [class]="'btn-primary'"
+                                    (onclick)="changeGeo()">
+                            Изменить
+                        </button-ro5>
+                    </div>
+                </header>
+
+                <header class="section-header-content">
+                    <input-box [type]="'search'" [isFocus]="true" [isFullSize]="true" [(value)]="__search" (valueChange)="treeView.filterTextChange($event)"></input-box>
+                </header>
+                
+                <div class="row no-gutters-2">
+                    <div class="col">
+                        <tree-view-ro5 #treeView
+                                       [nodes]="geoTree"
+                                       [childDataName]="'Nodes'"
+                                       [isCheck]="false"
+                                       [isSearch]="false"></tree-view-ro5>
+                    </div>
+                </div>
+
+            </section>
+        </div>
+    </div>
+</div>

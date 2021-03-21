@@ -1,0 +1,102 @@
+﻿<message-popup [(messages)]="errors"></message-popup>
+<loader-ro5 [(loading)]="runModesLoading"></loader-ro5>
+
+<div class="main-view-content height-auto main-view-result col-content-ro5">
+    <div class="row no-gutters">
+        <div class="col border-right-1 max-width-415">
+            <header class="section-header-content row">
+                <div class="col-auto">
+                    <h5> Режимы запуска отчетов </h5>
+                </div>
+            </header>
+
+            <list-view-ro5 #runModesLV
+                           [KeyField]="'Id'"
+                           [RowTemplate]="runModesLVRowTemplate"
+                           [DataSource]="runModePermissions"
+                           [DisplayField]="'Name'"
+                           [IsFocused]="!editMode"
+                           (OnItemClick)="onRunModeClick($event)">
+                <ng-template #runModesLVRowTemplate let-item="item">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <a [innerHtml]="item.Data[runModesLV.DisplayField] | markerText:runModesLV.SearchFilter"></a>
+                        </div>
+                        <div class="col-auto">
+                            <i class="zmdi zmdi-chevron-right zmdi-hc-2x"></i>
+                        </div>
+                    </div>
+                </ng-template>
+            </list-view-ro5>
+        </div>
+
+        <div class="col">
+            <header class="section-header-content row">
+                <div class="col-auto">
+                    <h5> Отчеты с правами доступа </h5>
+                </div>
+                <div class="col"></div>
+                <ng-container *appCanAccess="'ADM_EDIT_GROUP_REPORTS'">
+                    <ng-container *ngIf="editMode">
+                        <div class="col-auto">
+                            <button-ro5 [class]="'btn btn-primary'"
+                                        (onclick)="saveCurrModePermissionsChanges()">
+                                Сохранить
+                            </button-ro5>
+                        </div>
+                        <div class="col-auto">
+                            <button-ro5 [class]="'btn btn-outline-secondary'"
+                                        (onclick)="cancelCurrModePermissionsChanges()">
+                                Отменить изменения
+                            </button-ro5>
+                        </div>
+                    </ng-container>
+                    <div class="col-auto" *ngIf="!editMode">
+                        <button-ro5 [class]="'btn btn-primary'"
+                                    [disabled]="runModesLoading || (currRunMode && !currRunMode.Permissions.length)"
+                                    (onclick)="changeCurrModePermissions()">
+                            Изменить
+                        </button-ro5>
+                    </div>
+                </ng-container>
+            </header>
+
+            <section *ngIf="currRunMode" class="section-body-content settings-container" style="height: calc(100vh - 100px);">
+                <section class="section-body-content section-panel-two-columns-settings" [ngSwitch]="currRunMode.Permissions.length > 0">
+                    <div *ngSwitchCase="false" class="row no-gutters-2 justify-content-center message-margin__top_bottom">
+                        <div class="col" style="text-align: center">
+                            <h4> У текущей группы нет отчетов на выбранный режим запуска </h4>
+                        </div>
+                    </div>
+                    <ng-container *ngSwitchCase="true">
+                        <header class="row no-gutters-2 section-header-grouppanel-expander">
+                            <div class="col">
+                                <h5> Вид отчета </h5>
+                            </div>
+                        </header>
+
+                        <div class="row align-items-center no-gutters-2 border-bottom-1" *ngFor="let permission of currRunMode.Permissions">
+                            <div class="col-3">
+                                <span> {{ permission.Name }} </span>
+                            </div>
+                            <div class="col-9">
+                                <div class="row no-gutters align-items-center">
+                                    <div *ngIf="!editMode" class="col-auto">
+                                        <span> {{ permission.IsActive ? 'Есть' : 'Нет' }} </span>
+                                    </div>
+                                    <div *ngIf="editMode" class="col-auto">
+                                        <toggle-switch [checked]="permission.IsActive"
+                                                       [checkedRunnerColorClass]="'runner-color-checked-green'"
+                                                       [checkedSliderColorClass]="'slider-color-checked-green'"
+                                                       (onCheck)="permission.IsActive = $event;">
+                                        </toggle-switch>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+                </section>
+            </section>
+        </div>
+    </div>
+</div>

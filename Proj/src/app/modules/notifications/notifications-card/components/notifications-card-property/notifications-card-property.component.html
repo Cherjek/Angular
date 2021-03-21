@@ -1,0 +1,161 @@
+<message-popup [(messages)]="errors"></message-popup>
+<loader-ro5 [(loading)]="loadingContent"></loader-ro5>
+
+<div romHotkeys
+    (onCtrlSave)="save()"
+    (onEsc) = "cancel()"
+    [editMode]="isPropEdit"
+    class="main-view-content height-auto main-view-result">
+    <div class="col col-content-ro5">
+
+        <ng-container *ngIf="errorLoadEntity != null">
+            <div class="row no-gutters-2 justify-content-center message-margin__top_bottom">
+                <div class="col-auto">
+                    <h4>{{ errorLoadEntity.ShortMessage }}</h4>
+                </div>
+            </div>
+            <div class="row no-gutters-2 justify-content-center">
+                <div class="col-auto">
+                    <button-ro5 [class]="'btn-outline-secondary'" (onclick)="navigateBack()">
+                        Вернуться к предыдущей странице
+                    </button-ro5>
+                </div>
+            </div>
+        </ng-container>
+
+        <div class="col-content-flex-column" *ngIf="errorLoadEntity == null">
+            <section class="section-body-content section-panel-two-columns-settings">
+                <header class="section-header-grouppanel-expander row no-gutters border-bottom-1">
+                    <div class="col">
+                        <h5>Свойства</h5>
+                    </div>
+                    <div *appCanAccess="'ES_NTF_EDIT'" class="col-auto" [ngSwitch]="isPropEdit">
+                        <ng-container *ngSwitchCase="true">
+                            <button-ro5 *ngIf="!isNew" [class]="'btn-outline-secondary'" (onclick)="cancel()">
+                                Отменить изменения
+                            </button-ro5>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="false">
+                            <button-ro5 class="btn-primary" (onclick)="isPropEdit = true;">
+                                Изменить
+                            </button-ro5>
+                        </ng-container>                        
+                    </div>
+                    <div class="col-auto">
+                        <i *ngIf="loadingContentPanel" class="zmdi zmdi-spinner zmdi-hc-3x zmdi-hc-spin"></i>
+                        <button [ngClass]="{'ct-state-invisible' : loadingContentPanel}" data-toggle="collapse"
+                            data-target="#propertySection" aria-controls="propertySection" aria-expanded="false"
+                            class="btn-outline-circle transform-rotate-show btn-circle-size-32">
+                            <i class="zmdi zmdi-chevron-right"></i>
+                        </button>
+                    </div>
+                </header>
+
+                <section id="propertySection" class="collapse show">
+
+                    <section class="section-panel-two-columns-settings" *ngIf="properties">
+                        <div [class.rom-no-border--bottom]="prop.IsNotShown || prop.Code === 'EMailSubjectPattern'" class="row no-gutters-2 border-bottom-1 rom-notif-item" *ngFor="let prop of properties;let i= index">
+                            <div *ngIf="!prop.IsNotShown" class="col-2">
+                                <span> {{ prop.Name }} </span><span *ngIf="isPropEdit && prop.IsRequired" class="error-required-color">&nbsp;*</span>
+                            </div>
+                            <div *ngIf="!prop.IsNotShown" class="col-10 word-break-all" [class.rom-border--top]="prop.Code === 'EMailBodyPattern'" >
+                                <ng-container [ngSwitch]="isPropEdit && !prop.ReadOnly">
+
+                                    <ng-container *ngSwitchCase="true">
+                                        <ng-container [ngSwitch]="prop.Type">
+                                            <input-box *ngSwitchCase="'String'" 
+                                                [placeholder]="'Название'"
+                                                [(value)]="prop.Value"
+                                                [isFocus] = "i === 0" 
+                                                [maxlength]="90"></input-box>
+                                            
+                                            <combo-box-ro5 *ngSwitchCase="'Option'"
+                                                [keyField]="'Id'"
+                                                [valueField]="'Name'"
+                                                [value]="prop.Value"
+                                                [itemsInput]="prop.arrayValues"
+                                                (onSelected)="prop.Value = $event; eventDropDown({ event: 'SELECT' }, prop )"
+                                                (event)="eventDropDown($event, prop)"></combo-box-ro5>
+
+                                            <div *ngSwitchCase="'MultiString'">
+                                                    <div class="rom-preceding-parent" *ngIf="prop.TextPrecede; else noTextboxString">
+                                                        <span class="rom-preceding-text">{{prop.TextPrecede + ':'}}</span>
+                                                            <textarea 
+                                                                maxlength="300"
+                                                                class="form-control"
+                                                                [(ngModel)]="prop.Value"
+                                                                [placeholder]="'Тема письма c шаблоном...'"></textarea>
+                                                    </div>
+                                                    <ng-template #noTextboxString>
+                                                        <textarea 
+                                                            maxlength="300"
+                                                            class="form-control"
+                                                            [(ngModel)]="prop.Value"
+                                                            [placeholder]="'Текст письма c шаблоном...'"></textarea>
+                                                    </ng-template>
+                                            </div>
+
+
+                                            <toggle-switch *ngSwitchCase="'Bool'" 
+                                                [checked]="prop.Value"
+                                                [checkedRunnerColorClass]="'runner-color-checked-green'"
+                                                [checkedSliderColorClass]="'slider-color-checked-green'"
+                                                (onCheck)="prop.Value = $event; updateToggleContent()"></toggle-switch>
+                                        </ng-container>
+                                    </ng-container>
+
+                                    <ng-container *ngSwitchCase="false">
+                                        <ng-container *ngIf="!prop.IsNotShown">
+                                            <ng-container [ngSwitch]="prop.Type">
+                                                <div *ngSwitchCase="'Bool'">
+                                                    {{ prop.Value ? 'Да' : 'Нет' }}
+                                                </div>
+                                                <div *ngSwitchCase="'Option'">
+                                                    {{ prop?.Value?.Name }}
+                                                </div>
+                                                <div *ngSwitchDefault>
+                                                <div class="rom-preceding-parent" *ngIf="prop.TextPrecede; else noTextboxInView">
+                                                    <span class="rom-preceding-text-title">{{prop.TextPrecede + ':'}}</span>
+                                                    <span class="rom-preceding-text-content">{{ prop.Value }}</span>
+                                                </div>
+                                                    <ng-template #noTextboxInView>
+                                                        {{ prop.Value }}
+                                                    </ng-template>
+                                                </div>
+                                            </ng-container>
+                                        </ng-container>
+                                    </ng-container>
+
+                                    
+
+                                </ng-container>
+                            </div>
+                        </div>
+
+                        <ng-content></ng-content>
+                    </section>
+
+                </section>
+            </section>
+
+            <footer class="section-footer-content" *ngIf="isPropEdit">
+                <div class="row no-gutters-2 align-items-center">
+                    <div class="col">
+                        <div class="row no-gutters col-wrappanel align-items-center">
+                            <div class="col-auto">
+                                <button-ro5 [class]="'btn-primary'" (onclick)="save()">                                    
+                                    {{ 'Сохранить' }}
+                                </button-ro5>
+                            </div>
+                            <div class="col-auto">
+                                <button-ro5 [class]="'btn-outline-secondary'" (onclick)="cancel()">
+                                    Отмена
+                                </button-ro5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+</div>

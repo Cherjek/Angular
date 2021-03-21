@@ -1,0 +1,93 @@
+﻿<button *ngIf="isCollapsePanel" class="btn-collapse btn-outline-circle transform-rotate-show btn-circle-size-24"
+        [ngClass]="{ 'collapsed' : !isFilterPanelShow, 'active' : isFilterPanelShow }"
+        (click)="isFilterPanelShow = !isFilterPanelShow">
+    <i class="zmdi zmdi-chevron-right"></i>
+</button>
+
+<h5 *ngIf="!isFilterPanelShow" class="header-collapse rotate-angle-90-plus">Фильтры</h5>
+
+<div class="collapse-panel col-content-flex-column"
+     [ngClass]="{ 'hidden' : !isFilterPanelShow, 'show' : isFilterPanelShow }">
+
+    <header class="section-header-content row" [ngSwitch]="isCollapsePanel">
+        <div *ngSwitchCase="true" class="col" style="padding-left: 40px !important">
+            <ng-template [ngTemplateOutlet]="headerFilterTextTemplate"></ng-template>
+        </div>
+        <div *ngSwitchCase="false" class="col">
+            <ng-template [ngTemplateOutlet]="headerFilterTextTemplate"></ng-template>
+        </div>
+        <ng-template #headerFilterTextTemplate>
+            <h5>Фильтры</h5>
+        </ng-template>
+        <div class="col-auto" *ngIf="isFilterDefChange">
+            <button type="button" (click)="clearAllFilter()" class="btn btn-outline-secondary">Сброс</button>
+        </div>
+    </header>
+
+    <section class="section-body-content">
+
+        <div class="row no-gutters-2 align-items-center" *ngFor="let filter of (FiltersContainer || {}).Filters; index as i">
+            <div class="col">
+                <div class="row row-no-wrap align-items-center header-filter-panel">
+                    <div class="col-8">
+                        <h6>{{filter.Caption}}</h6>
+                    </div>
+                    <div class="col">
+                        <div class="row row-no-wrap no-gutters justify-content-end">
+                            <div class="col">
+                                <button class="btn-outline-circle btn-circle-size-24" (click)="clearFilter(filter)">
+                                    <i class="zmdi zmdi-close"></i>
+                                </button>
+                            </div>
+                            <div class="col-1"></div>
+                            <div class="col">
+                                <button class="btn-outline-circle btn-circle-size-24 transform-rotate" data-toggle="collapse" [attr.data-target]="'#itemObject' + i" [attr.aria-expanded]="true" [attr.aria-controls]="'itemObject' + i">
+                                    <i class="zmdi zmdi-chevron-down"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row collapse show content-padding-form" [attr.id]="'itemObject' + i">
+                    <div class="col">
+                        <input-box *ngIf="filter.Search.IsSearch" [type]="'search'" [(value)]="filter.Search.SearchText"></input-box>
+                        <ng-template [ngTemplateOutlet]="filter.Template ? filter.Template :
+                                     filter.Lookup ? (filter.Lookup.LookupField ? objectRowTemplate : valueRowTemplate) :
+                                     defaultRowTemplate"
+                                     [ngTemplateOutletContext]="{ $implicit: filter}">
+                        </ng-template>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+    <ng-template #defaultRowTemplate let-filter>
+        <div class="row row-dom-item-padding-vertical">
+            <div class="col">
+                <input-box *ngIf="filter.EditorType == 0" [placeholder]="'Значение...'" [(value)]="filter.Data.Value"></input-box>
+                <input-box *ngIf="filter.EditorType == 1" [placeholder]="'Значение...'" [type]="'number'" [(value)]="filter.Data.Value"></input-box>
+
+                <date-picker-ro5 *ngIf="filter.EditorType == 2" 
+                                 [(fromDate)]="filter.Data.Value.FromDate" 
+                                 [(toDate)]="filter.Data.Value.ToDate" 
+                                 [positionDiv]="'fixed'"
+                                 [isVertical]="true"></date-picker-ro5>
+            </div>
+        </div>
+    </ng-template>
+
+    <ng-template #objectRowTemplate let-filter>
+        <filter-array-component [filter]="filter" [isClear]="filter.isClear"></filter-array-component>        
+    </ng-template>
+
+    <footer class="section-footer-content">
+        <div [ngStyle]="{ 'cursor': (isAsyncCallbackStart || !isFilterChange) ? 'not-allowed' : 'default' }">
+            <button type="button" class="btn btn-primary full-size" (click)="applyFilter()" [ngClass]="{ 'item-display-disabled' : (isAsyncCallbackStart || !isFilterChange) }">
+                Применить фильтр
+            </button>
+        </div>
+    </footer>
+
+</div>

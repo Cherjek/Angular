@@ -1,0 +1,156 @@
+<loader-ro5 [(loading)]="loadingContent"></loader-ro5>
+<header *ngIf="title" class="main-content-header row">
+  <div class="col">
+    <div class="row align-items-center">
+      <div class="col">
+        <h3>{{title}}</h3>
+      </div>
+    </div>
+  </div>
+</header>
+<div
+  romHotkeys
+  (onEsc)="cancelEdit()"
+  (onCtrlSave) = "saveItem()"
+  [editMode]="editMode"
+  class="main-view-content">
+  <div class="col col-content-ro5">
+    <div class="inline-grid">
+      <section class="inline-grid-plus-container" *appCanAccess="permissionAdd || permission">
+        <div class="inline-grid-plus">
+          <button class="btn btn-outline-secondary full-size inline-grid-plus__btn"  (click)="addNew()">
+            <i class="zmdi zmdi-plus zmdi-hc-2x inline-grid-plus__icon"></i>
+          </button>
+        </div>
+      </section>
+      <section class="data-grid-section">
+        <div *ngIf="alert" class="popup-alert">
+          <ngb-alert [type]="alert.type" [dismissible]="true" (close)="closeAlert()">
+            {{alert.msg}}
+          </ngb-alert>
+        </div>
+        <data-grid-ro5 [searchBoxStyle] = "searchBoxStyle" #dataGridRo5>
+          <ng-template #columnTextTemplate let-item="item" let-column="column">
+            <ng-container>
+                <ng-container *ngIf="editMode && (item[keyField]==null || item[keyField] == currentEditingItemId) && !column.ReadOnly;else defaultView" >
+      
+                   <ng-container [ngSwitch]="column.Type">
+                       <combo-box-ro5 *ngSwitchCase="'Option'"
+                                      [ngClass]="{ 'error-required-control__border' : (column?.IsRequired && isEmptyCell && (item[column.Name] == null) && isSavedClicked) }"
+                                      keyField="Id"             
+                                      valueField="Name"
+                                      [value]="item[column.Name]"
+                                      [itemsInput]="columnsValues[column.Name]"
+                                      (onSelected)="item[column.Name] = $event"></combo-box-ro5>
+
+                      <div *ngSwitchCase="'Bool'" class="inline-grid-action-container">
+                        <div class="inline-grid-action-container-sub">
+                          <toggle-switch [checked] ="item[column.Name]" (onCheck)="item[column.Name] = $event"></toggle-switch>
+                        </div>
+                      </div>
+  
+                      <div *ngSwitchCase="'DateTime'"
+                        [ngClass]="{ 'error-required-control__border' : (column.IsRequired && isEmptyCell && (item[column.Name] == null) && isSavedClicked) }">
+                        <date-picker-ro5 [isIntervalMode]="false" [(fromDate)]="item[column.Name]"></date-picker-ro5>
+                      </div>
+                      <div *ngSwitchCase="column.Type === 'Date' ? 'Date' : 'YearMonth'"
+                        [ngClass]="{ 'error-required-control__border' : (column.IsRequired && isEmptyCell && (item[column.Name] == null) && isSavedClicked) }">
+                        <date-picker-ro5 [isMonthMode] = "column.Type === 'YearMonth'" [isIntervalMode]="false" [isTimeShow]="false" [(fromDate)]="item[column.Name]"></date-picker-ro5>
+                      </div>
+                      
+                      <input-box *ngSwitchDefault  [ngClass]="{ 'error-required-control__border' : (column.IsRequired && isEmptyCell && (item[column.Name] == null) && isSavedClicked) }"
+                        [type]="column.Type || 'text'"
+                        [placeholder]="column.Caption"
+                        [isFocus] = "column.FocusEditCell"
+                        [maxlength]="column.MaxLength"
+                        [(value)]="item[column.Name]"></input-box>
+                    </ng-container>
+  
+      
+                </ng-container>
+                <ng-template #defaultView>
+                    <ng-container [ngSwitch]="column?.Type">
+                        <div *ngSwitchCase="'Option'" [innerHTML]="item[column.Name ]?.Name | markerText:dataGrid.SearchFilter"></div>
+                        <div *ngSwitchCase="'DateTime'">
+                          <span [innerHTML]="item[column.Name ] | dateTimeFormat | markerText:dataGrid.SearchFilter"></span>
+                        </div>
+                        <div *ngSwitchCase="'Date'">
+                          <span [innerHTML]="item[column.Name ] | dateFormat | markerText:dataGrid.SearchFilter"></span>
+                        </div>
+                        <div *ngSwitchCase="'YearMonth'">
+                          <span [innerHTML]="item[column.Name ] | dateFormat | slice: 0:7 | markerText:dataGrid.SearchFilter"></span>
+                        </div>
+                        <div *ngSwitchCase="'Bool'">
+                            {{ item[column.Name] ? 1 : 0 }}
+                        </div>
+                        <ng-container *ngSwitchDefault>
+                            <ng-container *ngIf="column.routerLink!==undefined;else noLinkColumn">
+                                <a [routerLink]="['/'+column?.routerLink + '/'+item.Id]" [innerHTML]="item[column.Name] | markerText:dataGrid.SearchFilter"></a>
+                            </ng-container>
+                            <ng-template #noLinkColumn>
+                                <div [innerHTML]="item[column.Name] | markerText:dataGrid.SearchFilter"></div>
+                            </ng-template>
+                        </ng-container>
+                    </ng-container>
+                </ng-template>
+            </ng-container>
+        </ng-template>
+        <ng-template #columnActionsTemplate let-item="item" let-column="column">
+          <ng-container>
+            <ng-container *ngIf="editMode && (item[keyField]==null || item[keyField] == currentEditingItemId); else defaultActionView">
+              
+              <div class="inline-grid-action-container">
+                <div class="inline-grid-action-container-sub">
+                  <div class="inline-grid-actions row">
+                    <span (click)="saveItem(item)" class="inline-grid-actions__action col-auto">Сохранить</span>
+                    <span (click)="cancelEdit()" class="inline-grid-actions__action">Отменить</span>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+            <ng-template #defaultActionView>
+              <div class="inline-grid-action-container">
+                <div class="inline-grid-action-container-sub">
+                  <div class="inline-grid-actions row">
+                    <span *appCanAccess="permissionEdit || permission" class="inline-grid-actions__action col-auto" (click)="itemEdit(item)">Изменить</span>
+                    <span 
+                      *appCanAccess="permissionDelete || permission"
+                      [ngbPopover]="popFormContent"
+                      #popUpFormActionButton="ngbPopover"
+                      data-container="body" 
+                      data-placement="left auto"
+                      triggers="manual"
+                      [autoClose]="true"
+                      (click)="popUpFormActionButton.open({ p: popUpFormActionButton });" class="inline-grid-actions__action" >Удалить</span>
+                  </div>
+                </div>
+              </div>
+            </ng-template>
+            <ng-template #popFormContent let-p="p">
+              <div class="popover-body">
+                  <div class="row no-gutters popup-body">
+                      <div class="col">
+                          Вы уверены, что хотите удалить?
+                      </div>
+                  </div>
+                  <div class="row no-gutters col-wrappanel">
+                      <div class="col-auto">
+                          <button-ro5 class="btn-primary" (onclick)="deleteItem(item);p.close()">
+                              Удалить
+                          </button-ro5>
+                      </div>
+                      <div class="col-auto">
+                          <button-ro5 class="btn-outline-secondary" (onclick)="p.close()">
+                              Отмена
+                          </button-ro5>
+                      </div>
+                  </div>
+              </div>
+          </ng-template>
+          </ng-container>
+        </ng-template>
+        </data-grid-ro5>
+      </section>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,43 @@
+.margin-left-5 {
+  margin-left: 5px;
+}
+
+.col-objects-ro5 {
+  height: calc(100% - 50px); 
+}
+.button-settemplate-left {
+  height: 40px; 
+  width: 250px;  
+  &.drop-radius {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+}
+
+.button-settemplate-right {
+  height: 40px;
+  width: 50px;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0
+}
+.footer-panel-container {
+  width: 300px;
+  height: 100%;
+  float: right;
+}
+.not-data-items {
+  position: absolute;
+  width: 100%;
+  height: 100px;
+  text-align: center;
+  font-size: 18px;
+  z-index: 1;
+}
+.step-two-files {
+  display: flex;
+  align-items: center;
+
+  &-matrix {
+    margin-right: 15px;
+  }
+}

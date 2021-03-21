@@ -1,0 +1,81 @@
+﻿<div class="main-view-content height-auto">
+    <div class="col-filter-ro5 border-right-1">
+        <frame-filters-custompanel
+            #ObjRo5FiltersPanel
+            [service]="filtersContainerService"
+            (onApplyFilter)="onApplyFilter($event)"
+            [isAsyncCallbackStart]="loadingContentPanel"
+        ></frame-filters-custompanel>
+    </div>
+    <div class="col col-content-ro5 border-right-1">
+        <header class="section-header-content row">
+            <div class="col-auto"><h5> Участники группы </h5></div>
+            <div class="col"></div>
+            <div class="col-auto" *appCanAccess="'ADM_ADD_USERS_TO_GROUP'">
+                <dropdown-box-ro5
+                        #dropdownBox
+                        [keyField]="'Id'"
+                        [valueField]="'Name'"
+                        [isSelected]="true"
+                        [itemsInput]="allUsers"
+                        [footerTemplate]="footerTemplate"
+                        [buttonText]="'Добавить участников в группу'"
+                        [BttnColorClass]="'btn-primary'">
+                    <ng-template #footerTemplate>
+                        <footer class="section-footer-content">
+                            <div class="row no-gutters-2 align-items-center">
+                                <div class="col">
+                                    <div class="row no-gutters align-items-center col-wrappanel"
+                                         style="flex-wrap: nowrap">
+                                        <div class="col-auto">
+                                            <button-ro5
+                                                    [class]="'btn btn-primary'"
+                                                    (onclick)="addUsersToGroup(dropdownBox.getSelectedRows()); dropdownBox.close()">
+                                                Добавить
+                                            </button-ro5>
+                                        </div>
+                                        <div class="col-auto">
+                                            <button-ro5
+                                                    [class]="'btn btn-outline-secondary'"
+                                                    (onclick)="dropdownBox.close()">
+                                                Отмена
+                                            </button-ro5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </footer>
+                    </ng-template>
+                </dropdown-box-ro5>
+            </div>
+        </header>
+        <message-popup [(messages)]="errors"></message-popup>
+        <loader-ro5 [(loading)]="loadingContentPanel"></loader-ro5>
+        <data-grid-ro5
+            #Ro5DataGrid
+            [HeaderActionTemplate]="headerActionTemplate"
+            (onActionButtonClicked)="onDGRowActionBtnClick($event)">
+            <ng-template #headerActionTemplate>
+
+                <div class="row no-gutters-2">
+                    <div class="col">
+                        <datagrid-header-temp-def 
+                            [permissionDelete]="['ADM_REMOVE_USERS_FROM_GROUP','ADM_REMOVE_USER_FROM_GROUP']"
+                            [dataGrid]="dataGrid" 
+                            (deletedRows)="deleteUsersFromGroup(Ro5DataGrid.getSelectDataRows());">
+                        </datagrid-header-temp-def>
+                    </div>
+                </div>                
+            </ng-template>
+
+            <ng-template #LoginColumnTemplate let-item="item">
+                <a [routerLink]="['/admin/user/' + item['Id']]"
+                   [innerHTML]="item['Login'] | markerText:dataGrid.SearchFilter"></a>
+            </ng-template>
+
+            <ng-template #DateColumnTemplate let-item="item">
+                {{ item['CreationDate'] | dateFormat }}
+            </ng-template>
+        </data-grid-ro5>
+    </div>
+</div>

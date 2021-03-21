@@ -1,0 +1,7 @@
+<li *ngIf="navItem.isVisible !== false" class="nav-item"
+    [ngStyle]="{ 'cursor': navItem.isDisabled ? 'not-allowed' : 'default' }" routerLinkActive="active">
+    <a class="nav-link" [ngClass]="{ 'item-display-disabled' : navItem.isDisabled }" queryParamsHandling="merge"
+        [routerLink]="navItem.url">
+        {{ navItem.name }}
+    </a>
+</li>

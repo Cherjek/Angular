@@ -1,0 +1,13 @@
+﻿.dots {
+    border-bottom: 1px #ced4da dotted;
+    margin: 0 5px;
+    position: relative;
+    bottom: 6px;
+}
+.property-row {
+    margin: 15px 0;
+    margin-left: 15px;
+}
+.property-row > div {
+    margin: 25px 0;
+}

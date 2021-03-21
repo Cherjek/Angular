@@ -1,0 +1,37 @@
+﻿
+<div class="col-content-flex-column">
+    <header class="section-header-content">
+        <div class="row no-gutters align-items-center">
+
+            <div class="col">
+                <navigate-menu-ro5 [items]="menuTabHeader"
+                                   [isTabView]="true"
+                                   (onNavSelectChanged)="navClick($event)"></navigate-menu-ro5>
+            </div>
+
+        </div>
+    </header>
+
+    <section class="section-body-content" style="flex: 1 1 auto">
+        <div class="row no-gutters">
+            <div class="col">
+
+                <list-view-ro5 #listView
+                               [KeyField]="getFieldName(ListViewFieldName.KeyField)"
+                               [DisplayField]="getFieldName(ListViewFieldName.DisplayField)"
+                               [AdditionalField]="getFieldName(ListViewFieldName.AdditionalField)"
+                               [IsSelected]="IsSelected"
+                               [IsRemoved]="IsRemoved"
+                               [OffsetBottom]="OffsetBottom"
+                               (OnItemClick)="itemClick($event)"
+                               (OnItemCheckClick)="itemClick($event)"
+                               (OnRemoveListItem)="removeListItem($event)"></list-view-ro5>
+
+            </div>
+        </div>
+    </section>
+
+    <ng-template [ngTemplateOutlet]="FooterTemplate">
+    </ng-template>
+
+</div>

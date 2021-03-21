@@ -1,0 +1,62 @@
+﻿<header class="main-content-header row">
+    <div class="col-auto">
+        <backward-button></backward-button>
+    </div>
+    <div class="col main-header-text">
+        <h3>{{JobInfo?.Job?.Name}}</h3>
+        <div class="row no-gutters">
+            <div class="col-auto" *ngIf="isJobInfoDefined">
+                <div class="label-info" [innerHtml]="
+                    (((this.JobInfo||{}).Job||{}).StatusName ? (((this.JobInfo||{}).Job||{}).StatusName + '. ') : '') +
+    
+                    'С ' + ( ( (this.JobInfo || {}).Job || {} ).StartDate ? ( ( ( this.JobInfo || {} ).Job || {} ).StartDate | dateTimeFormat ) : ( (( ( this.JobInfo || {} ).Job || {} ).CreateDate | dateTimeFormat) ) ) +
+    
+                    (((this.JobInfo||{}).Job||{}).EndDate ? ' По ' + (((this.JobInfo||{}).Job||{}).EndDate | dateTimeFormat) : '') +
+                    ((this.JobInfo||{}).Allowance ? (' Припуск &#60; ' + (this.JobInfo||{}).Allowance + ' сек.') : '')
+                 "></div>
+            </div>
+            <ng-container *ngIf="(this.JobInfo||{}).Hierarchy">
+                <div class="col-auto label-info">
+                    , Иерархия: &nbsp;
+                </div>
+                <div class="col-auto label-info">
+                    <a [routerLink]="[
+                        '../../../hierarchies-module/hierarchy-card/' + (this.JobInfo||{}).Hierarchy['Id']
+                        ]" [innerHTML]="(this.JobInfo||{}).Hierarchy['Name'] | pipeNoName">
+                    </a>
+                </div>
+            </ng-container>
+        </div>
+        
+        
+    </div>
+    <div>
+        <ng-template #templateNavItem let-navItem="navItem">
+            <ng-container *appCanAccess="navItem.access">
+                <li *ngIf="navItem.isVisible !== false" class="nav-item"
+                    [ngStyle]="{ 'cursor': navItem.isDisabled ? 'not-allowed' : 'default' }"
+                    routerLinkActive="active">
+                    <a class="nav-link"
+                       [ngClass]="{ 'item-display-disabled' : navItem.isDisabled }"
+                       [queryParamsHandling]="'merge'"
+                       [routerLink]="navItem.url">{{ navItem.name }}</a>
+                </li>
+            </ng-container>
+        </ng-template>
+        <navigate-menu-ro5 
+            [templateNavItem]="templateNavItem"
+            [items]="Menu"></navigate-menu-ro5>
+    </div>
+    <context-button [items]="ContextButtonItems" 
+                    [width]="230"
+                    (onItemClick)="contextButtonHeaderClick($event)"></context-button>
+</header>
+<div class="main-view-content">
+    <div class="col">
+        <message-popup [(messages)]="errorsContentValidationForms"></message-popup>
+        <loader-ro5 [(loading)]="loadingContentPanel"></loader-ro5>
+        <router-outlet></router-outlet>
+    </div>
+</div>
+
+

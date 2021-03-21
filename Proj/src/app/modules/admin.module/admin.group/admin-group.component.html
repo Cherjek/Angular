@@ -1,0 +1,48 @@
+﻿<header class="main-content-header row admin-group-header">
+    <div class="col-auto">
+        <backward-button></backward-button>
+    </div>
+    <div class="col main-header-text" [ngSwitch]="!isNew">
+        <div *ngSwitchCase="true">
+            <h3> Группа </h3>
+            <ng-container *ngIf="header != null">
+                <div class="label-info"> {{ header }} </div>
+            </ng-container>
+        </div>
+        <h3 *ngSwitchCase="false"> Новая группа  </h3>
+    </div>
+    <ng-container *ngIf="!isNew">
+        <div class="main-header-navigation parent-ellipsis">
+            <ng-template #templateNavItem let-navItem="navItem">
+                <ng-container *appCanAccess="navItem.access">
+                    <li *ngIf="navItem.isVisible !== false" class="nav-item parent-ellipsis"
+                        [ngStyle]="{ 'cursor': navItem.isDisabled ? 'not-allowed' : 'default' }"
+                        routerLinkActive="active">
+                        <a class="nav-link child-ellipsis"
+                           [ngClass]="{ 'item-display-disabled' : navItem.isDisabled }"
+                           [queryParamsHandling]="'merge'"
+                           [routerLink]="navItem.url">{{ navItem.name }}</a>
+                    </li>
+                </ng-container>
+            </ng-template>
+            <navigate-menu-ro5 
+                [templateNavItem]="templateNavItem"
+                [items]="menuItems"></navigate-menu-ro5>
+        </div>
+        <ng-container *appCanAccess="'ADM_DELETE_GROUP'">
+            <context-button
+                    class="context-button"
+                    [items]="contextButtonItems"
+                    (onItemClick)="contextButtonHeaderClick($event)"
+            ></context-button>
+        </ng-container>
+
+    </ng-container>
+</header>
+<div class="main-view-content">
+    <div class="col">
+        <loader-ro5 [(loading)]="loadingPanel"></loader-ro5>
+        <message-popup [(messages)]="headerErrors"></message-popup>
+        <router-outlet></router-outlet>
+    </div>
+</div>

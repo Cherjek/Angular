@@ -1,0 +1,41 @@
+<message-popup [(messages)]="errors"></message-popup>
+<loader-ro5 [(loading)]="loadingContent"></loader-ro5>
+<div class="main-view-content">
+
+    <div class="col col-content-ro5 border-right-1">
+        <header class="section-header-content row">
+            <div class="col-auto">
+                <h5>Зоны суток</h5>
+            </div>
+            <div class="col"></div>
+            <div class="col-auto" *appCanAccess="'TC_DAY_ZONE_ADD'">
+                <button-ro5 [class]="'btn btn-primary'" (onclick)="addNewItem()">
+                    + Добавить
+                </button-ro5>
+            </div>
+        </header>
+
+        <data-grid-ro5 #Ro5DataGrid (onActionButtonClicked)="onActionButtonClicked($event)">            
+            <ng-template #dateColumnTemplate let-item="item">
+                <a [routerLink]="[
+                        '../../' + oesId + '/day-zones/' + item.Id
+                    ]" [innerHTML]="item.Date | dateFormat | markerText: dataGrid.SearchFilter">
+                </a>
+            </ng-template>
+            <ng-template #orderDateColumnTemplate let-item="item">
+                <span [innerHTML]="item.OrderDate | dateFormat | markerText: dataGrid.SearchFilter">
+                </span>
+            </ng-template>
+            <ng-template #nightHoursColumnTemplate let-item="item">
+                <span *ngFor="let hour of item?.NightHours; let i=index" 
+                [innerHTML] = "(hour + (i != (item?.NightHours?.length - 1) ? ', ' : '')) | markerText: dataGrid.SearchFilter">
+                </span>
+            </ng-template>
+            <ng-template #dayHoursColumnTemplate let-item="item">
+                <span *ngFor="let hour of item?.DayHours; let i=index" 
+                [innerHTML] = "(hour + (i != (item?.DayHours?.length - 1) ? ', ' : '')) | markerText: dataGrid.SearchFilter">
+                </span>
+            </ng-template>
+        </data-grid-ro5>
+    </div>
+</div>

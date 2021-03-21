@@ -1,0 +1,58 @@
+<ng-template #popContent>
+    <div class="popover-body" (click)="$event.stopPropagation();">
+    
+        <ng-container [ngSwitch]="actionButton?.isConfirm">
+            <ng-container *ngSwitchDefault>
+    
+                <ng-template #menuItemTemplate let-disabled="disabled" let-menuItem="menuItem">
+                    <div [ngStyle]="{ 'cursor': disabled ? 'not-allowed' : 'default' }">
+                        <a class="dropdown-item"
+                            (click)="actionButtonMenuClicked(menuItem)"
+                            [class.item-display-disabled]="disabled"
+                            [innerHtml]="menuItem.displayText">
+                        </a>
+                    </div>
+                </ng-template>
+    
+                <ng-template *ngFor="let menuItem of actionButtons" 
+                    [ngTemplateOutlet]="menuItemTemplate"
+                    [ngTemplateOutletContext]="{ disabled: !menuItem.isValid(), menuItem: menuItem }">
+                </ng-template>
+    
+            </ng-container>
+            <ng-container *ngSwitchCase="true">
+                <div class="row no-gutters popup-body__margin">
+                    <div class="col">
+                        {{ actionButton.confirmSettings.confirmBody }}
+                    </div>
+                </div>
+                <div class="row no-gutters col-wrappanel">
+                    <div class="col-auto">
+                        <button type="button" class="btn btn-primary"
+                            (click)="apply(actionButton)">
+                            {{ actionButton.confirmSettings.confirmButtonText }}
+                        </button>
+                    </div>
+                    <div class="col-auto">
+                        <button type="button" class="btn btn-outline-secondary" (click)="popUpActionButton.close()">
+                            Отмена
+                        </button>
+                    </div>
+                </div>
+            </ng-container>
+        </ng-container>
+
+    </div>    
+</ng-template>
+<button
+    class="btn-outline-circle btn-circle-size-32"
+    container="body" 
+    placement="left"
+    #popUpActionButton="ngbPopover" 
+    [ngbPopover]="popContent" 
+    [autoClose]="'outside'" 
+    triggers="manual"
+    (hidden)="hiddenEventActionButtonPopover()"
+    (click)="openActionButtonPopover($event);$event.stopPropagation();">
+    <i class="zmdi zmdi-more"></i>
+</button>

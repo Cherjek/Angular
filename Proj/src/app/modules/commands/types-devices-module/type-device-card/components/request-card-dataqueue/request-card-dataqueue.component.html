@@ -1,0 +1,15 @@
+<message-popup [(messages)]="errors"></message-popup>
+<loader-ro5 [(loading)]="loadingContent"></loader-ro5>
+<div class="main-view-content height-auto">
+    <div class="col col-content-ro5 border-right-1">
+        <ng-container *ngIf="dataQuery != null">
+            <rom-data-query-type-channels
+                access="CFG_DEVICE_EDIT_QUERIES"
+                [typeTags]="dataQuery"
+                (save)="save($event)"
+                (cancel)="cancel()">
+            
+            </rom-data-query-type-channels>
+        </ng-container>                
+    </div>
+</div>

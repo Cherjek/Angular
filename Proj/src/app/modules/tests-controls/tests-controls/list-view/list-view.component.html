@@ -1,0 +1,62 @@
+<div class="row no-gutters-2">
+    <div class="col-12">
+        
+        <div class="row">
+            <div class="col">
+                <h3>ListView single</h3>
+                <hr>
+                <list-view-ro5 #listView
+                               KeyField="Id"
+                               DisplayField="Name"
+                               AdditionalField="Desc"
+                               [DataSource]="items"
+                               [IsSelected]="true"
+                               [IsRemoved]="true"
+                               [Height]="500"
+                               (OnItemClick)="itemClick($event)"
+                               (OnItemCheckClick)="itemClick($event)"
+                               (OnRemoveListItem)="removeListItem($event)"></list-view-ro5>
+            </div>
+        </div>
+        
+    </div>    
+    <div class="col-12">
+        <br>
+        <hr>
+    </div>
+    <div class="col-12">
+        <div class="row">
+          <div class="col" style="height: 800px;">
+
+            <div class="row no-gutters-2">
+                <div class="col-auto">
+                    <h3>TreeList Checked Panel</h3>
+                </div>
+                <div class="col-auto">
+                    <check-box-ro5
+                        [checked]="tabViewMode"
+                        label="Компактное представление"
+                        (onClick)="tabViewMode = !tabViewMode; loadTreeListView()">
+                    </check-box-ro5>
+                </div>
+            </div>
+
+            <loader-ro5 [(loading)]="loader"></loader-ro5>
+
+            <treelist-checked-panel 
+                *ngIf="treeLoadComplete"
+                #treelistCheckedPanel 
+                [TabViewMode]="tabViewMode"
+                [TreeListItems]="treeListItems"
+                [Tree]="geoTree | filterRow:changeDetection" 
+                [ChildDataName]="'Nodes'" 
+                KeyField="Id" 
+                DisplayField="Name"
+                AdditionalField="Name"
+                (onCountTotalChange)="tlcPanel.countTotal = $event"
+                (onCountCheckTotalChange)="tlcPanel.countCheckTotal = $event"></treelist-checked-panel>
+
+          </div>
+        </div>
+    </div>
+</div>

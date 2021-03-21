@@ -1,0 +1,46 @@
+﻿<button class="btn button-apply full-size"
+        placement="bottom-right"
+        #p="ngbPopover"
+        triggers="manual"
+        [autoClose]="'outside'"
+        [ngbPopover]="contextMenu"
+        (click)="(items || []).length ? p.open() : null;$event.stopPropagation();"
+        (hidden)="confirmButtonClick = null;">
+    <i class="zmdi zmdi-settings zmdi-hc-2x"></i>
+    <i class="zmdi zmdi-caret-down"></i>
+</button>
+<ng-template #contextMenu>
+    <ng-container [ngSwitch]="confirmButtonClick != null">
+        <ul *ngSwitchCase="false" class="nav list-box-vertical" [style.width.px]="width">
+            <li *ngFor="let item of items"
+                class="background-gray"
+                style="background-image: none;"
+                [ngStyle]="{ 'cursor': item.isDisabled ? 'not-allowed' : 'pointer' }">
+                <a class="nav-link"
+                   (click)="itemClick(item);$event.stopPropagation();"
+                   [ngClass]="{ 'item-display-disabled' : item.isDisabled }">
+                    {{ item.name }}
+                </a>
+            </li>
+        </ul>
+        <ng-container *ngSwitchCase="true">
+            <div class="row no-gutters" style="margin: 15px 0">
+                <div class="col">
+                    {{ confirmButtonClick.confirm.text }}
+                </div>
+            </div>
+            <div class="row no-gutters col-wrappanel row-no-wrap">
+                <div class="col-auto">
+                    <button type="button" class="btn btn-primary" (click)="ok();p.close()">
+                        {{ confirmButtonClick.confirm.apply }}
+                    </button>
+                </div>
+                <div class="col-auto" style="margin-left: 10px">
+                    <button type="button" class="btn btn-outline-secondary" (click)="p.close()">
+                        Отмена
+                    </button>
+                </div>
+            </div>
+        </ng-container>
+    </ng-container>
+</ng-template>

@@ -1,0 +1,100 @@
+/* ��������� ������, ��� ������ � ����� input ������ x, ��� ������� input */
+div.input-group-clear {
+    position: relative;
+    align-items: center !important;
+}
+div.input-group-clear div.input-group-append {
+   
+}
+div.input-group-clear div.input-group-append span.input-group-text {
+    border: none !important;
+    background-color: transparent;
+    padding: 0;
+    margin: auto;
+}
+div.input-group-clear > .form-control {
+    padding-right: 30px;
+}
+div.input-group-clear > .form-control.number-padding-right {
+    padding-right: 45px;
+}
+div.input-group-clear > .custom-select:not(:last-child), div.input-group-clear > .form-control:not(:last-child) {
+    border-top-right-radius: .25em;
+    border-bottom-right-radius: .25em;
+}
+div.input-group-clear.input-group-fullsize {
+    height: 100%;
+}
+div.input-group-clear.input-group-fullsize > .form-control {
+    padding-left: 20px;
+}
+div.input-group-clear.input-group-fullsize > input {
+    height: 100%;
+    border: none !important;    
+    border-radius: 0;
+}
+
+
+div.input-group-clear > div.input_button {
+    cursor: pointer;
+    height: 100%;
+    position: absolute;
+    top: 0;    
+    z-index: 9;
+}
+
+
+div.input-group-clear > .clear-text,
+div.input-group-clear > .search-icon {
+    width: 35px;
+    right: 0.05em;
+}
+/* search button */
+div.input-group-clear > .search-icon {
+    cursor: default !important;
+}
+div.input-group-clear > .search-icon > .input-group-text > i {
+    font-weight: 900;
+}
+/* clear text button */
+div.input-group-clear > .clear-text.number {
+    right: 1.1em;
+}
+div.input-group-clear > .clear-text.hide {
+    display: none !important;
+}
+/* spinner button */
+div.input-group-clear .spinner {
+    width: 20px;
+    right: 0.02em;    
+}
+div.input-group-clear .spinner > i {
+    display: block;
+    position: relative;
+    height: 50%;
+    font-size: 20px;    
+}
+div.input-group-clear .spinner > i:hover {
+    background-color: #D0D0D0;
+}
+div.input-group-clear .spinner > i:active {
+    background-color: #b8b8b8;
+    color: #fff;
+}
+div.input-group-clear .spinner > i.zmdi:before {
+    position: absolute !important;
+    top: -2px;
+    left: 6px;
+}
+input.box-fullsize-disable:focus {
+    border: none;
+    box-shadow: none !important;
+    outline: 0;
+}
+.not-valid-value {
+    border: 1px solid red !important;
+}
+
+input[type="time"] {
+    padding-right: 0 !important;
+}

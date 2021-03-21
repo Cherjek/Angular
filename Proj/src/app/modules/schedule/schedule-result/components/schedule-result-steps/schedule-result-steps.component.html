@@ -1,0 +1,24 @@
+<div class="main-view-content main_view_queue">
+    <div class="col col-content-ro5">
+  
+      <message-popup [(messages)]="errorsContentValidationForms"></message-popup>
+      <loader-ro5 [(loading)]="loadingContentPanel"></loader-ro5>
+  
+      <data-grid-ro5  #Ro5DataGrid>
+        <ng-template #CellTemplateProgressTooltip let-value="value" let-item="item">
+          <div [ngStyle]="{ 'color': item.State.Code === NameStatusError ? 'red' : 'inherit' }"
+            style="display: inline-block" [innerHTML]="item?.State?.Name | markerText:dataGrid.SearchFilter"
+            container="body" placement="top" [ngbTooltip]="(item['Progress'] | number:'1.1-2') + '%'"></div>
+        </ng-template>
+        <ng-template #CellTemplateLinkToDetail let-value="value" let-id="id" let-item="item">
+          <a [routerLink]="[(item.TaskTypeCode === 'DataQuery' ? '/requests-module/request-result/' : '/reports/result/') + id ]"
+            (click)="dataGridCurrentItemService?.setCurrentItem(item)"
+            [innerHTML]="value | markerText:dataGrid.SearchFilter"></a>
+        </ng-template>
+        <ng-template #gridName let-value="value" let-id="id" let-item="item">
+          <a [innerHTML]="value?.Name"></a>
+        </ng-template>
+      </data-grid-ro5>
+  
+    </div>
+  </div>

@@ -1,0 +1,30 @@
+<div *ngIf="showSidebar && !router.url.includes('login')" class="rom-sidebar">
+  <div 
+    (click)="banner?.mode == 'minimize' ? onMinimize() : onClose()" 
+    [ngStyle]="{display: !showSidebar && 'none'}"
+    class="rom-sidebar-background"></div>
+  <div 
+    [ngStyle]="banner?.window?.style" 
+    [style.display]="display" class="rom-sidebar-container"
+    [ngStyle]="{animation: inAnimate ? 'slide-in-right '+ duration + 'ms ease forwards' : 'slide-out-right '+ duration + 'ms ease-out forwards'}">
+    <div class="rom-sidebar-content">
+      <header class="rom-sidebar-content-header">
+        <div 
+          [ngStyle]="banner?.window?.closeButton?.style" class="rom-sidebar-content-header-close"
+          *ngIf="banner?.mode" 
+          (click)="banner?.mode == 'minimize' ? onMinimize() : onClose()">
+          {{banner?.window?.closeButton?.text}}
+        </div>
+      </header>
+      <div class="rom-sidebar-content-card">
+        <div class="rom-sidebar-content-card__item">
+          <iframe [src]="banner?.window?.url | safeUrl" height="300px" width="100%"></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<button 
+  [ngStyle]="banner?.button?.style" 
+  (click)="sideBarCall()" *ngIf="showMinimizeButton && !router.url.includes('login')"
+  class="btn rom-sidebar-mini">{{banner?.button?.text}}</button>

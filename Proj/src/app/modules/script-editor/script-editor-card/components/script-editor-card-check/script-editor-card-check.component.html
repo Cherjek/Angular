@@ -1,0 +1,173 @@
+<message-popup [(messages)]="errors"></message-popup>
+<loader-ro5 [(loading)]="loadingContent"></loader-ro5>
+<div *ngIf="alert" class="popup-alert">
+  <ngb-alert [type]="alert.type" [dismissible]="true" (close)="closeAlert()">
+    {{alert.msg}}
+  </ngb-alert>
+</div>
+<div 
+  romHotkeys
+  (onEsc)="cancel()"
+  (onCtrlSave)="save()"
+  [editMode]="isPropEdit"
+  class="main-view-content height-auto">
+  <div class="col col-content-ro5 logic-parent">
+    <div class="se-main-body">
+        <ng-container *ngFor="let header of headers; let i=index;">
+            <header *ngIf="(header.Code == 'Script') || (isPropEdit || editorData[header.Code]?.length) " data-toggle="collapse" [attr.data-target]="'#groupSection' + i"
+              [attr.aria-controls]="'#groupSection' + i"
+              class="section-header-grouppanel-expander row no-gutters border-bottom-1 tags-header">
+              <div class="col">
+                <h5> {{ header?.Name }} </h5>
+              </div>
+              <div class="col"></div>
+              <div class="col-auto d-flex">
+                <div *ngIf="headers[i]?.Code === 'Script'" class="col-auto d-flex">
+                  <ng-container *appCanAccess="'REF_EDIT_SCRIPTS'">
+                    <button-ro5 *ngIf="!isNew" [class]="'btn-outline-secondary mr-4'" (click)="save(); $event.stopPropagation();">
+                      Сохранить
+                    </button-ro5>
+                    <button-ro5 *ngIf="!isNew" [class]="'btn-outline-secondary mr-4'" (click)="check(); $event.stopPropagation();">
+                      Проверить
+                    </button-ro5>
+                  </ng-container>                  
+                  <button-ro5 *ngIf="!isNew" [class]="'btn-primary'" (click)="execute(); $event.stopPropagation();">
+                    Выполнить
+                  </button-ro5>
+              </div>
+                <button data-toggle="collapse" [attr.data-target]="'#groupSection' + i"
+                  [attr.aria-controls]="'#groupSection' + i"
+                  class="section-header-grouppanel-expander row no-gutters border-bottom-1 tags-header transform-rotate-show"
+                  class="btn-outline-circle   btn-circle-size-32">
+                  <i class="zmdi zmdi-chevron-right"></i>
+                </button>
+              </div>
+            </header>
+      
+            <section #parentScroll 
+              [attr.id]="'groupSection' + i"
+              [ngClass]="true ? 'show': 'collapse'"
+              class="list-view-container section-body-content section-panel-two-columns-settings">
+      
+              <ng-container [attr.id]="'groupSection' + i">
+                  <ng-container [ngSwitch]="headers[i].Code">
+                    <ng-container *ngSwitchCase="'Script'">
+                      <div class="row no-gutters-2 border-bottom-1">
+                        <div class="col">
+                          <div *ngIf="!isPropEdit">
+                            {{editorData?.Text}}
+                          </div>
+                          <textarea
+                            [placeholder]="'Текст'"
+                            *ngIf="isPropEdit"
+                            class="form-control se-textarea"
+                            [(ngModel)]="editorData.Text"></textarea>
+                        </div>
+                      </div>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="'Parameters'">
+                      <div class="row no-gutters-2 border-bottom-1">
+                        <div class="col se-parameter-table">
+                          <table class="table table-bordered">
+                            <thead>
+                              <th>Название</th>
+                              <th>Тип значение</th>
+                              <th class="se-parameter-table-value">Значение</th>
+                            </thead>
+                            <tbody>
+                              <tr *ngFor="let val of editorData?.Parameters; let i=index;">
+                                <td>{{val?.Name}}</td>
+                                <td>{{val?.ValueType?.Name}}</td>
+                                <td>
+                                  <ng-container [ngSwitch]="val.ValueType.Name">
+                                    <input-box *ngSwitchCase="'String'" 
+                                        [placeholder]="'Введите значение'"
+                                        [(value)]="val.Value" 
+                                        [maxlength]="90"></input-box>
+      
+                                    <input-box *ngSwitchCase="'Float'" 
+                                        [type]="'float'"
+                                        [placeholder]="'Введите значение'"
+                                        [(value)]="val.Value"></input-box>
+      
+                                    <input-box *ngSwitchCase="'Integer'" 
+                                        [type]="'number'"
+                                        [placeholder]="'Введите значение'"
+                                        [(value)]="val.Value"></input-box>
+      
+                                    <date-picker-ro5 *ngSwitchCase="'Datetime'"
+                                        [isIntervalMode]="false"
+                                        [(fromDate)]="val.Value">
+                                    </date-picker-ro5>
+                                    <date-picker-ro5 *ngSwitchCase="'DatetimeInterval'"
+                                        [(toDate)] ="val.ToValue"
+                                        [(fromDate)]="val.Value">
+                                    </date-picker-ro5>
+                                    <div class="d-flex align-items-center" *ngSwitchCase="'Interval'">
+                                      <div class="se-interval-label ml-4">С</div>
+                                      <input-box
+                                        [type]="'float'"
+                                        [placeholder]="'Введите значение'"
+                                        [(value)]="val.Value"></input-box>
+                                      <div class="se-interval-label ml-4">По</div>
+                                      <input-box
+                                        [type]="'float'"
+                                        [placeholder]="'Введите значение'"
+                                        [(value)]="val.ToValue"></input-box>
+                                    </div>
+      
+                                    <toggle-switch *ngSwitchCase="'Bool'" 
+                                        [checked]="val.Value"
+                                        [checkedRunnerColorClass]="'runner-color-checked-green'"
+                                        [checkedSliderColorClass]="'slider-color-checked-green'"
+                                        (onCheck)="val.Value = $event"></toggle-switch>
+                                </ng-container>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="'Results'">
+                      <div class="row no-gutters align-items-baseline se-result-display">
+                        <div class="col section-body-content section-panel-two-columns-settings se-result-success-container">
+                          <div *ngFor="let item of editorData?.Results; let i=index;" class="row no-gutters-2 border-bottom-1">
+                            <div class="col-2"><h6>{{item?.Name}}</h6></div>
+                            <div class="col">
+                              <div>
+                                {{resultMessages[i]}}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div *ngIf="compileSuccess" class="col">
+                          <div class="row justify-content-center">
+                              <div class="col-auto">
+                                  <i class="zmdi zmdi-check-circle zmdi-hc-5x se-success-mark"></i>
+                              </div>
+                          </div>
+                          <div class="row justify-content-center">
+                              <div class="col-auto">
+                                  <h4>{{ 'Нет ошибок!'}}</h4>
+                              </div>
+                          </div>
+                      </div>
+                        <div class="se-result-list" *ngIf="resultList.length">
+                          <ul class="list-group list-group-flush">
+                            <li class="list-group-item se-result-list-item" *ngFor="let error of resultList; let i=index">
+                              <span [ngStyle]="{'backgroundColor': error.Span ? '#ffe900': '#f37769'}" class="se-result-list-error"></span>
+                              {{i+1 + '. ' + error?.Message + (error.Span ? (' at line ' + error?.Span?.Start?.Line) : '')}}
+                            </li>
+                          </ul>
+                        </div>
+                    </div>
+                    </ng-container>
+                  </ng-container>
+              </ng-container>   
+            </section>
+          </ng-container>
+    </div>
+  </div>
+</div>
+

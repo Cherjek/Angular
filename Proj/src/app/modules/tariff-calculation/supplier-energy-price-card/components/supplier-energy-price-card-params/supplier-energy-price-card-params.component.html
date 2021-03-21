@@ -1,0 +1,10 @@
+<message-popup [(messages)]="errors"></message-popup>
+<loader-ro5 [(loading)]="loadingContent"></loader-ro5>
+<ahm-shared-properties
+    #propControl
+    permission="TC_ENERGY_PRICE_EDIT"
+    [isNew]="isNew"    
+    [properties]="properties"
+    (save)="save($event, propControl)"
+    [errorLoadEntity]="errorLoadEntity">
+</ahm-shared-properties>

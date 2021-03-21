@@ -1,0 +1,108 @@
+<message-popup [(messages)]="errors"></message-popup>
+<loader-ro5 [(loading)]="loadingContent"></loader-ro5>
+<header class="main-content-header row">
+    <div class="col">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3>Расписания</h3>
+            </div>
+        </div>
+    </div>
+</header>
+<div class="main-view-content">
+    <div class="col-filter-ro5 border-right-1">
+        <frame-filters-custompanel 
+            (onApplyFilter)="onApplyFilter($event)"
+            [service]="schedulesFilterContainerService"
+            [isAsyncCallbackStart]="loadingContent">
+        </frame-filters-custompanel>
+    </div>
+
+    <div class="col col-content-ro5 border-right-1">
+        <header class="section-header-content row">
+            <div class="col-auto">
+                <h5>Список расписаний</h5>
+            </div>
+            <div class="col"></div>
+            <div class="col-auto" *appCanAccess="'SDL_CREATE'">
+                <button-ro5 [class]="'btn btn-primary'" (onclick)="addNewSchedule()">
+                    + Добавить новое расписание
+                </button-ro5>
+            </div>
+        </header>
+
+        <data-grid-ro5 #Ro5DataGrid 
+          [HeaderActionTemplate]="headerActionTemplate"
+          (onActionButtonClicked)="onActionButtonClicked($event)">
+          <ng-template #headerActionTemplate>          
+            <div class="row no-gutters-2" *ngIf="Ro5DataGrid.SelectionRow?.isItemsSelect">
+              <div class="col-auto">
+                <!-- <dropdown-box-ro5 
+                  [keyField]="'code'" 
+                  [valueField]="'name'" 
+                  [itemsInput]="commandsActionSchedule"
+                  [buttonText]="'Действия'"
+                  [isSearch]="false"
+                  (itemEvent)="itemActionEvent($event)">
+                </dropdown-box-ro5> -->
+                <ng-template #popContent>
+                  <ng-container [ngSwitch]="menuConfirmItem == null">
+                    <ng-container *ngSwitchCase="true">
+                      <a *ngFor="let menuItem of commandsActionSchedule" 
+                        class="dropdown-item"
+                        (click)="menuConfirmItem = menuItem;$event.stopPropagation();"
+                        [innerHtml]="menuItem.name">                                                        
+                      </a>
+                    </ng-container>
+                    <ng-container *ngSwitchDefault>
+                      <div class="row no-gutters" style="margin: 15px 0">
+                        <div class="col">
+                          {{ 'Вы уверены, что хотите "' + menuConfirmItem.name + '" расписания' }}
+                        </div>
+                      </div>
+                      <div class="row no-gutters col-wrappanel" style="flex-wrap: nowrap;">
+                          <div class="col-auto">
+                              <button type="button" class="btn btn-primary" 
+                                (click)="itemActionEvent(menuConfirmItem);popUpActionButton.close()">
+                                  {{ menuConfirmItem.name.split(' ')[0] }}
+                              </button>
+                          </div>
+                          <div class="col-auto">
+                              <button type="button" class="btn btn-outline-secondary" (click)="popUpActionButton.close()">
+                                  Отмена
+                              </button>
+                          </div>
+                      </div>
+                    </ng-container>
+                  </ng-container>
+                  
+                </ng-template>
+                <button-ro5 
+                  [style.display]="commandsActionSchedule?.length ? 'block' : 'none'"
+                  class="btn-outline-secondary" 
+                  container="body" 
+                  placement="bottom auto"
+                  #popUpActionButton="ngbPopover" 
+                  [ngbPopover]="popContent" 
+                  [autoClose]="'outside'" 
+                  triggers="manual"
+                  (hidden)="menuConfirmItem = null"
+                  (click)="popUpActionButton.open();$event.stopPropagation();">
+                  Действия
+                  &nbsp;&nbsp;&nbsp;
+                  <i class="zmdi zmdi-caret-down"></i>
+                </button-ro5>
+              </div>
+            </div>
+          </ng-template>
+            <ng-template #cellColumnTemplate let-item="item" let-column="column">
+                <a *ngIf="column.Name === 'Name'" [routerLink]="[
+                        '../../schedule-module/schedule-card/' + item.Id + '/properties'
+                    ]" [innerHTML]="item[column.Name] | markerText: dataGrid.SearchFilter">
+                </a>
+                <a *ngIf="column.Name === 'UserGroup'" [innerHTML]="item.UserGroup?.Name | markerText: dataGrid.SearchFilter">
+                </a>
+            </ng-template>
+        </data-grid-ro5>
+    </div>
+</div>

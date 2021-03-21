@@ -1,0 +1,12 @@
+<!--
+<label class="switch">
+  <input type="checkbox" [checked]="checked">
+  <span class="runner"></span>
+  <span class="slider" (click)="onClick($event)"></span>
+</label>-->
+
+<span class="switch">
+  <input type="checkbox" [checked]="checked">
+  <span class="runner" (click)="onClick()" [ngClass]="checked ? checkedRunnerColorClass : uncheckedRunnerColorClass"></span>
+  <span class="slider" (click)="onClick()" [ngClass]="checked ? checkedSliderColorClass : uncheckedSliderColorClass"></span>
+</span>

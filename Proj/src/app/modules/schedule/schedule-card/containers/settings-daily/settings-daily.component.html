@@ -1,0 +1,24 @@
+<div class="">
+  <div class="row no-gutters align-items-center">
+    <div class="col-1">
+      <div>Дата начала: </div>
+    </div>
+    <div class="col-date-edit" [ngSwitch]="isPropEdit">
+      <date-picker-ro5 [isTimeShow]="false" *ngSwitchCase="true" [isIntervalMode]="false" [(fromDate)]="startDate"></date-picker-ro5>
+      <div *ngSwitchDefault>{{startDate | dateFormat}}</div>
+    </div>
+  </div>
+  <div class="daily-gutter" ></div>
+  <div class="row no-gutters align-items-center">
+    <div class="col-1 align-items-center justify-content-center">
+      <div>Повторять каждые: </div>
+    </div>
+    <div [ngSwitch]="isPropEdit">
+      <input-box *ngSwitchCase="true" [(value)]="repeatValue" [min]="1" [type]="'number'"></input-box>
+      <div *ngSwitchDefault>{{repeatValue}}</div>
+    </div>
+    <div>&nbsp; дн.</div>
+  </div>
+  <hr>
+  <rom-settings-time-params #timeParams [data]="data?.Time" [isPropEdit]="isPropEdit"></rom-settings-time-params>
+</div>

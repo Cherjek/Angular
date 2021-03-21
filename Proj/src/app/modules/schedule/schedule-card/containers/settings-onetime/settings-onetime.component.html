@@ -1,0 +1,12 @@
+<div class="onetime-parent">
+  <div class="row no-gutters align-items-center">
+    <div class="col-1">
+      <div>Дата и время срабатывания: </div>
+    </div>
+    <div [ngSwitch]="isPropEdit" class="col-date-edit">
+      <date-picker-ro5 *ngSwitchCase="true" [isIntervalMode]="false" [(fromDate)]="startDate">
+      </date-picker-ro5>
+      <div *ngSwitchDefault>{{startDate | dateTimeFormat}}</div>
+    </div>
+  </div>
+</div>

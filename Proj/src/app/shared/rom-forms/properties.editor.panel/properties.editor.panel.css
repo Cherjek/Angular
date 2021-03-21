@@ -1,0 +1,12 @@
+﻿.margin-left-10 {
+    margin-left: 10px;
+}
+
+.input-interval-type__width {
+    min-width: 80px;
+    max-width: 80px;
+}
+
+.input-interval-type__padding-bottom {
+    padding-bottom: 8px;
+}

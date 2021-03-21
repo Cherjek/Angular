@@ -1,0 +1,24 @@
+﻿<data-grid-ro5 #Ro5DataGrid
+               [DataGridOptions]="{ isSearchVisibility: false }"
+               [HeaderActionTemplate]="headerAction"
+               [HeaderTextTemplate]="'Всего тегов'">
+    <ng-template #headerAction>
+        <div class="row no-gutters-2 align-items-center" *ngIf="Ro5DataGrid.SelectionRow.isItemsSelect">
+            <div class="col-auto">
+                <button-ro5 [class]="'btn-orange'" (onclick)="onBasketItemAdd()">
+                    Добавить теги в корзину
+                </button-ro5>
+            </div>
+        </div>
+    </ng-template>
+    <ng-template #cellTemplateNode let-value="value">
+        <div [innerHTML]="value | pipeNoName | markerText:filterQuery"></div>
+    </ng-template>
+    <ng-template #cellTemplateLogicDevice let-value="value">
+        <div [innerHTML]="value | pipeNoName | markerText:filterQuery"></div>
+    </ng-template>
+    <ng-template #cellTemplateTag let-value="value">
+        <div [innerHTML]="value | pipeNoName | markerText:filterQuery"></div>
+    </ng-template>
+</data-grid-ro5>
+

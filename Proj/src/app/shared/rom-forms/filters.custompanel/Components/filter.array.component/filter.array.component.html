@@ -1,0 +1,28 @@
+﻿<div style="display: none" #listView="listViewFilter" listViewFilter [DataSource]="filter.Data | filterRow:'Value|' + filter.Lookup.LookupField.DisplayField:filter.Search.SearchText">	
+</div>
+<div *ngIf="!filter.IsValuesSingle && listView.Length > 1" class="row no-gutters row-dom-item-padding-vertical">
+	<div class="col-auto">
+		<check-box-ro5 [indeterminate]="listView.IsNotAllSelect"
+					   [checked]="listView.IsAllSelect" (onClick)="listView.checked($event.checked)"></check-box-ro5>
+	</div>
+	<div class="col-auto" (click)="listView.checked(listView.IsAllSelect ? false : listView.IsNotAllSelect ? false : true)">
+		Все
+	</div>
+</div>
+<div class="row no-gutters row-dom-item-padding-vertical" *ngFor="let item of listView.DataSource; index as i">
+	<div class="col-auto">
+		<check-box-ro5 *ngIf="!filter.IsValuesSingle"
+					   [checked]="item.IsCheck"
+					   (onClick)="item.IsCheck = $event.checked;listView.updateChecked();"></check-box-ro5>
+
+		<check-box-ro5 *ngIf="filter.IsValuesSingle"
+					   [typeInput]="'radio'"
+					   [name]="filter.Name"
+					   [checked]="item.IsCheck"
+					   (onClick)="onClickRadioButton(i)"></check-box-ro5>
+	</div>
+    <!--<div class="col" (click)="rowClick($event, item, i);listView.updateChecked();" [innerHTML]="item.Value[filter.Lookup.LookupField.DisplayField] | markerText:filter.Search.SearchText">		
+    </div>-->
+    <div class="col-10" (click)="rowClick($event, item, i);listView.updateChecked();" [innerHTML]="item.Value[filter.Lookup.LookupField.DisplayField]">		
+    </div>
+</div>

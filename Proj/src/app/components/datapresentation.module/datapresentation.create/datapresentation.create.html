@@ -1,0 +1,172 @@
+﻿<div class="main-view-component">
+    <div class="col border-right-1">
+        <ng-template #defHeader>
+            <header class="main-content-header row align-items-center">
+                <div class="col-auto">
+                    <backward-button></backward-button>
+                </div>
+                <div class="col">
+                    <h3> Уточните теги представления данных </h3>
+                </div>
+            </header>
+        </ng-template>
+        <ng-template [ngTemplateOutlet]="templateHeader ? templateHeader : defHeader"></ng-template>
+        <header class="section-header-content row" style="position: relative; z-index: 1;">
+            <message-popup [(messages)]="errors"></message-popup>
+            <div class="col-auto" style="padding: 0">
+                <div class="dropdown" style="height: 100%">
+                    <button class="dropdown-toggle" style="height: 100%; border: none; background-color: transparent" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {{ filterSearchName[filterByTag ? 2 : filterByUnit ? 1 : 0] }}
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" href="javascript:void(0)" (click)="filterBy(filterSearchName[0])"> {{ filterSearchName[0] }} </a>
+                        <a class="dropdown-item" href="javascript:void(0)" (click)="filterBy(filterSearchName[1])"> {{ filterSearchName[1] }} </a>
+                        <a class="dropdown-item" href="javascript:void(0)" (click)="filterBy(filterSearchName[2])"> {{ filterSearchName[2] }} </a>
+                    </div>
+                </div>
+            </div>
+            <div style="line-height: 48px">|</div>
+            <div class="col" style="padding: 0" [ngClass]="{'item-display-disabled': objectsLVLoading || unitsLVLoading || tagsLVLoading}">
+                <input-box [type]="'search'"
+                           [isFocus]="true"
+                           [isFullSize]="true"
+                           [(value)]="DGSearchFilter"
+                           (valueChange)="filterBy(filterSearchName[filterByObject ? 0 : filterByUnit ? 1 : 2])"></input-box>
+            </div>
+        </header>
+        <div class="row no-gutters-2 align-items-center col-content-ro5 border-bottom-1" style="height: 50px;">
+            <div class="col-auto" *ngIf="!DGSearchFilter">
+                <span style="font-weight: 600;" *ngIf="!tags2Basket"> Всего тегов: {{ totalTagsAmt }}</span>
+                <button type="button" class="btn btn-orange" *ngIf="tags2Basket"
+                        (click)="tags2BasketFrom3LV()">
+                    Добавить теги в корзину
+                </button>
+            </div>
+            <div class="col-auto" *ngIf="DGSearchFilter">
+                <span style="font-weight: 600;" *ngIf="!tags2Basket"> Найдено тегов: {{ DGLoading ? 0 : (this.dataGrid.getVisibleItems() || []).length }} </span>
+                <button type="button" class="btn btn-orange" *ngIf="tags2Basket"
+                        (click)="tags2BasketFromDG()">
+                    Добавить теги в корзину
+                </button>
+            </div>
+        </div>
+        <div class="row main-view-component" [ngStyle]="{'display': DGSearchFilter ? 'none' : ''}">
+            <!--<loader-ro5 [(loading)]="loading"></loader-ro5>-->
+            <div class="col border-right-1" style="background-color: white;">
+                <loader-ro5 [(loading)]="objectsLVLoading"></loader-ro5>
+                <list-view-ro5 #objectsLV
+                               [HeaderText]="isHierarchy ? hierarchyApp.NodesName : 'Объекты'"
+                               [KeyField]="'ObjId'"
+                               [ControlId]="'objectsLVId'"
+                               [DataSource]="[]"
+                               [DisplayField]="'ObjName'"
+                               [RowTemplate]="objectRowTemplate"
+                               [IsSelected]="true"
+                               [IsFocused]="true"
+                               (OnItemClick)="onObjectClick($event)"
+                               (OnItemCheckClick)="onObjectCheckClick($event)">
+                    <ng-template #objectRowTemplate let-item="item" let-id="id">
+                        <div class="row">
+                            <div class="col">
+                                <div [innerHtml]="item.Data['ObjName'] | markerText:objectsLV.SearchFilter"></div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="zmdi zmdi-chevron-right zmdi-hc-2x"></i>
+                            </div>
+                        </div>
+                    </ng-template>
+                </list-view-ro5>
+            </div>
+            <div class="col border-right-1" style="background-color: white;">
+                <loader-ro5 [(loading)]="unitsLVLoading"></loader-ro5>
+                <list-view-ro5 #unitsLV
+                               [HeaderText]="'Оборудование'"
+                               [KeyField]="'UnitId'"
+                               [ControlId]="'unitsLVId'"
+                               [DataSource]="[]"
+                               [DisplayField]="'UnitName'"
+                               [RowTemplate]="unitRowTemplate"
+                               [IsSelected]="true"
+                               [IsFocused]="true"
+                               (OnItemClick)="onUnitClick($event)"
+                               (OnItemCheckClick)="onUnitCheckClick($event)">
+                    <ng-template #unitRowTemplate let-item="item" let-id="id">
+                        <div class="row">
+                            <div class="col">
+                                <div [innerHtml]="item.Data['UnitName'] | pipeNoName | markerText:unitsLV.SearchFilter"></div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="zmdi zmdi-chevron-right zmdi-hc-2x" [ngStyle]="{'color': item.IsFocused ? 'red' : ''}"></i>
+                            </div>
+                        </div>
+                    </ng-template>
+                </list-view-ro5>
+            </div>
+            <div class="col" style="background-color: white;">
+                <loader-ro5 [(loading)]="tagsLVLoading"></loader-ro5>
+                <list-view-ro5 #tagsLV
+                               [HeaderText]="'Теги'"
+                               [KeyField]="'TagId'"
+                               [ControlId]="'tagsLVId'"
+                               [DataSource]="[]"
+                               [DisplayField]="'FullTagName'"
+                               [RowTemplate]="tagRowTemplate"
+                               [IsFocused]="false"
+                               [IsSelected]="true"
+                               (OnItemClick)="onTagClick($event)"
+                               (OnItemCheckClick)="onTagHeaderCheckClick($event)">
+                    <ng-template #tagRowTemplate let-item="item" let-id="id">
+                        <div class="row">
+                            <div class="col">
+                                <span [innerHtml]="item.Data['TagCode'] + ' ' | markerText:tagsLV.SearchFilter"></span>
+                                <span class="text-info-additional" [innerHtml]="item.Data['TagName'] | markerText:tagsLV.SearchFilter"></span>
+                                <span class="text-info-additional" [innerHtml]="(item.Data['TagUnitName'] ? ', ' + item.Data['TagUnitName'] : '') | markerText:tagsLV.SearchFilter"></span>
+                            </div>
+                        </div>
+                    </ng-template>
+                </list-view-ro5>
+            </div>
+        </div>
+        <div class="row main-view-content" [ngStyle]="{'display': DGSearchFilter ? '' : 'none'}" style="height: calc(100% - 3*50px);">
+            <div class="col col-content-ro5 border-right-1" style="height: 100%;">
+                <loader-ro5 [(loading)]="DGLoading"></loader-ro5>
+                <data-grid-ro5 #dataGrid
+                               [KeyField]="'FullTagId'"
+                               [DataSource]="[]"
+                               [DataGridOptions]="{ isSearchVisibility: false }"
+                               [RowsTemplate]="GridRowlTemplate">
+                    <ng-template #GridRowlTemplate let-item>
+                        <div class="row">
+                            <div class="col" style="text-align: left;">
+                                <div [innerHTML]="item['ObjName'] | markerText:(filterByObject ? DGSearchFilter : '')"></div>
+                            </div>
+                            <div class="col" style="text-align: left;">
+                                <div [innerHTML]="item['UnitName'] | markerText:(filterByUnit ? DGSearchFilter : '')"></div>
+                            </div>
+                            <div class="col" style="text-align: left;">
+                                <span [innerHtml]="item['TagCode'] + ' ' | markerText:(filterByTag ? DGSearchFilter : '')"></span>
+                                <span class="text-info-additional" [innerHtml]="item['TagName'] | markerText:(filterByTag ? DGSearchFilter : '')"></span>
+                                <span class="text-info-additional" [innerHtml]="(item['TagUnitName'] ? (', ' + item['TagUnitName']) : '') | markerText:(filterByTag ? DGSearchFilter : '')"></span>
+                            </div>
+                        </div>
+                    </ng-template>
+                </data-grid-ro5>
+            </div>
+        </div>
+    </div>
+    <!--<div class="col-auto show-basket"
+         [ngStyle]="{'width': ((basket || {}).DataSource || {}).length > 0 ? '330px' : '0' }">-->
+    <div class="col-auto show-basket"
+         [ngStyle]="{'width': (basket.DataSource || []).length > 0 ? '330px' : '0' }">
+        <!--<loader-ro5 [(loading)]="basketLoading"></loader-ro5>-->
+        <tags-basket #basket
+                     [KeyField]="'FullTagId'"
+                     [DataSource]="[]"
+                     [loading]="basketLoading"
+                     [(objectsLVLoading)]="objectsLVLoading"
+                     [(DGLoading)]="DGLoading"
+                     [PropertyForm]="PropertyFormBasket"
+                     (onDroppedTags)="tagsFromBasket($event)">
+        </tags-basket>
+    </div>
+</div>

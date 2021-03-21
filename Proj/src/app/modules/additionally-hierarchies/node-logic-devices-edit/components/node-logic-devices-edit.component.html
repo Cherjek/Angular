@@ -1,0 +1,114 @@
+﻿<div class="main-view-component">
+    <div class="col border-right-1">
+        <header class="main-content-header row">
+            <div class="col-auto">
+                <backward-button></backward-button>
+            </div>
+            <div class="col">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h3> Редактирование доступного оборудования </h3>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="main-view-content">
+            <div class="col-filter-ro5 border-right-1">
+                <frame-filters-custompanel #ObjRo5FiltersPanel
+                                           (onApplyFilter)="onApplyFilter($event)"
+                                           [service]="filterContainerService"
+                                           [isAsyncCallbackStart]="loadingDG"></frame-filters-custompanel>
+            </div>
+            <div class="col col-content-ro5">
+                <message-popup [(messages)]="DGErrors"></message-popup>
+                <loader-ro5 [(loading)]="loadingDG"></loader-ro5>
+                <data-grid-ro5 #Ro5DataGrid
+                               class="unitsEditVS"
+                               [KeyField]="'Id'"
+                               [HeaderTemplate]="GridHeaderTemplate"
+                               [DataSource]="DGSrc"
+                               [RowsTemplate]="GridRowTemplate"
+                               [DetailRow]="{ components: DetailsRowComponents }"
+                               [SelectionRowMode]="DGSelectionRowMode.Multiple">
+                    <ng-template #GridRowTemplate let-item>
+                        <div class="row">
+                            <div class="col" style="text-align: left;">
+
+                                <!-- <a [routerLink]="['/ld-editor/' + item.Id + '/properties']"
+                                   [queryParams]="{ unitId: item.IdUnit }"
+                                   [innerHTML]="item.DisplayName | markerText:dataGrid.SearchFilter"></a> -->
+                                <a [routerLink]="['/ld-editor/' + item.Id + '/properties']"
+                                   [innerHTML]="item.DisplayName | pipeNoName | markerText:dataGrid.SearchFilter"></a>
+
+                                <br>
+                                <span class="text-info-additional" [innerHTML]="item.UnitDisplayName | markerText:dataGrid.SearchFilter"></span>
+                                <br>
+                                <span class="text-info-additional" [innerHTML]="item.UnitAdditionalInfoo | markerText:dataGrid.SearchFilter"></span>
+
+                            </div>
+                        </div>
+                    </ng-template>
+
+                    <ng-template #GridHeaderTemplate>
+                        <header class="row no-gutters align-items-center">
+                            <div class="col-auto" *ngIf="Ro5DataGrid.SelectionRow.isItemsSelect">
+                                <button-ro5 class="btn-orange" (onclick)="toObjectsPanel()">
+                                    В корзину
+                                </button-ro5>
+                            </div>
+                        </header>
+                    </ng-template>
+                </data-grid-ro5>
+
+                <footer class="section-footer-content">
+                    <div class="row no-gutters col-wrappanel align-items-center margin-left-5">
+                        <div class="col-auto">
+                            <button-ro5 [class]="'btn-primary'" (onclick)="Save()" [disabled]="loadingBasket">
+                                Сохранить
+                            </button-ro5>
+                        </div>
+                        <div class="col-auto">
+                            <button-ro5 [class]="'btn-outline-secondary'" (onclick)="Cancel()" [disabled]="loadingBasket">
+                                Отмeна
+                            </button-ro5>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-auto col-basket" [ngClass]="{'show' : pageInitComplete && (BasketSrc || []).length }">
+        <header class="main-content-header row">
+            <div class="col">
+                <h4>Корзина</h4>
+            </div>
+            <div class="col-auto">
+                <button-ro5 (onclick)="clearAllBasket()" [class]="'btn-outline-secondary button-main-header'">
+                    Сброс
+                </button-ro5>
+            </div>
+        </header>
+
+        <div class="col-objects-ro5">
+
+            <loader-ro5 [(loading)]="loadingBasket"></loader-ro5>
+            <message-popup [(messages)]="BasketErrors"></message-popup>
+
+            <list-view-ro5 #listView
+                           KeyField="Id"
+                           DisplayField="DisplayName"
+                           AdditionalField="UnitDisplayName"
+                           [DataSource]="BasketSrc"
+                           [IsSelected]="true"
+                           [IsRemoved]="true"                               
+                           (OnRemoveListItem)="clearItemsBasket($event)"></list-view-ro5> 
+        </div>
+    </div>
+</div>
+
+
+
+

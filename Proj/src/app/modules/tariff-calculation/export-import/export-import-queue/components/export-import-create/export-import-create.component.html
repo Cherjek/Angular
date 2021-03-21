@@ -1,0 +1,253 @@
+<div class="main-view-component">
+
+  <div class="col border-right-1">
+
+      <header class="main-content-header row">
+          <div class="col-auto">
+              <backward-button></backward-button>
+          </div>
+          <div class="col">
+              <h3 *ngIf="typeForm === 'export'">Настройки экспорта</h3>
+              <h3 *ngIf="typeForm === 'import'">Настройки импорта с сайта АТС</h3>
+              <h3 *ngIf="typeForm === 'import-files'">Настройки импорта из файла</h3>
+          </div>
+      </header>
+
+      <div class="main-view-content">
+          <div class="col col-content-ro5">
+              <message-popup [(messages)]="errors"></message-popup>
+              <loader-ro5 [(loading)]="loadingContent"></loader-ro5>
+
+              <div class="col-content-flex-column">
+
+                  <section class="section-body-content section-panel-two-columns-settings">
+                  
+                    <header class="row no-gutters-2 section-header-grouppanel-expander">
+                      <div class="col">
+                        <h5>Настройки</h5>
+                      </div>
+                    </header>
+
+                    <ng-container *ngIf="typeForm !== 'import-files'">
+                      <div class="row no-gutters-2 border-bottom-1">
+                        <div class="col-2">
+                          <h6>Временной диапазон</h6>
+                        </div>
+                        <div class="col">
+                          <div class="col">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="date-group-control">
+                                        <div class="row">
+                                            <div class="col">
+                                                <date-picker-ro5 #calendarSettings
+                                                                 [(fromDate)]="dateStart" 
+                                                                 [(toDate)]="dateEnd" 
+                                                                 [isDefFast]="true"
+                                                                 [fastPanel]="true"></date-picker-ro5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </ng-container>                    
+
+                    <div class="row no-gutters-2 border-bottom-1">
+                      <div class="col-2">
+                        <h6>Название</h6>
+                      </div>
+                      <div class="col">
+                        <input-box [placeholder]="'Название'" [maxlength]="128" [(value)]="name">
+                        </input-box>
+                      </div>
+                    </div>
+
+                    <ng-container *ngIf="typeForm === 'import-files'">
+                      <div class="row no-gutters-2 border-bottom-1">
+                        <div class="col-2">
+                          <h6>Файлы</h6>
+                        </div>
+                        <div class="col">
+                          <rom-uploader 
+                            multiple="true"
+                            asBlob="true"
+                            (onFileUpload)="onFileUpload($event)"
+                            (onWrongFileUpload)="onFileUploadError($event)">
+                          </rom-uploader>
+                        </div>
+                      </div>
+                    </ng-container>
+
+                    <ng-container *ngIf="typeForm !== 'import-files'">
+                      <div class="row no-gutters-2 border-bottom-1" *ngFor="let item of exportImportSettingTypesArr">
+                        <div class="col-2"><h6>{{item.Name}}</h6></div>
+                        <div class="col" [ngClass]="{'details-row-view background': isIssueEdit(item) }">
+                            <!--Tags View-->
+                            <table class="view-tag-panel"
+                                   [ngStyle]="{'display': isIssueEdit(item) ? 'none' : '' }">
+                                <tbody>
+                                    <tr *ngFor="let tag of getTagsChecked(item)" class="item-row-checkbox">
+                                        <td>
+                                            <span class="tag-info-label">
+                                                {{tag.Code}}
+                                            </span>
+                                            <span class="text-info-additional">
+                                                {{ tag.Name}}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <button type="button" class="btn-outline-circle btn-circle-size-32" placement="top" container="body" ngbTooltip="Удалить" (click)="onClickedRemove(tag, $event, item)">
+                                                <i class="zmdi zmdi-delete"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+  
+                            <!--Tags Edit-->
+                            <div [attr.id]="'folder' + item.Id" class="collapse">
+                                <div class="row no-gutters">
+                                    <div class="col">
+                                        <div class="row no-gutters align-items-center edit-issue-header">
+                                            <div class="col">
+                                                <h5>{{item.Name}}</h5>
+                                            </div>
+                                            <div class="col-auto">
+                                                <button type="button" class="btn-outline-circle btn-circle-size-32" data-toggle="collapse" [attr.data-target]="'#folder' + item.Id" (click)="onClickedCancel(item)">
+                                                    <i class="zmdi zmdi-close"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="row no-gutters">
+                                            <div class="col">
+                                                <!--Tags-->
+                                                <table class="editTagPanel">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>
+                                                                <div class="row no-gutters align-items-end item-row-checkbox" (click)="allTagsClick(item)">
+                                                                    <div class="col-auto">
+                                                                        <check-box-ro5 class="tag-info-label" [label]="'Все'" [indeterminate]="item.Indeterminate" [checked]="item.IsCheck"></check-box-ro5>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                        <tr *ngFor="let tag of item.Tags">
+                                                            <td>
+                                                                <div class="row no-gutters col-wrappanel align-items-end item-row-checkbox" (click)="tag.IsCheck = !tag.IsCheck;issueTagCheckChange(item)">
+                                                                    <div class="col-auto">
+                                                                        <check-box-ro5 class="tag-info-label" [label]="tag.Code" [checked]="tag.IsCheck"></check-box-ro5>
+                                                                    </div>
+                                                                    <div class="col-auto">
+                                                                        <span class="text-info-additional">
+                                                                            {{tag.Name}}
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+  
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+  
+                                        <div class="row no-gutters col-wrappanel">
+                                            <div class="col-auto">
+                                                <button type="button" class="btn btn-primary" data-toggle="collapse" [attr.data-target]="'#folder' + item.Id" (click)="onClickedSave(item)">Сохранить</button>
+                                            </div>
+                                            <div class="col-auto">
+                                                <button type="button" class="btn btn-outline-secondary" data-toggle="collapse" [attr.data-target]="'#folder' + item.Id" (click)="onClickedCancel(item)">Отмена</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+  
+                            <button type="button" class="btn btn-outline-secondary" data-toggle="collapse" [attr.data-target]="'#folder' + item.Id" (click)="onClickedAdd(item)"
+                                    [ngStyle]="{'display': isIssueEdit(item) ? 'none' : '' }">
+                                Редактировать
+                            </button>
+                        </div>
+                      </div>
+                      <div class="row no-gutters-2 border-bottom-1">
+                        <div class="col-2">
+                          <h6>Список гарантирующих поставщиков</h6>
+                        </div>
+                        <div class="col">
+                          <chips-ro5 #suppliersChips [itemsInput]="suppliersView"></chips-ro5>
+                        </div>
+                      </div>
+                      <ng-container *ngIf="typeForm === 'export'">
+                        <div class="row no-gutters-2">
+                          <div class="col-2">
+                            <h6>Формат</h6>
+                          </div>
+                          <div class="col">
+                            <combo-box-ro5 [keyField]="'Id'"
+                              [valueField]="'Name'"
+                              [value]="fileFormat"
+                              [itemsInput]="fileFormats"
+                              (onSelected)="fileFormat = $event;"></combo-box-ro5>
+                          </div>
+                        </div>                      
+                      </ng-container>
+                    </ng-container>                                      
+                  
+                  </section>
+                  <footer class="section-footer-content" [ngStyle]="{ 'cursor': isCreateValidSuccess ? 'not-allowed' : 'default' }">
+                    <div class="row no-gutters col-wrappanel align-items-center justify-content-end" [ngClass]="{ 'item-display-disabled' : isCreateValidSuccess }" 
+                         [ngSwitch]="isShowTemplateSavePanel"
+                         style="margin-right: 15px">
+                        <div class="col-auto" *ngSwitchCase="false">
+                            <button [disabled]="saveComplete" 
+                              [ngStyle]="{ 'cursor': (saveComplete) ? 'not-allowed' : 'default' }"
+                              class="btn button-apply button-settemplate-left" [ngClass]="{'drop-radius':typeForm !== 'import-files'}" (click)="save()">
+                              Поставить в очередь
+                            </button>
+                            <ng-container *ngIf="typeForm !== 'import-files'">
+                              <button *appCanAccess="typeForm === 'export' ? 'TC_EXPORT_USE_FAVORITES' : 'TC_IMPORT_USE_FAVORITES'"
+                              [disabled]="saveComplete" class="btn btn-darkgreen button-settemplate-right"
+                              [ngStyle]="{ 'cursor': (saveComplete) ? 'not-allowed' : 'default' }"
+                              placement="top" ngbTooltip="Добавить в шаблон"                                        
+                              (click)="isShowTemplateSavePanel = true">
+                              <i class="zmdi zmdi-star"></i>
+                             </button>
+                            </ng-container>
+                        </div>
+                        <div class="col" *ngSwitchCase="true" style="padding-left: 10px">
+                            <div class="row no-gutters col-wrappanel align-items-center">
+                                <div class="col">
+                                    <input-box #inputNameTemplate class="allowance-input-width"
+                                               [placeholder]="'Название шаблона'"
+                                               [maxlength]="128"
+                                               [isFocus]="true"
+                                               [isEnableValidate]="true"
+                                               [(value)]="__value"
+                                               (isCheckValidValue)="isValidSaveTemplate = $event"></input-box>
+                                </div>
+                                <div class="col-auto" [ngStyle]="{ 'cursor': (!isValidSaveTemplate || saveComplete) ? 'not-allowed' : 'default' }">
+                                    <button style="height: 40px; width: 250px;" [ngClass]="{ 'item-display-disabled' : (!isValidSaveTemplate || saveComplete)}"
+                                            type="button" class="btn btn-primary" (click)="saveTemplate((inputNameTemplate || {}).value)">
+                                        Сохранить
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <button 
+                            [ngStyle]="{ 'cursor': (saveComplete) ? 'not-allowed' : 'default' }"
+                            [disabled]="saveComplete" style="height: 40px; width:150px" type="button" class="btn btn-outline-secondary" (click)="clickCancelButton()"> Отмена </button>
+                        </div>
+                    </div>
+                </footer>
+              </div>
+
+          </div>
+      </div>
+
+  </div>
+</div>

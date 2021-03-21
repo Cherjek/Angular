@@ -1,0 +1,43 @@
+<loader-ro5 [(loading)]="loadingDuringRemoving"></loader-ro5>
+
+<message-popup [messages]="errors"></message-popup>
+
+<div class="col-content-flex-column">
+    <section id="favorites" class="section-body-content">
+        <header class="section-header-content">
+            <input-box [type]="'search'" [isFocus]="true" [isFullSize]="true" [(value)]="searchText"></input-box>
+        </header>
+        <div class="favorite-row border-bottom-1" *ngFor="let favor of favTemps | searchRow:searchText; index as i">
+            <div class="row no-gutters-2 align-items-baseline">
+                <div class="col-auto col-icon">
+                    <i class="zmdi zmdi-more-vert"></i>
+                </div>
+                <div class="col" (click)="onFavoriteSelect($event, favor)" [innerHTML]="favor.Name | markerText:searchText"></div>
+                <div class="col-auto" placement="top" container="body" ngbTooltip="Удалить">
+                    <button class="btn-outline-circle btn-circle-size-24" data-toggle="collapse" [attr.data-target]="'#warning' + favor.Id">
+                        <i class="zmdi zmdi-delete"></i>
+                    </button>
+                </div>
+            </div>
+            <div id="warning{{favor.Id}}" class="detail border-top-1 collapse">
+                <div class="row no-gutters-2 align-items-center justify-content-end">
+                    <div class="col-auto">
+                        <div class="row no-gutters col-wrappanel">
+                            <div class="col-auto">Вы уверены?</div>
+                            <div class="col-auto">
+                                <button class="btn-outline-circle btn-circle-size-24" (click)="deleteTemplate(favor)">
+                                    <i class="zmdi zmdi-check"></i>
+                                </button>
+                            </div>
+                            <div class="col-auto">
+                                <button class="btn-outline-circle btn-circle-size-24" data-toggle="collapse" [attr.data-target]="'#warning' + favor.Id">
+                                    <i class="zmdi zmdi-close"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

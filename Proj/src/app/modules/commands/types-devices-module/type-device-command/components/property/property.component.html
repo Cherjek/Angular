@@ -1,0 +1,11 @@
+<message-popup [(messages)]="errors"></message-popup>
+<loader-ro5 [(loading)]="loadingContent"></loader-ro5>
+<ahm-shared-properties 
+    #propertyControl
+    permission="CFG_DEVICE_EDIT_COMMANDS"
+    [isNew]="isNew" 
+    [properties]="properties" 
+    (optionControlDropDown)="optionControlDropDown($event)"
+    (save)="save($event, propertyControl)" 
+    [errorLoadEntity]="errorLoadEntity">
+</ahm-shared-properties>

@@ -1,0 +1,34 @@
+<div class="main-view-content height-auto">
+    <message-popup [(messages)]="errors"></message-popup>
+    <loader-ro5 [(loading)]="loadingContent"></loader-ro5>
+    <div class="col col-content-ro5 border-right-1">
+        <header class="section-header-content row">
+            <div class="col-auto">
+                <h5> Варианты выбора </h5>
+            </div>
+            <div class="col"></div>
+            <div class="col-auto" *appCanAccess="permission">
+                <button-ro5 [class]="'btn btn-primary'" (onclick)="addOption()">
+                    + Добавить выбор
+                </button-ro5>
+            </div>
+        </header>
+        <div class="main-view-content height-auto">
+            <div class="col col-content-ro5 border-right-1">
+                <data-grid-ro5 #Ro5DataGrid 
+                    (onActionButtonClicked)="onDGRowActionBtnClick($event)">
+                    
+                    <ng-template #cellNameParam let-item="item">
+                        <a [routerLink]="['/commands-module/o/types-devices/' + idDeviceType + '/command/' + commandId + '/parameters/' + parameterId + '/options/' + item.Id + '/property']"
+                            [innerHTML]="item?.Text | markerText:dataGrid.SearchFilter"></a>
+                    </ng-template>
+
+                    <ng-template #cellValueParam let-item="item">
+                        <span [innerHTML]="item?.ValueType?.Text | pipeNoName | markerText:dataGrid.SearchFilter"></span>
+                    </ng-template>
+
+                </data-grid-ro5>
+            </div>
+        </div>
+    </div>
+</div>

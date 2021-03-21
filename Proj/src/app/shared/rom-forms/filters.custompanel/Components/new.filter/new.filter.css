@@ -1,0 +1,73 @@
+﻿a.border-dashed-bottom-1 {
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+    a.border-dashed-bottom-1:hover {
+        border-color: black;
+        cursor: pointer;
+    }
+
+/*.col-content-flex-column section .row.border-bottom-1:hover {
+    cursor: pointer;
+    background-color: #D3D8E1;
+}*/
+
+.filter-caption:hover {
+    background-color: rgba(64, 65, 69, 0.05 );
+}
+
+.filter-operator {
+    font-size: 14px;
+    cursor: pointer;
+    padding: 5px;
+}
+.filter-operator:hover {
+    background-color: #D3D8E1;
+}
+/************************************/
+.packname, .groupname {
+    min-height: 40px;
+    height: 40px;    
+}
+.packname {
+    background-color: #e7ebf4;
+}
+.packname > .col > span {
+    height: 19px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #575d6b;
+}
+.packname:hover {
+    cursor: pointer;
+}
+.packname:active {
+    background-color: #c8d1e6;
+}
+
+.groupname > .col span {
+    height: 19px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #575d6b;
+}
+/************************************/
+.filter-caption > .col > .row {
+    min-height: 30px;
+    height: 30px;
+    cursor: pointer;
+}
+.filter-caption > .col > .row > .col span {
+    height: 19px;
+    font-size: 14px;
+    color: #575d6b;
+}
+.row.filter-caption:hover {
+    background-color: rgba(64, 65, 69, 0.05);
+}
+.filter-props-active {
+    background-color: rgba(64, 65, 69, 0.1);
+}
+/************************************/

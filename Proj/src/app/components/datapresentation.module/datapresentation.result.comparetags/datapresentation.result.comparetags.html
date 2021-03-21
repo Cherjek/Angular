@@ -1,0 +1,88 @@
+﻿<header class="main-content-header row">
+    <div class="col-auto">
+        <backward-button></backward-button>
+    </div>
+    <div class="col">
+        <h3>Сравнение тегов</h3>
+    </div>    
+</header>
+<div class="main-view-content">
+    <div class="col col-content-ro5" style="display: flex">
+        
+        <loader-ro5 [(loading)]="loadingViewPanel"></loader-ro5>
+        
+        <div id="panelGraph" class="splitter_panel" style="flex: 1 1 auto">
+            <div id="resizebleContent" #splitterCanvasGraph [ngClass]="{ 'ct-state-invisible': !showGraphPanel }" class="top_panel">
+                <loader-ro5 [(loading)]="loadingGraphViewPanel"></loader-ro5>
+                <div id="charttags" style="width: 100%; background-color: #fff" [style.height.px]="getPixelHeightGraph(splitterCanvasGraph)"></div>
+            </div>
+            <div class="bottom_panel" style="height:calc(100%)">
+                <div #splitterTableTag class="row no-gutters" style="height:calc(100%)">
+                    <div class="col">
+
+                        <data-grid-ro5 #Ro5DataGrid
+                                       [ParentElementRef]="splitterTableTag"
+                                       [HeaderActionTemplate]="headerAction"
+                                       [HeaderHeight]="'auto'"
+                                       [DataGridOptions]="{ isSearchVisibility: false }"
+                                       [KeyField]="'Datetime'"
+                                       (onDataBinding)="onDataGraphBinding($event)">
+                        </data-grid-ro5>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <ng-template #headerAction>
+            <div class="row no-gutters align-items-center justify-content-end">
+                <div class="col-auto">
+                    <button type="button" class="btn btn-outline-secondary" (click)="createTagsGraph()" *ngIf="isButtonGraphShow">
+                        {{ !showGraphPanel ? 'Показать на графике' : 'Скрыть график' }}
+                    </button>
+                </div>
+            </div>
+        </ng-template>
+
+        <ng-template #colDateTemplate col>
+            <div class="row no-gutters align-items-center">
+                <div class="col">
+                    {{ dateRangeHeaderColumn.start | dateFormat }} - {{ dateRangeHeaderColumn.end | dateFormat }}
+                </div>
+            </div>
+        </ng-template>
+
+        <ng-template #colTagTemplate let-col>
+            <div class="row no-gutters align-items-center">
+                <div class="col">
+                    <div class="row no-gutters align-items-center" [style.color]="getTagsHeaderColor(col.Name)">
+                        <div class="col-auto">
+                            <span>{{ getItemColText(col, 'TagCode') }}</span><span>&nbsp;</span>
+                        </div>
+                        <div class="col-auto">
+                            <span class="text-info-additional" style="font-weight: 100; color: inherit">{{ getItemColText(col, 'TagName') }}</span>
+                        </div>
+                    </div>
+                    <div class="row no-gutters align-items-center" style="margin: 8px 0">
+                        <div class="col">
+                            <span class="text-info-additional" style="font-weight: 100">{{ getItemColText(col, 'UnitDisplayText') }}</span>
+                        </div>
+                    </div>
+                    <div class="row no-gutters align-items-center">
+                        <div class="col">
+                            <span class="text-info-additional" style="font-weight: 100">{{ getItemColText(col, 'LogicDeviceDisplayText') }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+
+        <ng-template #cellTag let-item="item" let-value="value" let-column="column">
+            <div class="row no-gutters" *ngIf="value != null">
+                <div class="col">
+                    <span [innerHtml]="value | decimalFormat | markerText:dataGrid.SearchFilter:1"></span>&nbsp;&nbsp;<span [innerHtml]="Columns[column.Name].TagUnitName | markerText:dataGrid.SearchFilter"></span>
+                </div>
+            </div>
+        </ng-template>
+    </div>
+</div>

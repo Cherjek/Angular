@@ -1,0 +1,28 @@
+.zmdi-chevron-right {
+    color: rgba(0, 0, 0, 0.54);
+}
+a {
+    cursor: pointer;
+}
+.detail-report-header {
+    background-color: #EFECD6;
+    position: relative;
+    /*display: flex;
+    align-items: center*/
+}
+.detail-report-header span {
+    position: absolute;
+    top: 10px;
+}
+.report-create-setting-header {
+    height: 50px;
+}
+.report-create-setting-header > div:last-child i {
+    margin-top: 3px;
+}
+.main-view-content .col-filter-ro5 {
+    width: 350px;
+}
+.col-objects-ro5 {
+    height: calc(100% - 50px); 
+}

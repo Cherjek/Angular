@@ -1,0 +1,22 @@
+{
+  "extends": "../tslint.json",
+  "rules": {
+    "directive-selector": [
+      true,
+      "attribute",
+      "rom",
+      "camelCase"
+    ],
+    "component-selector": [
+      true,
+      "element",
+      "rom",
+      "kebab-case"
+    ],
+    "variable-name": {
+      "options": [
+        "allow-leading-underscore"
+      ]
+    }
+  }
+}

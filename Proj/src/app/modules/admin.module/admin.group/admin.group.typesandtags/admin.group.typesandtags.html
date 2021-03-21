@@ -1,0 +1,199 @@
+﻿<message-popup [(messages)]="errors"></message-popup>
+<loader-ro5 [(loading)]="typesLoading"></loader-ro5>
+
+<div class="main-view-content height-auto main-view-result col-content-ro5">
+    <div class="col">
+        <div class="col-content-flex-column">
+            <header class="section-header-content row no-gutters">
+                <div class="col-auto">
+                    <h5> Типы оборудования и доступные теги </h5>
+                </div>
+                <div class="col"></div>
+                <div class="col-auto" *appCanAccess="'ADM_EDIT_GROUP_TAG_TYPES'">
+                    <button-ro5 *ngIf="editMode"
+                                [class]="'btn btn-outline-secondary'"
+                                (onclick)="cancelTypeTagsChanges()">
+                        Отменить изменения
+                    </button-ro5>
+                    <button-ro5 *ngIf="!editMode"
+                                [class]="'btn btn-primary'"
+                                [disabled]="typesLoading"
+                                (onclick)="changeListTypeTags()">
+                        Изменить
+                    </button-ro5>
+                </div>
+            </header>
+
+            <section class="section-body-content settings-container" style="overflow-y: hidden;">
+                <div class="row no-gutters">
+                        <div class="col border-right-1 max-width-415">
+                            <loader-ro5 [(loading)]="typesLoading"></loader-ro5>
+
+                            <header class="section-header-content row">
+                                <div class="col-auto">
+                                    <h5> Доступные типы оборудования </h5>
+                                </div>
+                                <div class="col"></div>
+                                <div *ngIf="editMode" class="col-auto">
+                                    <dropdown-box-ro5 #typesDDB
+                                                      [keyField]="'Id'"
+                                                      [valueField]="'Name'"
+                                                      [isSelected]="true"
+                                                      [itemsInput]="typeTags | filterByField:'IsActive':false:typesPipeTrigger"
+                                                      [footerTemplate]="typesFooterTemplate"
+                                                      [buttonText]="'Добавить'"
+                                                      [BttnColorClass]="'btn-primary'">
+                                        <ng-template #typesFooterTemplate>
+                                            <footer class="section-footer-content">
+                                                <div class="row no-gutters-2 align-items-center">
+                                                    <div class="col">
+                                                        <div class="row no-gutters align-items-center col-wrappanel" style="flex-wrap: nowrap">
+                                                            <div class="col-auto">
+                                                                <button-ro5 [class]="'btn btn-primary'"
+                                                                            (onclick)="addTypes(typesDDB.getSelectedRows());typesDDB.close()">
+                                                                    Добавить типы
+                                                                </button-ro5>
+                                                            </div>
+                                                            <div class="col-auto">
+                                                                <button-ro5 [class]="'btn btn-outline-secondary'"
+                                                                            (onclick)="typesDDB.close()">
+                                                                    Отмена
+                                                                </button-ro5>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </footer>
+                                        </ng-template>
+                                    </dropdown-box-ro5>
+                                </div>
+                            </header>
+
+                            <list-view-ro5 #ldTypesLV
+                                           [KeyField]="'Id'"
+                                           [RowTemplate]="ldTypesLVRowTemplate"
+                                           [DataSource]="typeTags | filterByField:'IsActive':true:typesPipeTrigger"
+                                           [DisplayField]="'Name'"
+                                           [IsFocused]="true"
+                                           (OnItemClick)="onTypeClick($event)">
+                                <ng-template #ldTypesLVRowTemplate let-item="item">
+                                    <div class="row align-items-center">
+                                        <div class="col">
+                                            <a [innerHtml]="item.Data[ldTypesLV.DisplayField] | markerText:ldTypesLV.SearchFilter"></a>
+                                        </div>
+                                        <div *ngIf="editMode" class="col-auto">
+                                            <!--<i class="zmdi zmdi-delete " (click)="deleteType(item)"></i>-->
+                                            <button type="button"
+                                                    class="btn-outline-circle btn-circle-size-24"
+                                                    placement="top"
+                                                    container="body"
+                                                    ngbTooltip="Удалить"
+                                                    (click)="deleteType(item, $event)">
+                                                <i class="zmdi zmdi-delete"></i>
+                                            </button>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="zmdi zmdi-chevron-right zmdi-hc-2x"></i>
+                                        </div>
+                                    </div>
+                                </ng-template>
+                            </list-view-ro5>
+                        </div>
+
+                        <div class="col">
+                            <header class="section-header-content row">
+                                <div class="col-auto">
+                                    <h5> Доступные теги </h5>
+                                </div>
+                                <div class="col"></div>
+                                <div *ngIf="editMode" class="col-auto">
+                                    <dropdown-box-ro5 #tagsDDB
+                                                      [keyField]="'Id'"
+                                                      [valueField]="'Name'"
+                                                      [isSelected]="true"
+                                                      [itemsInput]="((ldTypesLV.focusedListItem || { Data: { LogicTagTypes: [] } }).Data || { LogicTagTypes: [] }).LogicTagTypes | filterByField:'IsActive':false:tagsPipeTrigger"
+                                                      [footerTemplate]="footerTemplate"
+                                                      [buttonText]="'Добавить'"
+                                                      [BttnColorClass]="'btn-primary'">
+                                        <ng-template #footerTemplate>
+                                            <footer class="section-footer-content">
+                                                <div class="row no-gutters-2 align-items-center">
+                                                    <div class="col">
+                                                        <div class="row no-gutters align-items-center col-wrappanel" style="flex-wrap: nowrap">
+                                                            <div class="col-auto">
+                                                                <button-ro5 [class]="'btn btn-primary'"
+                                                                            (onclick)="addTypeTags(tagsDDB.getSelectedRows());tagsDDB.close()">
+                                                                    Добавить теги
+                                                                </button-ro5>
+                                                            </div>
+                                                            <div class="col-auto">
+                                                                <button-ro5 [class]="'btn btn-outline-secondary'"
+                                                                            (onclick)="tagsDDB.close()">
+                                                                    Отмена
+                                                                </button-ro5>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </footer>
+                                        </ng-template>
+                                    </dropdown-box-ro5>
+                                </div>
+                            </header>
+
+                            <list-view-ro5 #ldTypeTagsLV
+                                           [KeyField]="'Id'"
+                                           [RowTemplate]="ldTypeTagsLVRowTemplate"
+                                           [DataSource]="((ldTypesLV.focusedListItem || { Data: { LogicTagTypes: [] } }).Data || { LogicTagTypes: [] }).LogicTagTypes | filterByField:'IsActive':true:tagsPipeTrigger"
+                                           [DisplayField]="'Name'"
+                                           [IsRemoved]="editMode"
+                                           (OnItemClick)="isTypesListChange = true;"
+                                           (OnItemCheckClick)="onAllCheckClick($event)"
+                                           (OnRemoveListItem)="onRemoveTypeTags($event)"
+                                           [IsSelected]="editMode">
+                                <ng-template #ldTypeTagsLVRowTemplate let-item="item">
+                                    <div class="row">
+                                        <div class="col">
+                                            <a [innerHtml]="item.Data[ldTypeTagsLV.DisplayField] | markerText:ldTypeTagsLV.SearchFilter"></a>
+                                        </div>
+                                        <div *ngIf="editMode" class="col-auto">
+                                            <!--<i class="zmdi zmdi-delete " (click)="deleteTypeTag(item)"></i>-->
+                                            <button type="button"
+                                                    class="btn-outline-circle btn-circle-size-24"
+                                                    placement="top"
+                                                    container="body"
+                                                    ngbTooltip="Удалить"
+                                                    (click)="deleteTypeTag(item)">
+                                                <i class="zmdi zmdi-delete"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </ng-template>
+                            </list-view-ro5>
+                        </div>
+                </div>
+            </section>
+
+            <footer *ngIf="editMode" class="section-footer-content">
+                <div class="row no-gutters-2 align-items-center">
+                    <div class="col">
+                        <div class="row no-gutters col-wrappanel align-items-center">
+                            <div class="col-auto">
+                                <button-ro5 [class]="'btn btn-primary'"
+                                            (onclick)="saveTypeTagsChanges()">
+                                    Сохранить
+                                </button-ro5>
+                            </div>
+                            <div class="col-auto">
+                                <button-ro5 [class]="'btn btn-outline-secondary'"
+                                            (onclick)="cancelTypeTagsChanges()">
+                                    Отмена
+                                </button-ro5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,15 @@
+﻿{
+  "host": "/api/v15/",
+  "startPage": "PersonalArea",
+  "groupPages": [
+    {
+      "Code": "Main",
+      "Name": "Главная"
+    },
+    {
+      "Code": "PersonalArea",
+      "Name": "Личный кабинет"
+    }
+  ],
+  "advertisingConfigUrl":""
+}

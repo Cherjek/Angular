@@ -1,0 +1,43 @@
+﻿<nav class="navigate-ro5">
+    <ul class="nav list-box-horizontal" *ngIf="!isTabView" [style.height.px]="height">
+        <ng-container *ngFor="let item of navigate.items">
+            <ng-template #defaultNavUrl let-navItem="navItem">
+                <!-- <li *ngIf="navItem.isVisible !== false"
+                    class="nav-item"
+                    [ngStyle]="{ 'cursor': navItem.isDisabled ? 'not-allowed' : 'default' }"
+                    routerLinkActive="active">
+                    <a class="nav-link"
+                       [ngClass]="{ 'item-display-disabled' : navItem.isDisabled }"
+                       [queryParamsHandling]="'merge'"
+                       [routerLink]="navItem.url">{{ navItem.name }}</a>
+                </li> -->
+                <navigate-route-item [navItem]="navItem"></navigate-route-item>
+            </ng-template>
+            <ng-template
+                    [ngTemplateOutlet]="templateNavItem != null ? templateNavItem : defaultNavUrl"
+                    [ngTemplateOutletContext]="{ navItem: item }"
+            ></ng-template>
+        </ng-container>
+    </ul>
+    
+    <ul class="nav list-box-horizontal" *ngIf="isTabView" [style.height.px]="height">
+        <ng-container *ngFor="let item of navigate.items">
+            <ng-template #defaultNavTab let-navItem="navItem">
+                <!-- <li *ngIf="navItem.isVisible !== false"
+                    class="nav-item"
+                    [ngClass]="{'active' : navItem.code === navigate?.selectItem?.code }"
+                    (click)="onItemClick(navItem)">
+                    <a class="nav-link">{{ navItem.name }}</a>
+                </li> -->
+                <navigate-tab-item 
+                    [navItem]="navItem" 
+                    [isActive]="navItem.code === navigate?.selectItem?.code"
+                    (click)="onItemClick(navItem)"></navigate-tab-item>
+            </ng-template>
+            <ng-template
+                    [ngTemplateOutlet]="templateNavItem != null ? templateNavItem : defaultNavTab"
+                    [ngTemplateOutletContext]="{ navItem: item, navigate: this }"
+            ></ng-template>
+        </ng-container>
+    </ul>
+</nav>

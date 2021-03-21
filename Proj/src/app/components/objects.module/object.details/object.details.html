@@ -1,0 +1,19 @@
+﻿<div class="row no-gutters">
+    <div class="col">
+        <ul class="nav list-box-horizontal border-bottom-1">
+            <li class="nav-item">
+                <a class="nav-link" [ngClass]="{active: isNowClicked[0]}" (click)="loadTab(Tabs.Properties)" style="cursor: pointer;"> Свойства </a>
+            </li>
+            <!--<li class="nav-item">
+                <a class="nav-link" [ngClass]="{active: isNowClicked[1]}" (click)="loadTab(Tabs.Map)" style="cursor: pointer;"> Карта </a>
+            </li>-->
+        </ul>
+        <div class="row no-gutters">
+            <div class="col">
+                <div *ngIf="wasAlreadyClicked[Tabs.Map] == true">
+                    <obj-map [ngClass]="{'ct-state-invisible': !isNowClicked[1]}" [Parent]="Parent" [Key]="Key"></obj-map>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,47 @@
+﻿<div class="main-view-content height-auto">
+    <message-popup [(messages)]="errorsObjectsValidationForms"></message-popup>
+    <loader-ro5 [(loading)]="loadingContentPanel"></loader-ro5>
+    <div class="col col-content-ro5 col-content-flex-column">
+
+        <div class="section-body-content" style="box-shadow: 0 1px 2px 1px rgba(0, 0, 0, 0.24);z-index: 9;">
+            <ng-container *ngIf="JobObjects != null">
+                <frame-objects-panel 
+                    #ObjectsPanel 
+                    [IsSelected]="true"
+                    [DataSource]="JobObjects"
+                    (OnItemClick)="enableFooterButtons($event)"></frame-objects-panel>
+            </ng-container>
+    
+            <ng-container *ngIf="Nodes != null">
+                <treelist-checked-panel
+                    #treePanel 
+                    [TabViewMode]="true"
+                    [TreeListItems]="treePanel.TreeListItems || treeListCheckedService.getTreeListItems(['Узлы', 'Оборудование'])"
+                    [Tree]="Nodes | filterRow:changeDetection"
+                    [IsRemoved]="false"
+                    ChildDataName="LogicDevices" 
+                    KeyField="Id"
+                    DisplayField="DisplayName" 
+                    AdditionalField="DisplayNameNodeView"
+                    (itemChecked)="selectLogicDevices($event)"></treelist-checked-panel>
+            </ng-container>
+        </div>
+
+        <div class="section-footer-content action-panel" [ngClass]="{'show': unitIds.length > 0 }">
+            <div class="row no-gutters-2 align-items-center" style="height: 100%">
+                <div class="col-auto">
+                    <button type="button" class="btn button-apply" (click)="repeatWithUnits()">
+                        Повторить отчет с выбранными данными
+                    </button>
+                </div>
+                <div>
+                    <button type="button" class="btn btn-outline-secondary" (click)="cancel()">
+                        Отмена
+                    </button>
+                </div>
+                <div class="col"></div>
+            </div>
+        </div>        
+    </div>
+</div>
+

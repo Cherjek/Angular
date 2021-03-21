@@ -1,0 +1,154 @@
+<div class="main-view-content height-auto main-view-result">
+    <div class="col col-content-ro5">
+        <div class="col-content-flex-column">
+            <message-popup [messages]="errorsPropertyPanel"></message-popup>
+            <message-popup [messages]="errorsDevicesPanel"></message-popup>
+            <message-popup [messages]="errorsTagsPanel"></message-popup>
+
+            <header class="section-header-content row no-gutters" *ngIf="!isNew">
+                <div class="col">
+                    <h5> Cвойства </h5>
+                </div>
+                <div class="col-auto" 
+                     [ngSwitch]="isPropEdit"
+                     [ngStyle]="{ 'cursor': isDeviceConnecting ? 'not-allowed' : 'default' }">
+                    <button *ngSwitchCase="true"
+                            class="btn btn-outline-secondary" 
+                            (click)="cancelChangeProperty()"> Отменить изменения </button>
+                    
+                    <ng-container *appCanAccess="{ keySource: entityId, source: 'LogicDevices', value: 'OE_EDIT_EQUIPMENT' }">
+                        <button *ngSwitchCase="false" 
+                                class="btn btn-primary"
+                                [ngClass]="{ 'item-display-disabled' : isDeviceConnecting }"
+                                (click)="changeProperties()"> Изменить свойства </button>
+                    </ng-container>
+                    
+                </div>
+            </header>
+            <section class="section-body-content section-panel-two-columns-settings">
+                <header class="section-header-grouppanel-expander row no-gutters border-bottom-1">
+                    <div class="col">
+                        <h5>Оборудование</h5>
+                    </div>
+                    <div class="col-auto" [ngSwitch]="loadingPropertyPanel">                        
+                        <i *ngSwitchCase="true" class="zmdi zmdi-spinner zmdi-hc-3x zmdi-hc-spin"></i>
+                        <button *ngSwitchCase="false" 
+                                data-toggle="collapse"
+                                data-target="#propertySection"
+                                aria-controls="propertySection"
+                                class="btn-outline-circle transform-rotate-show btn-circle-size-32"
+                                [ngClass]="{ 'collapsed' : isDeviceConnecting }">
+                            <i class="zmdi zmdi-chevron-right"></i>
+                        </button>
+                    </div>
+                </header>
+                
+                <section id="propertySection" class="collapse" [ngClass]="{ 'show' : !isDeviceConnecting }">
+                    <properties-editor-panel #propertiesEditorPanel
+                                             [properties]="properties"
+                                             [isEdit]="isPropEdit"
+                                             [service]="logicDeviceEditorPropertiesService">
+                    </properties-editor-panel>
+                </section>
+                
+                <ng-container *ngIf="!isNew">
+                    <ng-container *appCanAccess="{ keySource: entityId, source: 'LogicDevices', value: 'OC_VIEW_EQUIPMENT_DEVICES' }">
+
+                        <header class="section-header-grouppanel-expander row no-gutters">
+                            <div class="col">
+                                <h5> Свойства связанного устройства </h5>
+                            </div>
+                            <div class="col-auto" [ngSwitch]="loadingDevicesPanel">                                
+                                <i *ngSwitchCase="true" class="zmdi zmdi-spinner zmdi-hc-3x zmdi-hc-spin"></i>
+                                <ng-container *ngSwitchCase="false">
+                                    <button *ngIf="!isDeviceConnecting"
+                                            data-toggle="collapse"
+                                            data-target="#deviceSection"
+                                            aria-controls="deviceSection"
+                                            class="btn-outline-circle transform-rotate-show btn-circle-size-32">
+                                        <i id="icnDetailButton" class="zmdi zmdi-chevron-right"></i>
+                                    </button>
+                                </ng-container>
+                            </div>
+                        </header>
+
+                        <section id="deviceSection" class="collapse show" [ngSwitch]="isDeviceConnecting">
+
+                            <section class="section-panel-two-columns-settings" *ngSwitchCase="false">
+                                <div class="row no-gutters-2 border-bottom-1">
+                                    <div class="col-2">
+                                        <span> Устройство </span>
+                                    </div>
+                                    <div class="col-10">
+                                        <button class="btn btn-primary" (click)="connectDevice()">
+                                            Подключить существующее
+                                        </button>
+                                        <button class="btn button-apply" style="margin-left: 8px" (click)="createDevice()">
+                                            Создать новое
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="row no-gutters-2 border-bottom-1">
+                                    <div class="col-2">
+                                        <span> Подключенные устройства </span>
+                                    </div>
+                                    <div class="col-10" *ngIf="unitId != null">
+                                        <logicdevice-devices [parentKey]="entityId" [unitId]="unitId"></logicdevice-devices>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <ng-container *ngSwitchCase="true">
+
+                                <properties-editor-panel #propDeviceRelateEditPanel
+                                                         [properties]="deviceConnect.Properties"
+                                                         [isEdit]="true"
+                                                         [service]="deviceEditorPropertiesService">
+                                </properties-editor-panel>
+
+                                <section class="tags-editor__section" #sectionTableTag>
+                                    <header class="section-header-grouppanel-expander row no-gutters">
+                                        <div class="col">
+                                            <h5> Теги устройства </h5>
+                                        </div>
+                                        <div class="col-auto">                                            
+                                            <i *ngIf="loadingTagsPanel" class="zmdi zmdi-spinner zmdi-hc-3x zmdi-hc-spin"></i>
+                                        </div>
+                                    </header>
+
+                                    <tags-editor #tagsEditorComponent
+                                                 [defTagView]="defTagView"
+                                                 [IdLogicDevice]="entityId"
+                                                 [parentContainer]="sectionTableTag"></tags-editor>
+                                </section>
+
+                            </ng-container>
+                        </section>
+
+                    </ng-container>
+
+                </ng-container>
+
+            </section>
+
+            <footer class="section-footer-content" *ngIf="isPropEdit || isDeviceConnecting">
+                <div class="row no-gutters-2 align-items-center">
+                    <div class="col">
+                        <div class="row no-gutters col-wrappanel align-items-center">
+                            <div class="col-auto">
+                                <button [disabled] = "loadingTagsPanel" type="button" class="btn btn-primary" (click)="isDeviceConnecting ? saveDeviceRelate() : saveObject();">
+                                    {{ !isNew ? 'Сохранить' : 'Создать оборудование' }}
+                                </button>
+                            </div>
+                            <div class="col-auto">
+                                <button [disabled] = "loadingTagsPanel" type="button" class="btn btn-outline-secondary" (click)="cancel()">
+                                    Отмена
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+</div>

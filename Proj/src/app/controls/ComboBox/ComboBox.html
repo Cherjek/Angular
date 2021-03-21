@@ -1,0 +1,51 @@
+﻿<div [attr.id]="controlId" class="input-group input-group-clear">
+
+    <ng-template #rt let-r="result" let-t="term">
+        <!--<img [src]="'https://upload.wikimedia.org/wikipedia/commons/thumb/' + r['flag']" class="mr-1" style="width: 16px">
+        <ngb-highlight [result]="r.name" [term]="t"></ngb-highlight>-->
+        <div class="row no-gutters" style="color: inherit">
+            <div class="col">{{ r[valueField] }}</div>
+        </div>
+    </ng-template>
+
+    <input [attr.id]="controlId"
+           type="text"
+           [readonly]="isReadonly"
+           class="form-control"
+           container="body"
+           maxlength="50"
+           [attr.placeholder]="placeholderTwo || placeholder"
+           [(ngModel)]="model"
+           [ngbTypeahead]="search"
+           [resultTemplate]="rt"
+           (ngModelChange)="valueChange = true; modelChange()"           
+           (focus)="focus$.next({ type: 'focus', event: $event.target.value });focus();"
+           (blur)="valueChange = false"
+           (click)="click$.next({ type: 'click', event: $event.target.value })"
+           (selectItem)="selectItem($event);"
+           [editable] = "false"
+           #instance="ngbTypeahead" />
+
+    <!--Отображение значка загрузки-->
+    <div class="input-group-append input_button search-icon" *ngIf="asyncStart">
+        <span class="input-group-text">
+            <i class="zmdi zmdi-spinner zmdi-hc zmdi-hc-spin"></i>
+        </span>
+    </div>
+    <!--Отображение значка поиск, для type=search-->
+    <div class="input-group-append input_button search-icon"
+         *ngIf="!asyncStart && (value == null || value == '')">
+        <span class="input-group-text">
+            <i class="zmdi zmdi-search"></i>
+        </span>
+    </div>
+    <!--Отображение значка clear, для быстрой очистки поля-->
+    <div class="input-group-append input_button clear-text"
+         *ngIf="!asyncStart && (value != null && value != '')"
+         [ngClass]="{ 'number' : isNumberType }"
+         (click)="selectItem(null);reopenPopover()">
+        <span class="input-group-text">
+            <i class="icon icon-owl-cancel"></i><!--icon-owl-cancel должен быть общим, сейчас подтягивается от контрола date-picker в node_modules_ex-->
+        </span>
+    </div>
+</div>

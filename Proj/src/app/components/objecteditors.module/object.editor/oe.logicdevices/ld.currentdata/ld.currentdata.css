@@ -1,0 +1,6 @@
+﻿.dots {
+    border-bottom: 1px #ced4da dotted;
+    margin: 0 5px;
+    position: relative;
+    bottom: 6px;
+}

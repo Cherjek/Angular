@@ -1,0 +1,66 @@
+﻿input[type="checkbox"],
+input[type="radio"] {
+    display:none;
+}
+input[type="checkbox"] + label i,
+input[type="radio"] + label i {
+    display:inline-block;
+    width:19px;
+    height:19px;
+    margin:-2px 10px 0 0 !important;
+    vertical-align:middle;
+    /*background:url(check_radio_sheet.png) left top no-repeat;*/
+    cursor:pointer;
+    position: relative;
+    border: 1px solid;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2) inset;
+}
+input[type="radio"] + label i {
+    border-radius: 200px 200px 200px 200px;
+    -moz-border-radius: 200px 200px 200px 200px;
+    -webkit-border-radius: 200px 200px 200px 200px;
+    font-size: .7em;
+    font-weight: bold;
+}
+input[type="checkbox"]:checked + label i {
+    /*background:url(check_radio_sheet.png) -19px top no-repeat;*/
+}
+
+
+input[type="checkbox"] + label i.indeterminate {
+    font-size: 1.3em;
+    font-weight: bold;
+    color: #fff;
+}
+input[type="checkbox"] + label i.indeterminate:before {
+    content: '\f273' !important;
+    position: absolute;
+    top: 0;
+    left: 3px;
+}
+
+input[type="checkbox"] + label i.zmdi-check:before {
+    content: '';
+}
+input[type="checkbox"]:checked + label i.zmdi-check:before {
+    content: '\F26B';
+    position: absolute;
+    top: -7px;
+    left: 2px;
+}
+input[type="radio"] + label i.zmdi-circle:before {
+    content: '';
+}
+input[type="radio"]:checked + label i.zmdi-circle:before {
+    content: '\F26D';
+    position: absolute;
+    top: 4px;
+    left: 4px;
+}
+label {
+    margin: 0;
+}
+label i {
+    font-size: 27px;
+}

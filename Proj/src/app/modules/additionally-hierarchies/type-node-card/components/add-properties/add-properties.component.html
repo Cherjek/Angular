@@ -1,0 +1,48 @@
+<div class="main-view-content height-auto">
+    <message-popup [(messages)]="errors"></message-popup>
+    <loader-ro5 [(loading)]="loadingContent"></loader-ro5>
+    <div class="col col-content-ro5 border-right-1">
+        <header class="section-header-content row">
+            <div class="col-auto">
+                <h5> Дополнительные свойства </h5>
+            </div>
+            <div class="col"></div>
+            <div class="col-auto" *appCanAccess="'HH_TYPE_PROPERTY_CREATE'">
+                <button-ro5 [class]="'btn btn-primary'" (onclick)="addAdditionalProperty()">
+                    + Добавить дополнительное свойство
+                </button-ro5>
+            </div>
+        </header>
+        <div class="main-view-content height-auto">
+            <div class="col col-content-ro5 border-right-1">
+                <data-grid-ro5 #Ro5DataGrid 
+                    [HeaderActionTemplate]="GridHeaderTemplate"
+                    (onActionButtonClicked)="onDGRowActionBttnClick($event)">
+
+                    <ng-template #cellNameTemplate let-item="item">
+                        <a [innerHTML]="item.Name | markerText:dataGrid.SearchFilter"
+                           [queryParams]="{ idTypeNode: typeNodeId }"
+                           [routerLink]="['../../../../hierarchies-module/additionally-property-card/' + item.Id]"></a>
+                    </ng-template>
+                    <ng-template #cellCategoryTemplate let-item="item">
+                        <ng-container [ngSwitch]="dataGrid.SearchFilter?.length > 0">
+                            <div *ngSwitchCase="true" [innerHtml]="item.Category?.Name | markerText:dataGrid.SearchFilter"></div>
+                            <div *ngSwitchDefault>{{ item.Category?.Name }}</div>
+                        </ng-container>                        
+                    </ng-template>
+
+                    <ng-template #GridHeaderTemplate>
+                        <div class="row no-gutters-2">                        
+                            <div class="col">
+                                <datagrid-header-temp-def 
+                                    permissionDelete="HH_TYPE_PROPERTY_DELETE"
+                                    [dataGrid]="dataGrid" 
+                                    (deletedRows)="deleteDGRows()"></datagrid-header-temp-def>
+                            </div>
+                        </div>                        
+                    </ng-template>
+                </data-grid-ro5>
+            </div>
+        </div>
+    </div>
+</div>

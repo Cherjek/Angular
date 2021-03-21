@@ -1,0 +1,55 @@
+<message-popup [(messages)]="errors"></message-popup>
+<loader-ro5 [(loading)]="loadingContent"></loader-ro5>
+<header class="main-content-header row">
+    <div class="col">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3>Регионы</h3>
+            </div>
+        </div>
+    </div>
+</header>
+<div class="main-view-content">
+
+    <div class="col col-content-ro5 border-right-1">
+        <header class="section-header-content row">
+            <div class="col-auto">
+                <h5>Регионы</h5>
+            </div>
+            <div class="col"></div>
+            <div class="col-auto" *appCanAccess="'TC_REGION_ADD'">
+                <button-ro5 [class]="'btn btn-primary'" (onclick)="addNewItem()">
+                    + Добавить
+                </button-ro5>
+            </div>
+        </header>
+
+        <data-grid-ro5 #Ro5DataGrid (onActionButtonClicked)="onActionButtonClicked($event)">
+            <ng-template #nameColumnTemplate let-item="item">
+                <a [routerLink]="[
+                        '../../tariff-calculator/regions/' + item.Id
+                    ]" [innerHTML]="item?.Name | markerText: dataGrid.SearchFilter">
+                </a>
+            </ng-template>
+            <ng-template #priceColumnTemplate let-item="item">
+                <span [innerHTML]="item?.PriceZone?.Name | markerText: dataGrid.SearchFilter">
+                </span>
+            </ng-template>
+            <ng-template #oesColumnTemplate let-item="item">
+                <span [innerHTML]="item?.Oes?.Name | markerText: dataGrid.SearchFilter">
+                </span>
+            </ng-template>
+            <ng-template #timeZoneTemplate let-item="item">
+                <span [innerHTML]="item?.TimeZone?.Name | markerText: dataGrid.SearchFilter">
+                </span>
+            </ng-template>
+            <ng-template #peakTimeZoneTemplate let-item="item">
+                <span [innerHTML]="item?.AtsTimeZone?.Code | markerText: dataGrid.SearchFilter">
+                </span>
+                &nbsp;
+                <span [innerHTML]="item?.AtsTimeZone?.Name | markerText: dataGrid.SearchFilter">
+                </span>
+            </ng-template>
+        </data-grid-ro5>
+    </div>
+</div>

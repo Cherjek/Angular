@@ -1,0 +1,59 @@
+<ng-container [ngSwitch]="noObjectError">
+    <ng-container *ngSwitchCase="false">
+        <header class="main-content-header row">
+            <div class="col-auto">
+                <backward-button></backward-button>
+            </div>
+            <div class="col main-header-text" [ngSwitch]="!isNew">
+                <div *ngSwitchCase="true">
+                    <ng-container *ngIf="header != null">
+                        <h3> {{ 'Объект ' + header.DisplayName }} </h3>
+                        <div class="label-info"> {{ header.Address }} </div>
+                    </ng-container>
+                </div>
+                <h3 *ngSwitchCase="false"> Новый объект  </h3>
+            </div>
+            <ng-container *ngIf="!isNew">
+                <div class="main-header-navigation">
+
+                    <ng-template #templateNavItem let-navItem="navItem">
+                        <rom-forms__navigate-item-template [navItem]="navItem"></rom-forms__navigate-item-template>
+                    </ng-template>
+
+                    <navigate-menu-ro5
+                        [templateNavItem]="templateNavItem"
+                        [items]="menuItems"></navigate-menu-ro5>
+                </div>
+                <context-button class="context-button"
+                                [items]="contextButtonItems"
+                                (onItemClick)="contextButtonHeaderClick($event)"></context-button>
+            </ng-container>
+        </header>
+        <div class="main-view-content">
+            <div class="col">
+                <loader-ro5 [(loading)]="loadingPanel"></loader-ro5>
+                <message-popup [(messages)]="headerErrors"></message-popup>
+                <router-outlet></router-outlet>
+            </div>
+        </div>
+    </ng-container>
+
+    <ng-container *ngSwitchCase="true">
+        <div class="main-view-content height-auto main-view-result">
+            <div class="col col-content-ro5">
+                <header class="main-content-header row"></header>
+                <div class="row no-gutters-2 justify-content-center message-margin__top_bottom">
+                    <div class="col" style="text-align: center">
+                        <h4> Объект с Id = {{ objectId }} не найден </h4>
+                    </div>
+                </div>
+                <div class="row no-gutters-2 justify-content-center">
+                    <div class="col-auto">
+                        <button type="button" class="btn btn-outline-secondary" (click)="backToPrevPage()"> Вернуться к предыдущей странице </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ng-container>
+</ng-container>
+

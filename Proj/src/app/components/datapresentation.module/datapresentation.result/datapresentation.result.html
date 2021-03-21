@@ -1,0 +1,20 @@
+﻿<header class="main-content-header row">
+	<div class="col-auto">
+		<backward-button></backward-button>
+	</div>
+	<div class="col">
+		<h3>Представление данных</h3>
+		<div *ngIf="GlobalValues.Page?.Info" class="label-info" [innerHtml]="GlobalValues.Page.Info"></div>
+	</div>
+	<div>
+		<navigate-menu-ro5 [items]="Menu"></navigate-menu-ro5>
+	</div>
+	<context-button [items]="ContextButtonItems" (onItemClick)="contextButtonHeaderClick($event)"></context-button>
+</header>
+<div class="main-view-content">
+	<div class="col">
+		<!--<message-popup [(messages)]="errorsContentValidationForms"></message-popup>
+		<loader-ro5 [(loading)]="loadingContentPanel"></loader-ro5>-->
+		<router-outlet></router-outlet>
+	</div>
+</div>

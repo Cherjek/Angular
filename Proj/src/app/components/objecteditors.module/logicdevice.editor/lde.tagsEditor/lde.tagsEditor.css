@@ -1,0 +1,6 @@
+.edit-panel-display-none {
+  display: none;
+}
+.edit-panel-display-none.show {
+  display: block;
+}

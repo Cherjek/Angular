@@ -1,0 +1,40 @@
+<message-popup [(messages)]="errors"></message-popup>
+<loader-ro5 [(loading)]="loadingContent"></loader-ro5>
+<header class="main-content-header row">
+    <div class="col">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3>Типы устройств</h3>
+            </div>
+        </div>
+    </div>
+</header>
+<div class="main-view-content height-auto">
+    <div class="col col-content-ro5 border-right-1">
+        <header class="section-header-content row">
+            <div class="col-auto">
+                <h5>Типы устройств</h5>
+            </div>
+            <div class="col"></div>
+            <div class="col-auto" *appCanAccess="'CFG_DEVICE_EDIT'">
+                <button-ro5 [class]="'btn btn-primary'" (onclick)="addNewDevice()">
+                    + Добавить тип устройства
+                </button-ro5>
+            </div>
+        </header>
+
+        <data-grid-ro5 #Ro5DataGrid
+            (onActionButtonClicked)="onDGRowActionBtnClick($event)">            
+            <ng-template #typeNameColumnTemplate let-item="item">
+              <ng-template #disabledLink>
+                <a [innerHTML]="item?.Name | pipeNoName | markerText:dataGrid.SearchFilter"></a>
+              </ng-template>
+              <a *appCanAccess="'CFG_DEVICE_VIEW'; else disabledLink"  
+                  [routerLink]="[
+                        '../../commands-module/types-devices/' + item.Id
+                  ]" [innerHTML]="item?.Name | pipeNoName | markerText:dataGrid.SearchFilter">
+              </a>
+            </ng-template>
+        </data-grid-ro5>
+    </div>
+</div>

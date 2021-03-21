@@ -1,0 +1,135 @@
+<div class="main-view-component">
+
+    <div class="col border-right-1">
+
+        <header class="main-content-header row">
+            <div class="col-auto">
+                <backward-button></backward-button>
+            </div>
+            <div class="col">
+                <h3>Новый запрос</h3>
+            </div>
+        </header>
+
+        <div class="main-view-content">            
+            <div class="col col-content-ro5">
+                <message-popup [(messages)]="errors"></message-popup>
+                <loader-ro5 [(loading)]="loadingContentPanel"></loader-ro5>
+
+                <div class="col-content-flex-column">
+
+                    <section class="section-body-content section-panel-two-columns-settings">
+
+                        <header class="row no-gutters-2 section-header-grouppanel-expander">
+                            <div class="col">
+                                <h5>Параметры запроса</h5>
+                            </div>                            
+                        </header>
+                        <div class="row no-gutters-2 border-bottom-1">
+                            <div class="col-2"><h6>Период</h6></div>
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="date-group-control">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <date-picker-ro5 #calendarSettings
+                                                                     [(fromDate)]="dateStart" 
+                                                                     [(toDate)]="dateEnd" 
+                                                                     [isDefFast]="true"
+                                                                     [fastPanel]="true"></date-picker-ro5>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row no-gutters-2 border-bottom-1">
+                            <div class="col-2"><h6>Название запроса</h6></div>
+                            <div class="col">
+                                <input-box [placeholder]="'Название'" [maxlength]="128" [(value)]="jobName"></input-box>
+                            </div>
+                        </div>
+                        <ng-container *ngIf="queryTypeTags != null">
+                            <rom-query-type-tags #queryTypeTagsControl [queryTypeTags]="queryTypeTags"></rom-query-type-tags>    
+                        </ng-container>                        
+
+                    </section>
+                    <footer class="section-footer-content" [ngStyle]="{ 'cursor': isCreateValidSuccess ? 'not-allowed' : 'default' }">
+                        <div class="row no-gutters col-wrappanel align-items-center justify-content-end" [ngClass]="{ 'item-display-disabled' : isCreateValidSuccess }" 
+                             [ngSwitch]="isShowTemplateSavePanel"
+                             style="margin-right: 15px">
+                            <div class="col-auto" *ngSwitchCase="false">
+                                <button class="btn button-apply button-settemplate-left" (click)="clickedAddToQueue()">
+                                    Поставить в очередь
+                                </button>
+                                <button *appCanAccess="'DQ_USE_FAVORITES'" class="btn btn-darkgreen button-settemplate-right" placement="top" ngbTooltip="Добавить в шаблон"                                        
+                                        (click)="isShowTemplateSavePanel = true">
+                                    <i class="zmdi zmdi-star"></i>
+                                </button>
+                            </div>
+                            <div class="col" *ngSwitchCase="true" style="padding-left: 10px">
+                                <div class="row no-gutters col-wrappanel align-items-center">
+                                    <div class="col">
+                                        <input-box #inputNameTemplate class="allowance-input-width"
+                                                   [placeholder]="'Название шаблона'"
+                                                   [maxlength]="128"
+                                                   [isFocus]="true"
+                                                   [isEnableValidate]="true"
+                                                   [(value)]="__value"
+                                                   (isCheckValidValue)="isValidSaveTemplate = $event"></input-box>
+                                    </div>
+                                    <div class="col-auto" [ngStyle]="{ 'cursor': !isValidSaveTemplate ? 'not-allowed' : 'default' }">
+                                        <button style="height: 40px; width: 250px;" [ngClass]="{ 'item-display-disabled' : !isValidSaveTemplate}"
+                                                type="button" class="btn btn-primary" (click)="clickedAddToQueue((inputNameTemplate || {}).value)">
+                                            Сохранить
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <button style="height: 40px; width:150px" type="button" class="btn btn-outline-secondary" (click)="clickCancelButton()"> Отмена </button>
+                            </div>
+                        </div>
+                    </footer>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <div class="col-auto">
+
+        <header class="main-content-header row">
+            <div class="col-auto">
+                <div class="row align-items-center" style="width:330px">
+                    <div class="col">
+                        <h4>Оборудование запроса</h4>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="col-objects-ro5">
+
+            <message-popup [(messages)]="errorsRightPanel"></message-popup>
+            <loader-ro5 [(loading)]="loadingRightPanel"></loader-ro5>
+
+            <ng-container *ngIf="nodes != null">
+                <treelist-checked-panel #treePanel
+                                        [TabViewMode]="true"
+                                        [TreeListItems]="treePanel.TreeListItems || treeListCheckedService.getTreeListItems(basketHeaderMenu)"
+                                        [Tree]="nodes | filterRow:changeDetection" 
+                                        ChildDataName="LogicDevices" 
+                                        KeyField="Id"
+                                        DisplayField="DisplayName"
+                                        AdditionalField="DisplayNameNodeView"
+                                        (removeListItems)="removeListItems($event)"></treelist-checked-panel>    
+            </ng-container>
+            
+        </div>
+
+    </div>
+</div>

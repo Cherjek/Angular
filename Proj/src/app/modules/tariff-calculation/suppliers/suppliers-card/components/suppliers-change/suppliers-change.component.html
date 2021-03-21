@@ -1,0 +1,87 @@
+<div class="main-view-component">
+
+  <div class="col border-right-1">
+
+      <header class="main-content-header row">
+          <div class="col-auto">
+              <backward-button></backward-button>
+          </div>
+          <div class="col">
+              <h3>Замена гарантирующего поставщика</h3>
+          </div>
+      </header>
+
+      <div class="main-view-content">
+          <div class="col col-content-ro5">
+              <message-popup [(messages)]="errors"></message-popup>
+              <loader-ro5 [(loading)]="loadingContentPanel"></loader-ro5>
+
+              <div class="col-content-flex-column">
+
+                  <section class="section-body-content section-panel-two-columns-settings">
+                  
+                    <header class="row no-gutters-2 section-header-grouppanel-expander">
+                      <div class="col">
+                        <h5>Настройки</h5>
+                      </div>
+                    </header>
+                    
+                    <div class="row no-gutters-2 border-bottom-1">
+                      <div class="col-2">
+                        <h6>Дата начала действия</h6>
+                      </div>
+                      <div class="col">
+                        <date-picker-ro5 [isDefFast]="false" [isTimeShow]="false" [isIntervalMode]="false" [(fromDate)]="date"></date-picker-ro5>
+                      </div>
+                    </div>
+
+                    <div class="row no-gutters-2 border-bottom-1">
+                      <div class="col-2">
+                        <h6>Заменяемый гарантирующий поставщик</h6>
+                      </div>
+                      <div class="col">
+                        <combo-box-ro5 [keyField]="'Id'"
+                          [valueField]="'Name'"
+                          [value]="supplier1"
+                          [itemsInput]="suppliers1"
+                          (onSelected)="changeSupplier1($event)"></combo-box-ro5>
+                      </div>
+                    </div>
+
+                    <div class="row no-gutters-2">
+                      <div class="col-2">
+                        <h6>Заменяющий гарантирующий поставщик</h6>
+                      </div>
+                      <div class="col">
+                        <combo-box-ro5 [keyField]="'Id'"
+                          [valueField]="'Name'"
+                          [value]="supplier2"
+                          [itemsInput]="suppliers2"
+                          (onSelected)="changeSupplier2($event)"></combo-box-ro5>
+                      </div>
+                    </div>
+                  
+                  </section>
+
+                  <footer class="section-footer-content">
+                      <div class="row no-gutters col-wrappanel align-items-center margin-left-5">
+                          <div class="col-auto">
+                              <button-ro5 [class]="'btn-primary'" (onclick)="save()" [disabled]="saveComplete">
+                                  Сохранить
+                              </button-ro5>
+                          </div>
+                          <div class="col-auto">
+                              <button-ro5 [class]="'btn-outline-secondary'" (onclick)="cancel()"
+                                  [disabled]="saveComplete">
+                                  Отмeна
+                              </button-ro5>
+                          </div>
+                      </div>
+                  </footer>
+              </div>
+
+          </div>
+      </div>
+
+  </div>
+</div>

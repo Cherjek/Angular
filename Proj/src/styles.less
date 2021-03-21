@@ -1,0 +1,1192 @@
+﻿/* You can add global styles to this file, and also import other style files */
+@import '~@angular/material/prebuilt-themes/deeppurple-amber.css'; // стили для выпадающего меню в PersonalAccountComponent
+
+@font-face { 
+    font-family: "Roboto"; 
+    src: url("./fonts/Roboto-Light.ttf"); 
+}
+@font-face { 
+    font-family: "Roboto"; 
+    font-weight: 700;
+    src: url("./fonts/Roboto-Medium.ttf"); 
+}
+
+@themeGeneralColor: #458FD3;
+
+@mainContentColor: #F9F9E8;
+@mainMenuBarColor: #252D40;
+@mainRightBarColor: #F6F8Fb;
+@mainContentHeaderColor: @themeGeneralColor;
+@borderLineSolid-1: 1px solid rgba(52, 63, 85, 0.21);
+@borderLineDashed-1: 1px dashed rgba(52, 63, 85, 0.21);
+@headerHeight: 50px;
+@text-link-a-color: #317dba;
+@gridrow-backcolor: @mainContentColor;
+@gray-light-content: #f6f7f9;
+@redColorApp: #DC143C;
+@errorAndRequiredColor: @redColorApp;
+@button-remove-color: #F37669;
+
+@paddingMainRow: 10px;
+
+@buttonHeight: 33.5px;
+
+/* TOGGLE-SWITCH COLORS */
+.runner-color-checked-green {
+  background-color: rgba(3, 190, 91)
+}
+.slider-color-checked-green {
+  background-color: rgba(3, 190, 91, 0.5)
+}
+
+.runner-color-checked-blue {
+  background-color: rgba(65, 139, 202)
+}
+.slider-color-checked-blue {
+  background-color: rgba(65, 139, 202, 0.5)
+}
+
+.runner-color-unchecked {
+  background-color: rgba(241, 241, 241)
+}
+.slider-color-unchecked {
+  background-color: rgba(34, 31, 31, 0.26)
+}
+/*END TOGGLE-SWITCH COLORS */
+
+/* CONTROLS */
+html, body {
+    font-family: "Roboto", sans-serif;
+    color: #4f4f4f;
+    font-size: 14px;
+    height: 100%;
+    cursor: default;
+    overflow: hidden;
+}
+
+h3 {
+    margin: 0;
+    font-size: 1.57em;//22px
+    font-weight: 500;
+    line-height: inherit;
+}
+
+h4 {
+    margin: 0;
+    font-size: 1.28em;//18px
+    font-weight: 500;
+    line-height: inherit;
+}
+
+h5 {
+    margin: 0;
+    font-size: 1.14em;//16px
+    font-weight: 600;
+    line-height: inherit;
+}
+
+h6 {
+    margin: 0;
+    font-size: 1em;//14px
+    font-weight: 600;
+    line-height: inherit;
+}
+
+a {
+    color: @text-link-a-color;
+    text-decoration: none;
+    background-color: transparent;
+}
+
+button {
+    cursor: pointer;
+}
+
+input {    
+    //line-height: 0 !important;
+}
+input[type=text], input[type=password], input[type=date], input[type=datetime-local], input[type=month], input[type=time] {
+    height: 2.2em;
+}
+input::-ms-clear {
+    display: none;
+}
+
+/* END CONTROLS */
+
+/* CONTENT DIV START */
+.main-page-content {
+    
+}
+
+/* three main columns, main page  */
+.main-content {
+    background-color: @mainContentColor;
+    height: 100% !important;
+    padding: 0;
+}
+.main-content > main {
+    height: 100%;
+}
+.main-content .main-content-header {
+    background-color: @mainContentHeaderColor;
+    color: #fff;
+}
+
+.main-menu-bar {
+    background-color: @mainMenuBarColor;
+    padding: 0;
+    width: 155px;
+}
+.main-right-bar {
+    background-color: @mainRightBarColor;
+    padding: 0;
+    width: 80px;
+}
+
+.calculate-content-height(@offsetCalc) {
+    @heightCalcMoz: ~"-moz-calc(100% - @{offsetCalc})";
+    @heightCalcWebkit: ~"-webkit-calc(100% - @{offsetCalc})";
+    @heightCalcOpera: ~"-o-calc(100% - @{offsetCalc})";
+    @heightCalcStandart: ~"calc(100% - @{offsetCalc})";
+
+    /* Firefox */
+    height: @heightCalcMoz;
+    /* WebKit */
+    height: @heightCalcWebkit;
+    /* Opera */
+    height: @heightCalcOpera;
+    /* Standard */
+    height: @heightCalcStandart;
+}
+
+.main-view-class {
+    display: -ms-flexbox;
+    display: flex;
+    flex-direction: row;
+    margin-left: 0px;
+    margin-right: 0px;
+    width: 100%;
+}
+
+/*main div on all page*/
+.main-view-component {
+    .main-view-class; 
+    .calculate-content-height(0px);
+}
+/*div columns on all page (col-filter-ro5, col-content-ro5, col-objects-ro5)*/
+.main-view-component > div {
+    padding: 0;
+}
+
+/* класс для задания общей области для фильтра и контента - грида */
+.main-view-content {
+    .main-view-class;
+    .calculate-content-height(50px);
+    position: relative;
+}
+.main-view-content.height-auto {
+    height: 100%;
+}
+.main-view-content > div {
+    flex: 1 1 auto;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.col-content-flex-column {
+    display: -ms-flexbox;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+}
+
+.col-filter-ro5 {
+    background-color: #edf2f8;
+    border-right: 2px solid #d0d6df;
+    flex: 0 0 auto;
+    width: auto;
+    position: relative;        
+}
+.col-content-ro5 {
+    /*height: 100%;*/
+    background-color: @gray-light-content;
+    position: relative;
+}
+.col-objects-ro5 {
+    background-color: #edf2f8;
+    /*border-left: 2px solid #d0d6df;*/
+    width: 330px;
+    /*height: 100%;*/
+    max-width: 330px;
+    position: relative;
+}
+
+/* section-...-content */
+.section-header-content {
+    background-color: #fff;
+    .shadow-content-panel;
+    position: relative;
+    z-index: 2;
+    margin-bottom: 1px;
+}
+/* Сворачиваемая/статичная панель заголовок, для разделения групп на форме */
+.section-header-grouppanel-expander {
+    background-color: #d6dae3;
+}
+.section-body-content {
+    overflow-y: auto;      
+    overflow-x: hidden;
+    flex: 1 1 100%;    
+    position: relative;
+}
+.section-footer-content {
+    background-color: #fff;
+    /*flex: 0 1 50px;*/ //фиксированный размер
+    flex: 0 1 auto; //под размер содержимого
+    position: relative;
+    .shadow-y-content-panel;
+}
+
+/* end section-...-content */
+header {
+    /*padding: 0 10px;*/
+}
+header, footer {
+    height: 50px;      
+    min-height: 50px;  
+    z-index: 1;
+}
+footer > div {
+    height: 100% !important;
+}
+header > .col, header > [class*=col-] {
+    height: auto !important;
+}
+header.row {
+    .no-gutters-2;
+    align-items: center !important;
+}
+header.row > .col, header.row > [class*=col-] {
+    padding-right: @paddingMainRow !important;
+    padding-left: @paddingMainRow !important;
+}
+header.row > [class*=col-]:not(:nth-child(1)) {
+    padding-left: 0 !important;
+}
+header {
+    max-width: calc(100vw - 200px);
+    .main-header-text {
+        overflow: hidden;
+        white-space: nowrap;
+        /*div,*/ h3 {
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
+    }
+}
+header .label-info {
+    font-size: .75em;
+    margin-top: -5px;
+}
+header .main-header-navigation {
+    background-color: @mainContentHeaderColor;
+    z-index: 2;
+}
+header .main-header-border-gradient {
+    width: 60px;
+    z-index: 2;
+    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#000000+0,000000+100&0+0,1+50 */
+    background: -moz-linear-gradient(left, rgba(69,143,211,0) 0%, rgba(69,143,211,1) 50%, rgba(69,143,211,1) 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(left, rgba(69,143,211,0) 0%,rgba(69,143,211,1) 50%,rgba(69,143,211,1) 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to right, rgba(69,143,211,0) 0%,rgba(69,143,211,1) 50%,rgba(69,143,211,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */    
+}
+header .context-button {
+    z-index: 3;
+}
+
+
+/* CONTENT DIV END */
+
+/* HEADER START */
+
+.main-menu-bar header, .main-right-bar header  {
+    background-color: #3374A9;
+}
+
+/* HEADER END */
+
+/* MAIN MENU BAR START */
+.main-menu-bar a {
+    font-size: 1.14em; //16px
+    font-stretch: condensed;
+    text-align: left;
+    color: #cfd5e5;
+    padding: 1rem;
+}
+/*.main-menu-bar a:hover,*/ .main-menu-bar .active a {
+    color: #fff;
+}
+/* MAIN MENU BAR END */
+
+.menu-logo-bar {
+    position: absolute;
+    width: 100%;
+    bottom: 10px;
+    text-align: center;
+}
+
+/*========== COMMON STYLE ==============*/
+
+//Стили внутренние, для всего проекта
+//SHADOW PANEL
+.shadow-content-panel {
+    -webkit-box-shadow: 0 1px 2px 1px rgba(0, 0, 0, 0.24);
+    -moz-box-shadow: 0 1px 2px 1px rgba(0, 0, 0, 0.24);
+    box-shadow: 0 1px 2px 1px rgba(0, 0, 0, 0.24);
+}
+.shadow-y-content-panel {
+    -webkit-box-shadow: 0 -2px 2px 0px rgba(0, 0, 0, 0.24);
+    -moz-box-shadow: 0 -2px 2px 0px rgba(0, 0, 0, 0.24);
+    box-shadow: 0 -2px 2px 0px rgba(0, 0, 0, 0.24);
+}
+
+
+// Связана с ошибка и точки предупреждения 
+.rom-log-alert() {
+    .border-circle();
+    position: absolute;
+    top: 6px;
+    width: 8px;
+    height: 8px;
+    border: none;
+}
+
+.rom-alert-error {
+    .rom-log-alert();
+    background-color: #f37769;
+}
+
+.rom-alert-warn {
+    .rom-log-alert();
+    background-color: #ffcc00;
+}
+
+// Относящиеся к заглавию страницы 
+.rom-sub-header {
+    background-color: #fff;
+    margin-bottom: 1px;
+}
+
+//LINES BORDER
+.border-left-1 {
+    border-left: @borderLineSolid-1;
+}
+.border-right-1 {
+  border-right: @borderLineSolid-1;
+}
+.border-top-1 {
+    border-top: @borderLineSolid-1;
+}
+.border-bottom-1 {
+    border-bottom: @borderLineSolid-1;
+}
+.border-dashed-bottom-1 {
+    border-bottom: @borderLineDashed-1;
+}
+.border-dashed-white-bottom-1 {
+    border-bottom: @borderLineDashed-1;
+    border-color: #fff;
+}
+//---------------------
+/* настройка скорости transition, для всех стилей */
+.transition-duration {
+    -webkit-transition-duration: .15s;
+    -o-transition-duration: .15s;
+    -moz-transition-duration: .15s;
+    transition-duration: .15s;
+}
+
+/* подсветка текста при поиске */
+.highlight {
+    background-color: rgba(230, 220, 98, 0.5);
+}
+
+//DISABLE STYLE DOM ITEM
+/* disable style */
+.item-display-disabled {
+    pointer-events: none;
+    filter: alpha(opacity=65);
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    opacity: .65;
+}
+
+/* настройка текста */
+.text-info-additional {
+    font-size: .86em; //12px;
+    color: #949495;
+    word-break: break-word !important;
+    -ms-word-break: break-word !important;
+    word-wrap: break-word !important;
+}
+
+.error-required-color {
+    color: @errorAndRequiredColor;
+}
+
+.error-required-control__border input {
+    border-width: 1px;
+    border-style: solid;
+    border-color: @errorAndRequiredColor;
+}
+
+.white-space {
+    &-nowrap {
+        white-space: nowrap !important;
+    }
+
+    &-normal {
+        white-space: normal !important;
+    }
+}
+
+// перенос текста в столбце col
+.disable-text-wrap {
+    overflow: hidden;
+    & > .table-data-cell {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+}
+
+/* стиль для скрытия dom элемента */
+.ct-state-invisible {
+    display: none !important;
+}
+
+/* отключает выделение у элемента и его child */
+.not-user-select-html {
+    user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
+//----------------------------------------------
+
+
+//Стили внутренних компонент и сторонних компопнент(переопределение)
+
+//LIST BOX MENU STYLE
+.list-box-vertical li:hover, .list-box-vertical li.active, .selected-header {
+    background: rgba(255,255,255,0.2) url(assets/menu_background_v.png) repeat-y;
+}
+.list-box-vertical li {
+    width: 100%;
+    cursor: pointer;
+}
+.list-box-vertical li.background-gray:hover {
+    background-color: rgba(237,237,237,0.4) !important;
+}
+.list-box-vertical li.background-gray.active {
+    background-color: rgba(237,237,237,1.0) !important;
+}
+.list-box-horizontal {
+    margin-right: 0;
+    margin-left: 0;
+    flex-wrap: nowrap;
+    navigate-tab-item {
+        .disable-text-wrap;
+
+        .nav-item {
+            .table-data-cell;
+
+            a {
+                .table-data-cell;
+            }
+        }
+    }
+
+    li:hover, .active {
+        background: rgba(255,255,255,0.2) url(assets/menu_background_h.png) repeat-x left bottom;
+    }
+}
+//-------------------
+
+//NGX-TREEVIEW
+ngx-treeview .treeview-container {
+    overflow-x: hidden;
+    /*width: 270px;*/
+}
+ngx-treeview .treeview-text {
+    padding: 0 !important;
+}
+
+//OWL Datetime
+.owl-dateTime-cancel {
+    display: none;
+}
+.owl-weekdays th.owl-weekday {
+    text-align: center;
+}
+
+//Ngb DatePicker
+ngb-datepicker.dropdown-menu {
+    max-height: none !important;
+}
+
+/* чтобы не писать каждый <a class="text-info-additional"> используем возможности LESS */
+.date-picker-ro5 {
+	span {
+		a {
+            .text-info-additional;
+            padding: 5px 4px;
+            
+		}
+	}
+}
+
+.date-picker-ro5-selected {
+    background-color: #418bca;
+    color: #fff !important;
+}
+
+span.static-link-text {
+    color: @text-link-a-color;
+}
+
+.zmdi-star {
+    color: #f7ad5a;
+}
+.zmdi-star-outline {
+    color: #c9d4e1;
+}
+.zmdi-star, .zmdi-star-outline {
+    font-size: 1.3em;
+}
+button .zmdi-star {
+    color: #fff;
+}
+i.zmdi-spinner {
+    color: @themeGeneralColor !important;
+}
+i.zmdi-spinner.white {
+    color: #fff !important;
+}
+
+
+//Boostrap grid classes reload
+/* отступы для класса row и col */
+.no-gutters-2 {
+    margin-right: 0;
+    margin-left: 0;
+}
+.no-gutters-2 > .col, .no-gutters-2 > [class*=col-] {
+    padding-right: @paddingMainRow;
+    padding-left: @paddingMainRow;
+}
+.row.no-gutters.col-wrappanel > [class*=col-]:not(:first-child) {
+    margin-left: 5px;
+}
+//стили для row > .col
+.row > .col {
+    word-wrap: break-word;
+    /*word-break: break-all;*/
+}
+/* убираем перенос в классе .row */
+.row-no-wrap {
+    flex-wrap: nowrap !important;
+    -ms-flex-wrap: nowrap !important;
+}
+div.row-dom-item-padding-vertical {
+    padding: 2px 0;
+}
+
+//панель из двух столбцов, первый label, второй значение, пример - форма validation/create
+.section-panel-two-columns-settings > div > [class*=col-]:first-child {
+    background-color: #E7EBF4;
+}
+.section-panel-two-columns-settings > div > [class*=col] {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+//глобальное сообщение, выравнивание
+.message-margin__top_bottom {
+    margin-top: 100px;
+    margin-bottom: 23px;
+}
+/*------------------------------*/
+/* GRID */
+/* details row style */
+.details-row-view.background, .edit-row-view.background {
+    background-color: @gridrow-backcolor !important;
+}
+.data-grid-ro5 .row-detail {
+    background-color: @gray-light-content !important;
+}
+/*.data-grid-ro5 .row-detail > [class*=col]:first-child {
+    background-color: @gray-light-content !important;
+}*/
+.data-grid-ro5 .row-detail > [class*=col]:last-child {
+    background-color: #fff !important;
+}
+/* CheckBox for ListView & Grid */
+.data-grid-ro5 check-box-ro5.form-check-item div.row label,
+.list-view-ro5 check-box-ro5.form-check-item div.row label {
+    opacity: 0.3;
+}
+.data-grid-ro5 check-box-ro5.form-check-item.hover-cell div.row label, .data-grid-ro5 check-box-ro5.form-check-item.light-visible div.row label,
+.list-view-ro5 check-box-ro5.form-check-item.hover-cell div.row label, .list-view-ro5 check-box-ro5.form-check-item.light-visible div.row label {
+    opacity: 0.3;
+}
+.data-grid-ro5 check-box-ro5.form-check-item:hover div.row label, .data-grid-ro5 check-box-ro5.form-check-item.visible div.row label,
+.list-view-ro5 check-box-ro5.form-check-item:hover div.row label, .list-view-ro5 check-box-ro5.form-check-item.visible div.row label {
+    opacity: 1.0 !important;
+}
+.data-grid-ro5 check-box-ro5.form-check-item div.row label i.disabled,
+.list-view-ro5 check-box-ro5.form-check-item div.row label i.disabled {
+    color: rgba(52, 63, 85, 0.21);
+}
+/*------------------------------*/
+
+.amcharts-main-div .amcharts-chart-div > a {
+    display: none !important;
+}
+
+.rotate-angle-zero {
+    -webkit-transform: rotate(0deg);
+    -ms-transform: rotate(0deg); 
+    transform: rotate(0deg);
+}
+.rotate-angle-90-minus {
+    -webkit-transform: rotate(-90deg);
+    -ms-transform: rotate(-90deg); 
+    transform: rotate(-90deg);
+}
+.rotate-angle-90-plus {
+    -webkit-transform: rotate(90deg);
+    -ms-transform: rotate(90deg); 
+    transform: rotate(90deg);
+}
+.virtualScrollBody {
+    /*height: calc(96.1vh - 12.6rem + 1.29rem);*/
+    background-color: #fff;
+}
+.virtualScrollBody.vertical.selfScroll {
+    overflow-x: hidden !important;
+}
+
+
+/* стиль выделения строки в DataGrid и ListView */
+.selected-list-row, .focused-list-row {
+    background-color: rgb(234, 238, 244) !important;
+}
+list-view-ro5 .focused-list-row .zmdi-chevron-right {
+    color: @redColorApp !important;
+}
+/* стиль наведения на строку */
+.hover-list-row {
+    /*transition-property: background-color;
+    .transition-duration;*/
+}
+.hover-list-row:hover {
+    background-color: #f0f8ff !important;
+    transition-property: background-color;
+    .transition-duration;
+}
+
+/*
+    Чекбокс
+*/
+input[type="checkbox"] + label i,
+input[type="radio"] + label i {
+    color: @themeGeneralColor;
+    border-color: @themeGeneralColor; 
+}
+input[type="checkbox"] + label i.indeterminate {
+    background-color: @themeGeneralColor !important;
+    border: 1px solid !important;
+    border-color: @themeGeneralColor !important;
+}
+
+/*
+    ComboBox, DropDownBox
+*/
+.dropdown-item.active, .dropdown-item:active {
+    color: inherit;
+    text-decoration: none;
+    background-color: rgba(234, 238, 244, 0.5) !important;
+}
+.dropdown-menu {
+    max-height: 300px;
+    overflow-y: auto;
+}
+.dropdown-input {
+    input-box {
+        &:after {
+            display: none;
+        }
+
+        input {
+            background-color: #fff !important;
+        }
+    }
+
+    .dropdown-menu {
+        width: 100%;
+        padding: .375rem .75rem;
+    }
+}
+
+/*
+    Popover
+*/
+.popover {
+  max-width: 500px;
+}
+.popover-body {
+    font-size: 1.1em;
+}
+.popover-body .popup-body__margin {
+    margin: 15px 0
+}
+
+
+/*
+    Navigate
+*/
+nav {
+    height: 100%;
+}
+nav li {
+    cursor: pointer;
+    display: -ms-flexbox;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    border-left: 1px solid rgba(255, 255, 255, 0.29);
+}
+nav li:hover > a {
+    color: #fff;
+}
+nav a {
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+
+/*
+    Кнопки
+*/
+/* change bootstrap style */
+/* изменение стиля для https://v4-alpha.getbootstrap.com/components/input-group/ */
+div.dropdown-menu {
+    padding: 0;
+}
+
+div.input-group > .form-control:focus {
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.1rem rgba(0, 123, 255, .25) !important;
+}
+
+button {
+    height: @buttonHeight;
+}
+button.btn-primary {    
+    border: none;
+    background-color: #418bca;
+}
+button.btn-primary:hover {
+    background-color: #2a73b1;
+}
+button.btn-primary.focus, button.btn-primary:focus {
+    border-color: #155286;
+    outline: none;
+    box-shadow: none;
+}
+button.btn-primary:active {
+    outline: none !important;
+    box-shadow: none !important;
+    border-color: #155286 !important;
+    background-color: #205787 !important;
+}
+button.button-apply, button.btn-orange, button.btn-darkgreen,
+button.button-apply:hover, button.btn-orange:hover, button.btn-darkgreen:hover {
+    color: #fff;
+}
+button.button-apply {    
+    border: none;
+    background-color: #02ad53;
+}
+button.button-apply:hover {
+    background-color: #027b3b;
+}
+button.button-apply.focus, button.button-apply:focus {
+    border-color: #155286;
+    outline: none;
+    box-shadow: none;
+}
+button.button-apply:active {
+    outline: none !important;
+    box-shadow: none !important;
+    border-color: #155286 !important;
+    background-color: #01622f !important;
+}
+button.btn-orange {
+    border-color: none;
+    background-color: #e76e2a;
+}
+button.btn-orange:hover {
+    background-color: #cb5c1e;
+}
+button.btn-orange.focus, button.btn-orange:focus {
+    border-color: #cb5c1e;
+    outline: none;
+    box-shadow: none;
+}
+button.btn-orange:active {
+    outline: none !important;
+    box-shadow: none !important;
+    border-color: #cb5c1e !important;
+    background-color: #a14a18 !important;
+}
+button.btn-darkgreen {
+    border-color: none;
+    background-color: #039447;
+}
+button.btn-darkgreen:hover {
+    background-color: #02632f;
+}
+button.btn-darkgreen.focus, button.btn-darkgreen:focus {
+    border-color: #02632f;
+    outline: none;
+    box-shadow: none;
+}
+button.btn-darkgreen:active {
+    outline: none !important;
+    box-shadow: none !important;
+    border-color: #02632f !important;
+    background-color: #013318 !important;
+}
+button.btn-outline-secondary {
+    color: #6a84a4;
+    border-color: #6a84a4;
+}
+
+button.btn-outline-secondary:hover {
+    background-color: #6a84a4;
+}
+
+button.btn-outline-secondary.focus, button.btn-outline-secondary:focus {
+    border-color: #4e6786;
+    outline: none;
+    box-shadow: none;
+}
+
+button.btn-outline-secondary:active {
+    outline: none !important;
+    box-shadow: none !important;
+    border-color: #4e6786 !important;
+    background-color: #526a87 !important;
+}
+button.btn-outline-star {
+    color: #f7ad5a;
+    border-color: #f7ad5a;
+    background-color: transparent;
+}
+
+button.btn-outline-star i.zmdi-star {
+    color: #f7ad5a;
+}
+
+button.btn-outline-star:hover {
+    background-color: #f7ad5a;
+}
+
+button.btn-outline-star:hover i.zmdi-star {
+    color: #fff;
+}
+
+button.btn-outline-star.focus, button.btn-outline-star:focus {
+    border-color: #f5962a;
+    outline: none;
+    box-shadow: none;
+}
+
+button.btn-outline-star:active {
+    outline: none !important;
+    box-shadow: none !important;
+    border-color: #f5962a !important;
+    background-color: #e07d0b !important;
+}
+button.btn-outline-shadow {
+  background-color: #fff;
+  color: inherit;
+  border: 1px solid;
+  border-color: #6a84a4;
+  box-shadow: 2px 2px 4px 0px rgba(50, 50, 50, 0.75);
+}
+button.full-size {
+    width: 100%;
+    height: 100%;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    border-radius: 0;
+}
+/* end change bootstrap style */
+
+.border-circle {
+    border-radius: 200px 200px 200px 200px;
+    -moz-border-radius: 200px 200px 200px 200px;
+    -webkit-border-radius: 200px 200px 200px 200px;
+    border: 1px solid;
+}
+button.btn-outline-circle {
+    .border-circle;
+    position: relative;
+    border-color: transparent;
+    background-color: transparent;
+    color: #7e8ca3 !important;
+    .transition-duration;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+button.btn-circle-size-24 {
+    width: 24px;
+    height: 24px;
+}
+button.btn-circle-size-32 {
+    width: 32px;
+    height: 32px;
+}
+button.btn-circle-size-32 i {
+    font-size: 1.7em;
+}
+button.btn-outline-circle:hover, button.btn-outline-circle.active {
+    background-color: rgba(255, 255, 255, 0.5);
+    border-color: #a6b0bf !important;
+}
+button.btn-outline-circle:active {
+    background-color: rgba(186, 202, 212, 0.5);
+}
+button.btn-outline-circle.focus, button.btn-outline-circle:focus {
+    outline: none;
+    box-shadow: none;
+}
+button.btn-outline-circle.transform-rotate {
+    .rotate-angle-zero;
+    .transition-duration;
+}
+button.btn-outline-circle.transform-rotate.collapsed {
+    .rotate-angle-90-minus;
+    .transition-duration;
+}
+button.btn-outline-circle.transform-rotate-show {
+    .rotate-angle-90-plus;
+    .transition-duration;
+}
+button.btn-outline-circle.transform-rotate-show.collapsed {    
+    .rotate-angle-zero;
+    .transition-duration;
+}
+button.btn-outline-circle.btn-circle-size-32 i.zmdi-delete {
+    font-size: 1.5em;
+    padding-top: 3px;
+}
+button.btn-outline-circle.btn-circle-size-32 i.zmdi-more {
+    padding-top: 3px;
+}
+button.btn-outline-circle.btn-circle-size-32 i.zmdi-chevron-right {
+    position: absolute;
+    top: 4px;
+    left: 12px;
+}
+button.btn-outline-circle.btn-circle-size-24 i.zmdi-chevron-down {
+    font-size: 1.2em;
+    // padding-top: 3px;
+}
+
+button.button-main-header {
+    border-color: #fff;
+    color: #fff;
+}
+button.button-main-header i {
+    font-size: 1.5em;
+}
+button.button-main-header:hover {
+    background-color: #fff;
+    color: #458FD3;
+}
+button.btn-remove {
+    border-color: @button-remove-color;    
+}
+button.btn-remove:after {
+    font: normal normal normal 14px/1 Material-Design-Iconic-Font;
+    content: '\f1f4';
+    color: @button-remove-color;
+}
+/*  MATERIAL DESIGN ANGULAR COMPONENT
+    *
+    *
+    *
+*/
+.mat-ink-bar {
+    background-color: #F6B904 !important;
+    height: 5px !important;
+}
+[mat-button] {
+    cursor: pointer;
+}
+
+.mat-dropdown--disabled {
+    pointer-events:none;
+}
+.color-label-red {
+  color: #DC143C;
+}
+.color-label-orange {
+  color: #ffa742;
+}
+.color-label-green {
+  color: #039447;
+}
+.tooltipClass .tooltip-inner {
+  max-width: 500px;
+}
+
+
+
+
+
+//Todo что-то с этим сделать
+.z-index {
+    &-0 {
+        z-index: 0 !important;
+    }
+
+    &-1 {
+        z-index: 1 !important;
+    }
+}
+
+// @TODO вынести отсюда, тут только общие настройки
+.unitsEditVS {
+    virtual-scroller {
+        height: calc(100vh - 200px) !important;
+    }
+}
+
+.geoEditVS {
+    virtual-scroller {
+        height: calc(100vh - 200px) !important;
+    }
+}
+
+.overflow- {
+    &hidden {
+        overflow: hidden;
+    }
+}
+
+.parent-ellipsis {
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.child-ellipsis {
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+// Upload
+.rom-upload-ref {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+  
+    &__title {
+      opacity: .8;
+    }
+}
+
+/*
+General styles
+*/
+.height-50 {
+    min-height: 50px;
+}
+
+/* 
+SCROLL PROJECT CHROME SETTINGS
+
+::-webkit-scrollbar {
+    width: 6px;
+}
+ 
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+    // border-radius: 10px;
+}
+ 
+::-webkit-scrollbar-thumb {
+    // border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+}*/
+
+/* Animations */
+
+@keyframes slide-in {
+    from {
+        transform: translateX(-20px);
+        opacity: .5;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slide-in-right {
+    from {
+        transform: translateX(50px);
+        opacity: .5;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slide-out {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    to {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+}
+
+@keyframes slide-out-right {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    to {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+}

@@ -1,0 +1,48 @@
+<message-popup [(messages)]="errors"></message-popup>
+<loader-ro5 [(loading)]="loadingContent"></loader-ro5>
+<header class="main-content-header row">
+    <div class="col">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3>Очередь</h3>
+            </div>            
+        </div>
+    </div>
+</header>
+<div class="main-view-content">
+    <div class="col-filter-ro5 border-right-1">
+        <frame-filters-custompanel
+            (onApplyFilter)="onApplyFilter($event)"
+            [service]="filtersContainerService"
+            [isAsyncCallbackStart]="loadingContent">
+        </frame-filters-custompanel>
+    </div>
+
+    <div class="col col-content-ro5 border-right-1">
+        <header class="section-header-content row">
+            <div class="col">
+                <h5>Задания</h5>
+            </div>
+        </header>
+
+        <data-grid-ro5 #Ro5DataGrid
+          (onActionButtonClicked)="onActionButtonClicked($event)">
+          <ng-template #progressStatusTemplate let-value="value" let-item="item">
+            <div [ngStyle]="{ 'color': item.State.Code === NameStatusError ? 'red' : 'inherit' }"
+                style="display: inline-block" [innerHTML]="item?.State?.Name | markerText:dataGrid.SearchFilter"
+                container="body" placement="top" [ngbTooltip]="(item['Progress'] | number:'1.1-2') + '%'"></div>
+          </ng-template>
+          <ng-template #cellTemplateLinkToDetail let-value="value" let-id="id" let-item="item">
+            <a [routerLink]="['/tariff-calculator/main/filters/' + id]"
+               [innerHTML]="value | markerText:dataGrid.SearchFilter"></a>
+          </ng-template>
+          <ng-template #cellTemplateFile let-value="value" let-id="id" let-item="item" let-column="column">
+            <a *ngIf="item.Files" href="javascript:void(0)" (click)="downloadFile(item.Files); $event.stopPropagation()">Скачать</a>
+          </ng-template>
+          <ng-template #cellUserName let-item="item" let-column="column">
+            <span [title]="item[column.Name]?.Name" [innerHTML]="item[column.Name]?.Name | markerText: dataGrid.SearchFilter">
+            </span>
+          </ng-template>
+        </data-grid-ro5>
+    </div>
+</div>

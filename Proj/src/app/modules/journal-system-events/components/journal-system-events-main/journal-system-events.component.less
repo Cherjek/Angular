@@ -1,0 +1,72 @@
+@width: 330px;
+
+.load-panel, .col-basket, .action-panel .btn-action-panel:hover {
+    background-color: #fff;
+}
+.col-basket {
+    width: 0;
+    transition: width .15s ease-out;
+    left: 100px;
+    transition: left .15s ease-out;
+
+    footer {
+        height: auto;
+        position: fixed;
+        bottom: 0;
+        max-width: @width;
+        min-width: @width;
+    }
+}
+.col-basket.show {
+    left: 0;
+    width: @width;
+    transition: width .15s ease-out;
+}
+
+.action-panel {
+    margin-left: -20px;
+    margin-top: 10px;
+}
+.action-panel .btn-action-panel {
+    padding: 5px 4px;
+}
+.action-panel .btn-action-panel:hover {
+    background-color: #418bca;
+    color: #fff;
+}
+.reset--flex {
+    flex: auto !important;
+}
+.hierarchy-header {
+    max-width: calc(100vw - 155px);
+}
+.row-label-state {
+  position: absolute;
+  right: -36px;
+  bottom: -15px;
+  > i {
+    font-size: 1.8em;
+  }
+}
+
+.js-events-state {
+    display: block;
+    height: 10px;
+    width: 10px;
+    border: solid 1px;
+    border-radius: 50%;
+    // margin: auto;
+}
+
+.js-events-state__normal {
+    background-color: #45a545;
+    border-color: #45a545;
+}
+.js-events-state__warning {
+    background-color: #ffe900;
+    border-color: #ffe900;
+}
+.js-events-state__danger {
+    background-color: #f44242;
+    border-color: #f44242;
+}

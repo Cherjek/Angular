@@ -1,0 +1,7 @@
+<ng-container *ngIf="loader$ | async">
+  <div class="rom-loader d-flex flex-column justify-content-center align-items-center">
+    <i class="zmdi zmdi-spinner zmdi-hc-3x zmdi-hc-spin"></i>
+    <div class="mt-3" *ngIf="message$ | async as message">{{message}}</div>
+  </div>
+</ng-container>
+

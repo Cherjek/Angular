@@ -1,0 +1,197 @@
+<div class="main-view-component">
+
+  <div class="col border-right-1">
+
+      <header class="main-content-header row">
+          <div class="col-auto">
+              <backward-button></backward-button>
+          </div>
+          <div class="col">
+              <h3 *ngIf="step === 1">Новый расчет тарифного калькулятора</h3>
+              <h3 *ngIf="step === 2">Расчетные группы тарифного калькулятора</h3>
+          </div>
+      </header>
+
+      <div class="main-view-content">
+          <div class="col col-content-ro5">
+              <message-popup [(messages)]="errors"></message-popup>
+              <loader-ro5 [(loading)]="loadingContent"></loader-ro5>
+
+              <div class="col-content-flex-column" [ngSwitch]="step">
+
+                  <section *ngSwitchCase="1" class="section-body-content section-panel-two-columns-settings">
+                  
+                    <header class="row no-gutters-2 section-header-grouppanel-expander">
+                      <div class="col">
+                        <h5>Настройки</h5>
+                      </div>
+                    </header>
+
+                    <div class="row no-gutters-2 border-bottom-1">
+                      <div class="col-2">
+                        <h6>Временной диапазон</h6>
+                      </div>
+                      <div class="col">
+                        <date-picker-ro5 #calendarSettings
+                                                               [(fromDate)]="monthStart"
+                                                               [isMonthMode]="true"
+                                                               [isDefFast]="false"
+                                                               [fastPanel]="false"></date-picker-ro5>
+                      </div>
+                    </div>    
+                    
+                    <div class="row no-gutters-2 border-bottom-1">
+                      <div class="col-2">
+                        <h6>Название</h6>
+                      </div>
+                      <div class="col">
+                        <input-box [placeholder]="'Название'" [maxlength]="128" [(value)]="name">
+                        </input-box>
+                      </div>
+                    </div>
+
+                    <div class="row no-gutters-2 border-bottom-1">
+                      <div class="col-2">
+                        <h6>Тип калькуляций</h6>
+                      </div>
+                      <div class="col">
+                        <combo-box-ro5 [keyField]="'Id'"
+                              [valueField]="'Name'"
+                              [value]="calculationType"
+                              [itemsInput]="calculationTypes"
+                              (onSelected)="calculationType = $event;selectTypeCalc($event);"></combo-box-ro5>
+                      </div>
+                    </div>
+
+                    <div class="row no-gutters-2 border-bottom-1">
+                      <div class="col-2">
+                        <h6>Форма отчета</h6>
+                      </div>
+                      <div class="col" [ngStyle]="{ 'cursor': isTypeReportsLoading ? 'not-allowed' : 'default' }">
+                        <combo-box-ro5 
+                          [ngClass]="{ 'item-display-disabled' : isTypeReportsLoading }" 
+                          [keyField]="'Id'"
+                              [valueField]="'Name'"
+                              [value]="calculationTypesReport"
+                              [itemsInput]="calculationTypesReports"
+                              (onSelected)="calculationTypesReport = $event;"></combo-box-ro5>
+                      </div>
+                    </div> 
+                    
+                    <div class="row no-gutters-2 border-bottom-1">
+                      <div class="col-2">
+                        <h6>Учитывать каждый ПУ отдельно</h6>
+                      </div>
+                      <div class="col">
+                        <check-box-ro5 
+                          [checked]="separateLogicDevices"
+                          (onClick)="separateLogicDevices = $event.checked">
+                        </check-box-ro5>
+                      </div>
+                    </div> 
+                  
+                  </section>
+                  <ng-container *ngSwitchCase="2">
+                    <section class="section-body-content">
+                      <ng-container *ngFor="let group of calculationGroups; let i=index;">
+                        <header data-toggle="collapse" [attr.data-target]="'#logicDeviceGroupSection' + i"
+                          [attr.aria-controls]="'#logicDeviceGroupSection' + i"
+                          class="section-header-grouppanel-expander row no-gutters border-bottom-1 tags-header">
+                          <div class="col-auto">
+                            <h5> {{ group.Name }} </h5>
+                          </div>
+                          <div class="col"></div>
+                          <div class="col-auto step-two-files" (click)="$event.stopPropagation();">
+                            <a class="step-two-files-matrix" href="assets/files/Форма-Матрица.xls">Скачать матричную форму</a>
+                            <rom-uploader 
+                              asBlob="true"
+                              (onFileUpload)="onFileUpload(group, $event)"
+                              (onWrongFileUpload)="onFileUploadError($event)">
+                            </rom-uploader>
+                          </div>                
+                          <div class="col-auto">
+                            <button data-toggle="collapse" [attr.data-target]="'#logicDeviceGroupSection' + i"
+                              [attr.aria-controls]="'#logicDeviceGroupSection' + i"
+                              class="section-header-grouppanel-expander row no-gutters border-bottom-1 tags-header"
+                              [ngClass]="group.data?.length ? 'transform-rotate-show': 'transform-rotate-collapsed'"
+                              class="btn-outline-circle   btn-circle-size-32">
+                              <i class="zmdi zmdi-chevron-right"></i>
+                            </button>
+                          </div>
+                        </header>
+                        <section #parentScroll [attr.id]="'logicDeviceGroupSection' + i" [ngClass]="group.HierarchyNode?.LogicDevices ? 'show': 'collapse'" class="list-view-container">
+                          <div class="row no-gutters-2 border-bottom-1 height-50 align-items-center" *ngFor="let ld of group.HierarchyNode?.LogicDevices">
+                            <div class="col">{{ ld.DisplayName }}</div>
+                          </div>
+                        </section>
+                      </ng-container>
+                      <ng-container *ngIf="calculationGroups == null || !calculationGroups.length">
+                        <div class="row no-gutters align-items-center not-data-items">
+                          <div class="col">
+                              Нет данных
+                          </div>
+                        </div>
+                      </ng-container>
+                    </section>
+                  </ng-container>
+                  <footer class="section-footer-content">
+                    <div class="row no-gutters col-wrappanel align-items-center justify-content-end" [ngClass]="{ 'item-display-disabled' : isCreateValidSuccess }"
+                        style="margin-right: 15px">
+                        <div class="col-auto" *ngIf="step === 2">
+                          <button 
+                            [ngStyle]="{ 'cursor': (saveComplete) ? 'not-allowed' : 'default' }"
+                            [disabled]="saveComplete" style="height: 40px; width:150px" type="button" class="btn btn-outline-secondary" (click)="clickPreviousStep()"> Назад </button>
+                        </div>
+                        <div class="col-auto" *ngIf="step === 1 && !isShowTemplateSavePanel">
+                          <button 
+                            style="height: 40px; width:150px" type="button" class="btn btn-outline-secondary" (click)="clickNextStep()"> Далее </button>
+                        </div>
+                        
+                        <div class="col" *ngIf="isShowTemplateSavePanel" style="padding-left: 10px">
+                          <div class="row no-gutters col-wrappanel align-items-center">
+                            <div class="col">
+                              <input-box #inputNameTemplate class="allowance-input-width" [placeholder]="'Название шаблона'" [maxlength]="128"
+                                [isFocus]="true" [isEnableValidate]="true" [(value)]="__value"
+                                (isCheckValidValue)="isValidSaveTemplate = $event"></input-box>
+                            </div>
+                            <div class="col-auto">
+                              <button 
+                                style="height: 40px; width: 250px;"
+                                type="button" 
+                                class="btn btn-primary" 
+                                (click)="saveTemplate((inputNameTemplate || {}).value)">
+                                Сохранить
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                        <ng-container *ngIf="!isShowTemplateSavePanel">
+                          <div class="col-auto" [ngStyle]="{ 'cursor': saveComplete || (step === 2 && !(calculationGroups || []).length) ? 'not-allowed' : 'default' }">
+                            <button 
+                              [disabled]="saveComplete || (step === 2 && !(calculationGroups || []).length)"
+                              class="btn button-apply button-settemplate-left drop-radius" (click)="save()">
+                              Поставить в очередь
+                            </button>
+                            <button *appCanAccess="'TC_USE_FAVORITES'" 
+                              class="btn btn-darkgreen button-settemplate-right" 
+                              placement="top"
+                              ngbTooltip="Добавить в шаблон" 
+                              (click)="isShowTemplateSavePanel = true">
+                              <i class="zmdi zmdi-star"></i>
+                            </button>
+                          </div>
+                        </ng-container>                        
+                        <div class="col-auto">
+                            <button 
+                            [ngStyle]="{ 'cursor': (saveComplete) ? 'not-allowed' : 'default' }"
+                            [disabled]="saveComplete" style="height: 40px; width:150px" type="button" class="btn btn-outline-secondary" (click)="clickCancelButton()"> Отмена </button>
+                        </div>
+                    </div>
+                </footer>
+              </div>
+
+          </div>
+      </div>
+
+  </div>
+</div>

@@ -1,0 +1,42 @@
+<div class="row no-gutters-2">
+    <div class="col-12">
+        
+        <div class="row">
+            <div class="col">
+                <h3>Tree single</h3>
+                <tree-view-ro5 
+                    [nodes]="geoTree" 
+                    [childDataName]="'Nodes'" 
+                    [isCheck]="true"
+                    [isSearch]="true" 
+                    [showExpandToggle]="true">
+                </tree-view-ro5>
+            </div>
+        </div>
+    </div>
+    <div class="col-12">
+        <br>
+        <hr>
+    </div>
+    <div class="col-12">
+        
+        <div class="row">
+            <div class="col">
+                <h3>Tree table</h3>
+
+                <ng-template #nodeTemplate let-node>
+                    <a href="javascript:void(0)" (click)="onNavigate(node)">{{ node.name | pipeNoName }}</a>
+                </ng-template>
+                <mat-tree-ro5
+                    nodeId='Id' 
+                    nodeName='Name' 
+                    childPropertyName='Nodes'
+                    [nodeTemplate]="nodeTemplate"
+                    [data]="geoTree"
+                    [actionButtons]="matTreeActionButtons"
+                    (actionMenuClick)="actionMenuTreeClick($event)">
+                </mat-tree-ro5>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,48 @@
+<header class="section-header-content row">
+    <div class="col-auto">
+        <h5> Права доступа групп к модулю "{{accessList[activeAccessListItem]?.Name}}" </h5>
+    </div>
+</header>
+
+<section class="section-body-content settings-container">
+    <section class="section-body-content section-panel-two-columns-settings">
+        <div class="row align-items-center no-gutters-2 border-bottom-1"
+             *ngFor="let item of accessList[activeAccessListItem]?.Permissions">
+            <div class="col-3">
+                <span> {{ item.Name }} </span>
+            </div>
+            <div class="col-9">
+                <div class="row no-gutters align-items-center">
+                    <div class="col-auto">
+                        
+                        <ng-template #itemLink>
+                            <a [innerHTML]="item?.UserGroupsCount"></a>
+                        </ng-template>
+
+                        <ng-container [ngSwitch]="item?.UserGroupsCount > 0">
+
+                            <ng-container *ngSwitchCase="true">
+                                
+                                <a *appCanAccess="'ADM_GROUPS_ALLOW'; else itemLink"
+                                   (click)="saveItem(item)"
+                                   [routerLink]="['/admin/groups']"
+                                   [innerHTML]="item?.UserGroupsCount"></a>
+
+                            </ng-container>
+
+                            <ng-container *ngSwitchCase="false">
+                                
+                                <ng-template [ngTemplateOutlet]="itemLink"></ng-template>
+
+                            </ng-container>
+
+                        </ng-container>
+
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</section>

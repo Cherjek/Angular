@@ -1,0 +1,68 @@
+﻿<div class="main-view-content height-auto">
+    <loader-ro5 [(loading)]="loadingContentPanel"></loader-ro5>
+    <message-popup [(messages)]="errorsContentValidationForms"></message-popup>
+    <div class="col col-content-ro5 col-content-flex-column">
+        
+        <section class="section-body-content section-panel-two-columns-settings validate-create">
+            <div class="row no-gutters-2 border-bottom-1">
+                <div class="col-2"><h6>Период</h6></div>
+                <div class="col">
+                    <table>
+                        <tr>
+                            <td>{{JobSettings.DateStart | dateTimeFormat}}</td>
+                            <td>&nbsp;-&nbsp;</td>
+                            <td>{{JobSettings.DateEnd | dateTimeFormat}}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="row no-gutters-2 border-bottom-1">
+                <div class="col-2"><h6>Название анализа</h6></div>
+                <div class="col">{{JobSettings.JobName}}</div>
+            </div>
+            <ng-container *ngIf="JobSettings.Allowance != null">
+                <div class="row no-gutters-2 border-bottom-1">
+                    <div class="col-2"><h6>Припуск</h6></div>
+                    <div class="col">{{JobSettings.Allowance}}</div>
+                </div>
+            </ng-container>
+            <div class="row no-gutters-2 border-bottom-1" *ngFor="let item of JobSettings.Issues">
+                <div class="col-2"><h6>{{item.Name}}</h6></div>
+                <div class="col">
+                    <!--Tags-->
+                    <table class="view-tag-panel">
+                        <tbody>
+                            <tr *ngFor="let tag of item.Tags" class="item-row-checkbox">
+                                <td>
+                                    <span class="tag-info-label">
+                                        {{tag.Code}}
+                                    </span>
+                                    <span class="text-info-additional">
+                                        {{ tag.Name }}
+                                    </span>
+                                    <div *ngFor="let setting of tag.IssueTagSettings">
+                                        <table>
+                                            <tr>
+                                                <td>
+                                                    {{setting.Name}}
+                                                </td>
+                                                <td>
+                                                    {{setting.Value}}
+                                                </td>
+                                                <td>
+                                                    {{setting.UnitName}}
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+

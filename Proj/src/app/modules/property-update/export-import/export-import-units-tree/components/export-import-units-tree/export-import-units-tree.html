@@ -1,0 +1,150 @@
+﻿<div class="main-view-component">
+    
+    <div class="col border-right-1">
+
+        <header class="main-content-header row align-items-center">
+            <div class="col-auto">
+                <backward-button></backward-button>
+            </div>
+            <div class="col">
+                <h3> Выбор объектов, оборудования, устройств </h3>
+            </div>
+        </header>
+
+        <div class="main-view-content">
+            <div class="col col-content-ro5">
+                
+                <!-- <header class="section-header-content row" style="position: relative; z-index: 1;">
+                    <div class="col-auto p-0">
+                        <div class="dropdown" style="height: 100%">
+                            <button class="dropdown-toggle" style="height: 100%; border: none; background-color: transparent"
+                                    type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                    aria-expanded="false">
+                                {{ filterBy?.name }}
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <div *ngFor="let item of filterData; index as i;" class="dropdown-item"
+                                     (click)="filterBy = item">
+                                    {{ item?.name }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="line-height: 48px">|</div>
+                    <div class="col p-0">
+                        <input-box [isFocus]="true"
+                                   [isFullSize]="true"
+                                   [(value)]="dataGridFilterQuery"
+                                   (valueChange)="filterQuery = $event">
+                        </input-box>
+                    </div>
+                </header> -->
+                
+                <header class="row no-gutters-2 align-items-center col-content-ro5 border-bottom-1 z-index-0">
+                    <div class="col-auto"
+                         [ngSwitch]="treelistCheckedPanel?.CountCheckTotal != null && treelistCheckedPanel?.CountCheckTotal > 0">
+                        <h6 *ngSwitchCase="true">
+                            Выбрано: {{ treelistCheckedPanel?.CountCheckTotal }}
+                            из {{ treelistCheckedPanel?.CountTotal }}
+                        </h6>
+                        <h6 *ngSwitchCase="false">Всего: {{ treelistCheckedPanel?.CountTotal || 0 }}</h6>
+                    </div>
+                    <div class="col-auto"
+                         *ngIf="treelistCheckedPanel?.CountCheckTotal !== null && treelistCheckedPanel?.CountCheckTotal > 0">
+                        <button-ro5 [class]="'btn-orange'" (onclick)="onBasketItemAdd()">
+                            Добавить в корзину
+                        </button-ro5>
+                    </div>
+                </header>
+                
+                <loader-ro5 [(loading)]="loadingContentPanel"></loader-ro5>
+                <message-popup [(messages)]="errors"></message-popup>
+
+                <div class="col-content-flex-column" class="content-flex-height50">
+
+                    <section class="section-body-content" #sectionTreeList>
+
+                        <ng-container *ngIf="!dataGridFilterQuery?.length; else showDataGrid">
+                            <ng-container *ngIf="treeListItems">
+                                <treelist-checked-panel #treelistCheckedPanel 
+                                                        [TreeListItems]="treeListItems"
+                                                        [Tree]="unitsTree | filterRow:changeDetection" 
+                                                        [ChildDataName]="'Nodes'" 
+                                                        [KeyField]="'Id'"
+                                                        [DisplayField]="'Name'" 
+                                                        [OffsetBottom]="50"
+                                                        (onCountTotalChange)="tlcPanel.countTotal = $event"
+                                                        (onCountCheckTotalChange)="tlcPanel.countCheckTotal = $event"></treelist-checked-panel>
+                            </ng-container>
+                        </ng-container>
+                        <ng-template #showDataGrid>
+                            <!-- <admin-group-geo-edit-data-grid [dataTreeSource]="unitsTree"
+                                                            [filterBy]="filterBy"
+                                                            [filterQuery]="filterQuery"
+                                                            (onBasketMove)="onBasketMove($event)">
+                            </admin-group-geo-edit-data-grid> -->
+                        </ng-template>
+
+                    </section>
+
+                    <footer class="section-footer-content">
+                        <div class="row no-gutters-2 align-items-center">
+                            <div class="col">
+                                <div class="row no-gutters align-items-center col-wrappanel" style="flex-wrap: nowrap">
+                                    <div class="col-auto">
+                                        <button-ro5 [class]="'btn-primary'" (onclick)="save()">Сохранить</button-ro5>
+                                    </div>
+                                    <div class="col-auto">
+                                        <button-ro5 [class]="'btn-outline-secondary'" (onclick)="cancel()">Отмена</button-ro5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </footer>
+                </div>
+
+            </div>
+        </div>
+
+        
+    </div>
+
+    <div class="col-auto col-basket col-objects-ro5" [ngClass]="{'show' : unitsBasketTree?.length }">
+        <div class="col-content-flex-column">
+            <header class="main-content-header row align-items-center">
+                <div class="col">
+                    <h4> Выбрано </h4>
+                </div>
+            </header>
+            <header class="section-header-content">
+                <input-box
+                    [type]="'search'"
+                    [isFocus]="true"
+                    [isFullSize]="true"
+                    (valueChange)="treeView.filterTextChange($event)"></input-box>
+            </header>
+            <header class="row no-gutters-2 align-items-center border-bottom-1">
+                <div class="col">
+                    <button-ro5
+                        [disabled]="!checkedUnitsBasketTree?.length"
+                        [class]="'btn-primary'"
+                        (onclick)="onBasketItemRemove()">Убрать</button-ro5>
+                </div>
+            </header>
+
+            <section class="section-body-content">
+                <div class="row no-gutters-2" style="margin-top: 8px">
+                    <div class="col">
+                        <tree-view-ro5
+                            #treeView
+                            [nodes]="unitsBasketTree | filterRow:changeDetection"
+                            [childDataName]="'Nodes'" [isSearch]="false"
+                            (onSelectedChanged)="checkedUnitsBasketTree = $event"></tree-view-ro5>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+</div>

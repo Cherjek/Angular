@@ -1,0 +1,118 @@
+﻿<div class="main-view-content">
+    <div id="panelGraph" class="splitter_panel">
+        <div id="resizebleContent" #splitterCanvasGraph [ngClass]="{ 'ct-state-invisible': !showGraphPanel }" class="top_panel">
+            <loader-ro5 [(loading)]="loadingGraphViewPanel"></loader-ro5> 
+            <div id="charttags" style="width: 100%; background-color: #fff" [style.height.px]="getPixelHeightGraph(splitterCanvasGraph)"></div>
+        </div>        
+        <div class="bottom_panel">
+            <div class="row no-gutters" style="height:calc(100%)">
+                <div class="col col-content-flex-column">
+
+                    <div #splitterTableGraph class="splitter__grid-panel-div" [ngClass]="{ 'ct-state-invisible': !showGraphPanel }">
+
+                        <data-grid-ro5 #Ro5DataGridGraph
+                                       [ParentElementRef]="splitterTableGraph"
+                                       [DataGridOptions]="{ isSearchVisibility: false }"
+                                       [KeyField]="'UniqueId'"
+                                       [HeaderActionTemplate]="headerActionGraph"
+                                       [HeaderTextTemplate]="'Теги на графике'"
+                                       [DataSource]="DataSourceGraph"
+                                       [SelectionRowMode]="DGSelectionRowMode.Multiple"
+                                       (onDataBinding)="onDataGraphBinding($event)">
+
+                            <ng-template #headerActionGraph>
+                                <div class="row no-gutters-2 align-items-center justify-content-end">
+                                    <div class="col-auto">
+                                        <button type="button" class="btn btn-outline-secondary" (click)="clearTagsGraph()">
+                                            Сбросить
+                                        </button>
+                                    </div>
+                                </div>
+                            </ng-template>
+
+                            <ng-template #cellTagColor let-item="item">
+                                <div class="row no-gutters-2 align-items-center justify-content-center" *ngIf="itemTagsGraph[item.TagId]">
+                                    <div class="col-auto">
+                                        <div style="width: 30px; height: 30px" [style.backgroundColor]="itemTagsGraph[item.TagId].Color">
+                                        </div>
+                                    </div>
+                                </div>
+                            </ng-template>
+
+                        </data-grid-ro5>
+
+                    </div>
+                    <div #splitterTableTag class="splitter__grid-panel-div" [ngClass]="{ 'ct-state-invisible' : isNotVisibleTagsGrid }">
+
+                        <data-grid-ro5 #Ro5DataGrid
+                                       [ParentElementRef]="splitterTableTag"
+                                       [DataGridOptions]="{ isSearchVisibility: false }"
+                                       [KeyField]="'UniqueId'"
+                                       [HeaderActionTemplate]="headerAction"
+                                       [DataSource]="DataSource | filterRow:'':FilterTable:'&&'"
+                                       [SelectionRowMode]="DGSelectionRowMode.Multiple"
+                                       [SelLimit]="selLimit">
+
+                            <ng-template #headerAction>
+                                <div class="row no-gutters-2 align-items-center">
+                                    <!--<div class="col-auto" *ngIf="Ro5DataGrid.getSelectDataRows().length" style="font-weight: 600">
+                                        <div>/&nbsp;&nbsp;Выбрано: {{ Ro5DataGrid.getSelectDataRows().length }}</div>
+                                    </div>-->
+                                    <div class="col-auto" *ngIf="Ro5DataGrid.SelectionRow.isItemsSelect">
+                                        <ng-template #ShowGraphConfirmation>
+                                            <div class="row no-gutters">
+                                                <div class="col confirm-remove-panel">
+                                                    <div class="row no-gutters">
+                                                        <div class="col">
+                                                            Выбрано больше 10 тегов. Построение графика может занять время. Вы уверены, что хотите продолжить?
+                                                        </div>
+                                                    </div>
+                                                    <div class="row no-gutters col-wrappanel align-items-center justify-content-end">
+                                                        <div class="col-auto">
+                                                            <button type="button" class="btn btn-outline-secondary" (click)="createTagsGraph();p.close()"> Продолжить </button>
+                                                        </div>
+                                                        <div class="col-auto">
+                                                            <button type="button" class="btn btn-outline-secondary" (click)="p.close()"> Отмена </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </ng-template>
+                                        <button type="button" class="btn btn-orange"
+                                                data-placement="bottom-left"
+                                                triggers="manual"
+                                                [ngbPopover]="ShowGraphConfirmation"
+                                                #p="ngbPopover"
+                                                (click)="createTagsGraph(p)">
+                                            Показать на графике
+                                        </button>
+                                    </div>
+                                </div>
+                            </ng-template>
+
+                        </data-grid-ro5>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+               
+    </div>
+
+    <ng-template #cellUnit let-item="item">
+        <div class="row no-gutters">
+            <div class="col">
+                <div [innerHtml]="(item.UnitDisplayText + ' > ' + item.LogicDeviceDisplayText) | markerText:dataGrid.SearchFilter"></div>
+            </div>
+        </div>
+    </ng-template>
+
+    <ng-template #cellTag let-item="item">
+        <div class="row no-gutters">
+            <div class="col">
+                <span [innerHtml]="item.TagCode | markerText:dataGrid.SearchFilter"></span>&nbsp;&nbsp;<span class="text-info-additional" [innerHtml]="item.TagName | markerText:dataGrid.SearchFilter"></span>
+            </div>
+        </div>
+    </ng-template>
+</div>

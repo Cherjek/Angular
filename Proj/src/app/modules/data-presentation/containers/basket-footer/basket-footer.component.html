@@ -1,0 +1,44 @@
+<div class="row no-gutters col-wrappanel align-items-center" style="padding: 10px;">
+    <div class="col">
+        <h6>Показания</h6>
+    </div>
+    <div class="col-auto" style="cursor: pointer;">
+        <div class="row no-gutters">
+            <div class="col-auto" *ngIf="PropertyForm.IsShowData">
+                <check-box-ro5 [checked]="isOnlyLastValue" (onClick)="isOnlyLastValue = $event.checked">
+                </check-box-ro5>
+            </div>
+            <div class="col-auto" style="font-size: 12px;" *ngIf="PropertyForm.IsShowData"
+                (click)="isOnlyLastValue = !isOnlyLastValue">Только последние значения</div>
+        </div>
+    </div>
+</div>
+<div class="row no-gutters align-items-center" style="padding: 10px;"
+    [ngStyle]="{ 'cursor': isOnlyLastValue ? 'not-allowed' : 'default' }">
+    <div class="col" [ngClass]="{ 'item-display-disabled' : isOnlyLastValue }">
+        <date-picker-ro5 
+            #datePicker
+            [(fromDate)]="fromDate" 
+            [(toDate)]="toDate" 
+            [min]="minDate" 
+            [max]="maxDate" 
+            [fastButtonType]="fastButtonType"
+            [isVertical]="true"
+            [fastPanel]="true" 
+            [isDefFast]="true" 
+            [positionCalendar]="'top'">
+        </date-picker-ro5>
+    </div>
+</div>
+<div class="row no-gutters-2 align-items-center" style="padding: 10px 0;">
+    <div class="col" *ngIf="PropertyForm.IsShowData">
+        <button-ro5 style="width: 100%" class="button-apply" (onclick)="showData()">
+            Показать данные
+        </button-ro5>
+    </div>
+    <div class="col" *ngIf="PropertyForm.IsCompareData">
+        <button-ro5 style="width: 100%" class="button-apply" (onclick)="compareData()">
+            Сравнить
+        </button-ro5>
+    </div>
+</div>

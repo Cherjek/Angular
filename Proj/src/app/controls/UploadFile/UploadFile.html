@@ -1,0 +1,13 @@
+﻿<div class="input-group">
+    <div class="input-group-prepend">
+        <button class="btn btn-primary" type="button">
+            <i class="zmdi zmdi-upload"></i>
+        </button>
+    </div>
+    <div class="custom-file">
+        <input [accept]="acceptType" type="file" class="custom-file-input" id="inputGroupFile03"
+               (change)="handleFileInput($event.target.files)"
+               [attr.multiple]="multiple">
+        <label class="custom-file-label" for="inputGroupFile03">{{fileToUploadName}}</label>
+    </div>
+</div>

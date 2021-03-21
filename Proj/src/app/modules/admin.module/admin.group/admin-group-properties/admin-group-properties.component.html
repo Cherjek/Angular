@@ -1,0 +1,185 @@
+﻿<div class="main-view-content height-auto main-view-result">
+    <div class="col col-content-ro5">
+
+        <ng-container *ngIf="errorLoadGroup != null">
+            <div class="row no-gutters-2 justify-content-center message-margin__top_bottom">
+                <div class="col" style="text-align: center">
+                    <h4>{{ errorLoadGroup }}</h4>
+                </div>
+            </div>
+            <div class="row no-gutters-2 justify-content-center">
+                <div class="col-auto">
+                    <button type="button" class="btn btn-outline-secondary" (click)="back2Objects()"> Вернуться к
+                        предыдущей странице </button>
+                </div>
+            </div>
+        </ng-container>
+
+        <div class="col-content-flex-column" *ngIf="errorLoadGroup == null">
+            <section class="section-body-content section-panel-two-columns-settings">
+                <header class="section-header-grouppanel-expander row no-gutters border-bottom-1">
+                    <div class="col">
+                        <h5>Свойства</h5>
+                    </div>
+                    <div class="col-auto" [ngSwitch]="isPropEdit" *appCanAccess="'ADM_EDIT_GROUP_PROPERTIES'">
+                        <ng-container *ngSwitchCase="true">
+                            <button-ro5 *ngIf="!isNew" [class]="'btn-outline-secondary'" (onclick)="cancel()">
+                                Отменить изменения
+                            </button-ro5>
+                        </ng-container>
+                        <button-ro5 *ngSwitchCase="false" class="btn-primary" (onclick)="changeProperties()">
+                            Изменить
+                        </button-ro5>
+                    </div>
+                    <div class="col-auto">
+                        <message-popup [messages]="errors"></message-popup>
+                        <i *ngIf="loadingContentPanel" class="zmdi zmdi-spinner zmdi-hc-3x zmdi-hc-spin"></i>
+                        <button [ngClass]="{'ct-state-invisible' : loadingContentPanel}" data-toggle="collapse"
+                            data-target="#propertySection" aria-controls="propertySection" aria-expanded="false"
+                            class="btn-outline-circle transform-rotate-show btn-circle-size-32">
+                            <i class="zmdi zmdi-chevron-right"></i>
+                        </button>
+                    </div>
+                </header>
+
+                <section id="propertySection" class="collapse show">
+
+                    <section class="section-panel-two-columns-settings" *ngIf="group">
+                        <div class="row no-gutters-2 border-bottom-1">
+                            <div class="col-2">
+                                <span> Активность </span>
+                            </div>
+                            <div class="col-10">
+
+                                <ng-container [ngSwitch]="isPropEdit">
+                                    <toggle-switch *ngSwitchCase="true" [checked]="!group.IsBlocked"
+                                        [checkedRunnerColorClass]="'runner-color-checked-green'"
+                                        [checkedSliderColorClass]="'slider-color-checked-green'"
+                                        (onCheck)="group.IsBlocked = !$event"></toggle-switch>
+                                    <span
+                                        *ngSwitchDefault>{{ group.IsBlocked ? statuses_names.notActive : statuses_names.active }}</span>
+                                </ng-container>
+
+                            </div>
+                        </div>
+                        <div class="row no-gutters-2 border-bottom-1" [formGroup]="formValidateGroup">
+                            <div class="col-2">
+                                <span> Название группы </span><span class="error-required-color">&nbsp;*</span>
+                            </div>
+                            <div class="col-10">
+
+                                <ng-container [ngSwitch]="isPropEdit">
+                                    <input-box 
+                                        *ngSwitchCase="true" 
+                                        [placeholder]="'Введите название группы'" 
+                                        [(value)]="group.Name"
+                                        [maxlength]="90" 
+                                        formControlName="groupName"
+                                        [isNotValidValue]="groupName.invalid">
+                                    </input-box>
+                                    <div *ngIf="isPropEdit && groupName.invalid  && (groupName.dirty || groupName.touched)"
+                                        class="p-2 text-danger">
+                                        <div *ngIf="groupName?.errors?.required">
+                                            Название группы должно быть заполненно.
+                                        </div>
+
+                                        <div *ngIf="groupName?.errors?.forbiddenName">
+                                            В имени группы не должны быть только пробелы.
+                                        </div>
+                                    </div>
+                                    <span *ngSwitchDefault>{{ group.Name }}</span>
+                                </ng-container>
+                            </div>
+                        </div>
+
+                        <div class="row no-gutters-2 border-bottom-1">
+                            <div class="col-2">
+                                <span> Группа в AD </span>
+                            </div>
+                            <div class="col-10">
+                                <ng-container [ngSwitch]="isPropEdit">
+                                    
+                                    <ng-container *ngSwitchCase="true">
+                                        <ng-container *appCanAccess="'ADM_SELECT_AD'; else templateLDAP">
+                                            <div class="dropdown-input"
+                                                 ngbDropdown
+                                                 #dropDown="ngbDropdown"
+                                                 [autoClose]="false"
+                                                 (click)="stopPropagation($event)">
+                                                    
+                                                <div (click)="openTreeLdap(dropDown)">
+                                                    <input-box [placeholder]="'Выберите группу в AD'"
+                                                               [(value)]="group.LdapPath"
+                                                               [maxlength]="90">
+                                                    </input-box>
+                                                </div>
+
+                                                <div ngbDropdownMenu>
+                                                    <tree-view-ro5 #treeView
+                                                                   [nodes]="ldapNodesData"
+                                                                   [childDataName]="'Children'"
+                                                                   [isCheck]="false"
+                                                                   [isSearch]="true"
+                                                                   [showExpandToggle]="false"
+                                                                   (itemSelect)="onItemSelected($event); dropDown.close();">
+                                                    </tree-view-ro5>
+                                                </div>
+                                            </div>
+                                        </ng-container>
+                                    </ng-container>
+                                    
+                                    <ng-template #templateLDAP>
+                                        <input-box [placeholder]="'Выберите группу в AD'"
+                                                   [(value)]="group.LdapPath"
+                                                   [maxlength]="90">
+                                        </input-box>
+                                    </ng-template>
+
+                                    <span *ngSwitchDefault>{{ group.LdapPath }}</span>
+                                </ng-container>
+                            </div>
+                        </div>
+                        <div class="row no-gutters-2 border-bottom-1">
+                            <div class="col-2">
+                                <span> Главная страница </span>
+                            </div>
+                            <div class="col-10">
+
+                                <ng-container [ngSwitch]="isPropEdit">
+                                    <combo-box-ro5 *ngSwitchCase="true"
+                                                [keyField]="'Code'"
+                                                [valueField]="'Name'"
+                                                [value]="group.StartPage"
+                                                [itemsInput]="mainPageData"
+                                                (onSelected)="group.StartPage = $event;"
+                                                (event)="mainPageDropdown()"></combo-box-ro5>
+                                    <span *ngSwitchDefault>{{ group?.StartPage?.Name }}</span>
+                                </ng-container>
+                            </div>
+                        </div>
+                    </section>
+                </section>
+            </section>
+
+            <footer class="section-footer-content" *ngIf="isPropEdit">
+                <div class="row no-gutters-2 align-items-center">
+                    <div class="col">
+                        <div class="row no-gutters col-wrappanel align-items-center">
+                            <div class="col-auto">
+                                <button-ro5 [class]="'btn-primary'" (onclick)="saveGroup()"
+                                    [disabled]="!formValidateGroup?.valid">
+                                    {{ !isNew ? 'Сохранить' : 'Создать группу' }}
+                                </button-ro5>
+                            </div>
+                            <div class="col-auto">
+                                <button-ro5 [class]="'btn-outline-secondary'" (onclick)="cancel()">
+                                    Отмена
+                                </button-ro5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+</div>

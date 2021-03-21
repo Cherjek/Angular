@@ -1,0 +1,74 @@
+<div class="main-view-content">
+  <loader-ro5 [(loading)]="loadingContentPanel"></loader-ro5>
+  <div class="col col-content-ro5 col-content-flex-column">
+
+    <section class="section-body-content section-panel-two-columns-settings validate-create"
+      *ngIf="taskData as param">
+      <div *ngIf="param.Files == null" class="row no-gutters-2 border-bottom-1">
+        <div class="col-2">
+          <h6>Период</h6>
+        </div>
+        <div class="col">
+          <table>
+            <tr>
+              <ng-container *ngIf="(param.ImportSettings !== null ? param.ImportSettings: param.ExportSettings) as importExport">
+                <ng-container *ngIf="param.StartDate != null">
+                  <td>{{importExport?.DateTimeRange?.Start | dateFormat }}</td>
+                </ng-container>
+                <ng-container *ngIf="param.FinishDate != null">
+                  <td>&nbsp;-&nbsp;</td>
+                  <td>{{importExport?.DateTimeRange?.End | dateFormat}}</td>
+                </ng-container>
+              </ng-container>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="row no-gutters-2 border-bottom-1">
+        <div class="col-2">
+          <h6>Название</h6>
+        </div>
+        <div class="col">{{param.Name | pipeNoName}}</div>
+      </div>
+      <div *ngIf="param.Files == null && (param.ImportSettings !== null ? param.ImportSettings: param.ExportSettings) as importExport" class="row no-gutters-2 border-bottom-1">
+        <div class="col-2">
+          <h6>Список настроек</h6>
+        </div>
+        <div class="col">
+          <div *ngFor="let item of importExport.SettingTypes">
+              {{item?.Name + ' '}}
+          </div>
+        </div>
+      </div>
+      <div *ngIf="param.Files == null && (param.ImportSettings !== null ? param.ImportSettings: param.ExportSettings) as importExport" class="row no-gutters-2 border-bottom-1">
+        <div class="col-2">
+          <h6>Список гарантирующих поставщиков</h6>
+        </div>
+        <div class="col eirp-tariff-suppliers">
+          <a [routerLink]="['/tariff-calc/suppliers/' + item?.Id +'/property']" *ngFor="let item of importExport.TariffSuppliers">
+              {{item?.Name + ' '}}
+          </a>
+        </div>
+      </div>
+      <div *ngIf="param.Files == null && param?.IsExport" class="row no-gutters-2 border-bottom-1">
+        <div class="col-2">
+          <h6>Формат</h6>
+        </div>
+        <div class="col-8">
+          <div>
+              {{param?.ExportSettings?.FileFormat === 1 ? 'Excel' : 'Xml'}}
+          </div>
+        </div>
+      </div>
+      <div *ngIf="param.Files != null" class="row no-gutters-2 border-bottom-1">
+        <div class="col-2">
+          <h6>Файлы</h6>
+        </div>
+        <div class="col">
+          <a href="javascript:void(0)" (click)="downloadFile(param.Files); $event.stopPropagation()">Скачать</a>
+        </div>
+      </div>
+
+    </section>
+  </div>
+</div>

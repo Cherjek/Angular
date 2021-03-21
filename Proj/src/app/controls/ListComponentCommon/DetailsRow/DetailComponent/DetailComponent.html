@@ -1,0 +1,14 @@
+﻿<ng-container *ngIf="hasPermission; else noPermission">
+  <navigate-menu-ro5 #NavigateMenu [items]="Menu"
+                   [isTabView]="true"
+                   (onNavSelectChanged)="onNavSelectChanged($event)"></navigate-menu-ro5>
+<div class="hr"></div>
+</ng-container>
+<ng-template #noPermission>
+  <div class="dc-no-perm">
+    Нет данных или у вас нет доступа к этой странице.
+  </div>
+</ng-template>
+<ng-template #detailView="detailViewHost" detailViewHost>
+
+</ng-template>

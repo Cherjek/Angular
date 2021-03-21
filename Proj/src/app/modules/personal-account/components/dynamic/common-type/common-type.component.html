@@ -1,0 +1,47 @@
+﻿<message-popup [(messages)]="errors"></message-popup>
+
+<div class="container-main">
+    
+    <div class="container-body">
+
+        <table-container (click)="loadingTable = true; loadTable()"
+                         [changeSelectView]="changeSelectView"
+                         [isEmptySource]="tagTable == null || tagTable.length == 0"
+                         [loadingTable]="loadingTable">
+
+
+            <div class="table-common">
+
+                <table class="table-full" mat-table [dataSource]="dataSource" matSort>
+
+                    <ng-container matColumnDef="LogicDeviceDisplayText">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Оборудование </th>
+                        <td mat-cell *matCellDef="let row"> <img class="ld-type-img" [attr.src]="'assets/users-personal/' + row.Image" /> &nbsp;&nbsp; {{row.LogicDeviceDisplayText}} </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="TagDisplayText">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Тег </th>
+                        <td mat-cell *matCellDef="let row"> {{row.TagDisplayText}} </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="Date">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Дата </th>
+                        <td mat-cell *matCellDef="let row"> {{row.Date | dateTimeFormat}} </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="Value">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Показания </th>
+                        <td mat-cell *matCellDef="let row"> {{row.Value}} {{row.Unit}} </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                </table>
+
+            </div>
+
+        </table-container>
+
+    </div>
+
+</div>

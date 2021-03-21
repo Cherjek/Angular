@@ -1,0 +1,82 @@
+﻿<message-popup [(messages)]="errorsContentForm"></message-popup>
+
+<data-grid-ro5 #Ro5DataGrid
+               [ParentElementRef]="parentContainer"
+               [KeyField]="'Id'"
+               [DataGridOptions]="{ isSearchVisibility: false }"
+               [HeaderActionTemplate]="isRowTemplateEdit ? null : headerAction"
+               (onError)="errorsContentForm = $event">
+
+    <ng-template #headerAction>
+        <div class="row no-gutters col-wrappanel justify-content-end" *ngIf="!isEditMode">
+            <div class="col-auto">
+                <dropdown-box-ro5 #dropdownBox
+                                  keyField="Id"
+                                  valueField="Code"
+                                  additionalField="Name"
+                                  [isSelected]="true"
+                                  [itemsInput]="logicTagTypesDyn"
+                                  [footerTemplate]="footerTemplate"
+                                  [buttonText]="'Добавить теги'"
+                                  (event)="onViewLogicTagType($event)">
+                </dropdown-box-ro5>
+
+                <ng-template #footerTemplate>
+                    <footer class="section-footer-content">
+                        <div class="row no-gutters-2 align-items-center">
+                            <div class="col">
+                                <div class="row no-gutters align-items-center col-wrappanel" style="flex-wrap: nowrap">
+                                    <div class="col-auto">
+                                        <button class="btn btn-primary" (click)="addTags(dropdownBox.getSelectedRows());updateLogicTagTypes();dropdownBox.close()">Добавить</button>
+                                    </div>
+                                    <div class="col-auto">
+                                        <button class="btn btn-outline-secondary" (click)="dropdownBox.close()">Отмена</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </footer>
+                </ng-template>
+            </div>
+        </div>
+    </ng-template>
+
+    <ng-template #cellParameter let-item="item">
+        <span [innerHtml]="item.LogicTagType.Code | markerText:dataGrid.SearchFilter"></span>&nbsp;
+        <span class="text-info-additional" [innerHtml]="item.LogicTagType.Name | markerText:dataGrid.SearchFilter"></span>
+    </ng-template>
+    
+    <ng-template #cellCombobox let-item="item" let-column="column">
+        <combo-box-ro5 [keyField]="'Id'"
+                       [valueField]="'Name'"
+                       [value]="item.ValueField[column.Name].__value"
+                       [itemsInput]="item.ValueField[column.Name].__arrayValues"
+                       (onSelected)="item.ValueField[column.Name].__value = $event; cascadeCellComboboxChange(item, column)"
+                       (event)="eventCellComboboxDropDown($event, item, column)"></combo-box-ro5>
+    </ng-template>
+    
+    <ng-template #cellDelete let-item="item" let-id="id">
+        <button type="button" class="btn-outline-circle btn-circle-size-32" placement="top" container="body" ngbTooltip="Удалить" (click)="dataGrid.deleteRow(id);updateLogicTagTypes()">
+            <i class="zmdi zmdi-delete"></i>
+        </button>
+    </ng-template>
+
+    <ng-template #headerTemplate>      
+    </ng-template>
+    <ng-template #rowTemplate let-item>
+      <section class="section-panel-two-columns-settings" style="margin: -10px -18px;">
+        <ng-container *ngFor="let column of dataGrid.Columns; let i=index;">
+          <div class="row no-gutters-2 border-bottom-1">
+            <div class="col-2">
+              <h6>{{ column.Caption }}</h6>
+            </div>
+            <div class="col" style="background: #fff; padding-right: 20px !important;">
+              <ng-template [ngTemplateOutlet]="column.Name === 'LogicTagType' ? cellParameter : cellCombobox" 
+              [ngTemplateOutletContext]="{ item: item, column: column }"></ng-template>
+            </div>
+          </div>          
+        </ng-container>
+      </section>
+    </ng-template>
+
+</data-grid-ro5>

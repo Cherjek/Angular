@@ -1,0 +1,7 @@
+{
+    "javascript.preferences.quoteStyle": "single",
+    "typescript.preferences.quoteStyle": "single",
+    "prettier.singleQuote": true,
+    "explorer.compactFolders": false,
+    "editor.tabSize": 2
+}

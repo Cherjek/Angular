@@ -1,0 +1,209 @@
+﻿<div class="main-view-content height-auto main-view-result">
+    <div class="col col-content-ro5">
+
+        <ng-container *ngIf="errorLoadEntity != null">
+            <div class="row no-gutters-2 justify-content-center message-margin__top_bottom">
+                <div class="col-auto">
+                    <h4>{{ errorLoadEntity.ShortMessage }}</h4>
+                </div>
+            </div>
+            <div class="row no-gutters-2 justify-content-center">
+                <div class="col-auto">
+                    <button-ro5 [class]="'btn-outline-secondary'" (onclick)="back2Objects()">
+                        Вернуться к предыдущей странице
+                    </button-ro5>
+                </div>
+            </div>
+        </ng-container>
+
+        <div class="col-content-flex-column" *ngIf="errorLoadEntity == null">
+            <section class="section-body-content section-panel-two-columns-settings">
+                <header *ngIf="showHeaderPropertyEdit" class="section-header-grouppanel-expander row no-gutters border-bottom-1">
+                    <div class="col">
+                        <h5>Свойства</h5>
+                    </div>
+                    <div class="col-auto" [ngSwitch]="isPropEdit">
+                        <ng-container *ngSwitchCase="true">
+                            <button-ro5 *ngIf="!isNew" [class]="'btn-outline-secondary'" (onclick)="cancel()">
+                                Отменить изменения
+                            </button-ro5>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="false">
+                            <button-ro5 *appCanAccess="permission" class="btn-primary" (onclick)="changeProperties()">
+                                Изменить
+                            </button-ro5>
+                        </ng-container>                        
+                    </div>
+                    <div class="col-auto">
+                        <message-popup [messages]="errors"></message-popup>
+                        <i *ngIf="loadingContentPanel" class="zmdi zmdi-spinner zmdi-hc-3x zmdi-hc-spin"></i>
+                        <button [ngClass]="{'ct-state-invisible' : loadingContentPanel}" data-toggle="collapse"
+                            data-target="#propertySection" aria-controls="propertySection" aria-expanded="false"
+                            class="btn-outline-circle transform-rotate-show btn-circle-size-32">
+                            <i class="zmdi zmdi-chevron-right"></i>
+                        </button>
+                    </div>
+                </header>
+
+                <section id="propertySection" class="collapse show">
+
+                    <section class="section-panel-two-columns-settings" *ngIf="_properties">
+                        <div class="row no-gutters-2 border-bottom-1" *ngFor="let prop of _properties;let i= index">
+                            <div class="col-2">
+                                <span> {{ prop.Name }} </span><span *ngIf="isPropEdit && prop.IsRequired" class="error-required-color">&nbsp;*</span>
+                            </div>
+                            <div class="col-10 word-break-all">
+                                <ng-container [ngSwitch]="isPropEdit && !prop.ReadOnly">
+
+                                    <ng-container *ngSwitchCase="true">
+                                        <ng-container [ngSwitch]="prop.Type">
+                                            <!--Float, Integer, Bool, String, MultiString, Option-->
+                                            <input-box *ngSwitchCase="'String'" 
+                                                [placeholder]="'Введите название'"
+                                                [(value)]="prop.Value"
+                                                [isFocus] = "i === indexTypestring" 
+                                                [maxlength]="90"></input-box>
+
+                                            <input-box *ngSwitchCase="'Float'" 
+                                                [type]="'float'"
+                                                [placeholder]="'Введите название'"
+                                                [(value)]="prop.Value"
+                                                [isFocus] = "i === indexTypestring"></input-box>
+
+                                            <input-box *ngSwitchCase="'Integer'" 
+                                                [type]="'number'"
+                                                [placeholder]="'Введите название'"
+                                                [(value)]="prop.Value"
+                                                [isFocus] = "i === indexTypestring"></input-box>
+                                            
+                                            <textarea 
+                                                *ngSwitchCase="'MultiString'" 
+                                                maxlength="300"
+                                                class="form-control"
+                                                [(ngModel)]="prop.Value"
+                                                [placeholder]="prop.Name"></textarea>
+
+                                            <combo-box-ro5 *ngSwitchCase="'Option'"
+                                                [keyField]="'Id'"
+                                                [valueField]="'Name'"
+                                                [value]="prop.Value"
+                                                [itemsInput]="prop.arrayValues"
+                                                (onSelected)="prop.Value = $event; eventDropDown({ event: 'SELECT' }, prop )"
+                                                (event)="eventDropDown($event, prop)"></combo-box-ro5>
+
+                                            <date-picker-ro5 *ngSwitchCase="'Date'"
+                                                [isIntervalMode]="prop.IsDateInterval"
+                                                [isMonthMode] = "prop.IsMonthMode"
+                                                [isTimeShow] = "prop.IsTimeShow"
+                                                [(fromDate)]="prop.Value">
+                                            </date-picker-ro5>
+
+                                            <rom-calendar-picker-ro5 *ngSwitchCase="'TimeRange'"
+                                                [(values)] = "prop.Value"
+                                                [calendarPickerType]="calendarPickerTypes.TimeRange"
+                                            ></rom-calendar-picker-ro5>
+
+                                            <ng-container *ngSwitchCase="'Tree'">
+                                                <div class="dropdown-input" 
+                                                    ngbDropdown 
+                                                    #dropDown="ngbDropdown" 
+                                                    [autoClose]="false"
+                                                    (click)="$event.stopPropagation()">
+                                            
+                                                    <div (click)="dropDownOpen(); eventDropDown({ event: 'LOAD_TRIGGER' }, prop)">
+                                                        <input-box 
+                                                            readonly='readonly'
+                                                            [placeholder]="'Выберите родительский узел'" 
+                                                            [value]="prop.Value?.Name" 
+                                                            [maxlength]="90">
+                                                        </input-box>
+                                                    </div>
+                                            
+                                                    <div ngbDropdownMenu [ngSwitch]="prop.arrayValues === undefined">
+                                                        <i *ngSwitchCase="true" class="zmdi zmdi-spinner zmdi-hc-spin"></i>
+                                                        <tree-view-ro5 
+                                                            *ngSwitchDefault
+                                                            #treeView 
+                                                            [nodes]="prop.arrayValues" 
+                                                            [childDataName]="'Nodes'" 
+                                                            [isCheck]="false"
+                                                            [isSearch]="true" 
+                                                            [showExpandToggle]="false" 
+                                                            (itemSelect)="prop.Value = $event; dropDown.close();">
+                                                        </tree-view-ro5>
+                                                    </div>
+                                                </div>
+                                            </ng-container>
+
+                                            <toggle-switch #toggleSwitch *ngSwitchCase="'Bool'" 
+                                                [checked]="prop.Value"
+                                                [checkedRunnerColorClass]="'runner-color-checked-green'"
+                                                [checkedSliderColorClass]="'slider-color-checked-green'"
+                                                (onCheck)="prop.Value = $event; onPropChange(toggleSwitch, $event);"></toggle-switch>
+                                        </ng-container>
+                                    </ng-container>
+
+                                    <ng-container *ngSwitchCase="false">
+                                        <ng-container [ngSwitch]="prop.Type">
+                                            <div *ngSwitchCase="'Bool'">
+                                                {{ prop.Value ? 'Да' : 'Нет' }}
+                                            </div>
+                                            <div *ngSwitchCase="'Option'">
+                                                {{ prop.Value?.Name }}
+                                            </div>
+                                            <div *ngSwitchCase="'Tree'">
+                                                {{ prop.Value?.Name }}
+                                            </div>
+                                            <div *ngSwitchCase="'TimeRange'">
+                                                <span *ngFor="let item of prop?.Value; let i=index" 
+                                                    [innerHTML] = "(item + (i != (prop?.Value?.length - 1) ? ', ' : ''))">
+                                                </span>
+                                            </div>
+                                            <div *ngSwitchDefault>
+                                                {{ prop.Value || prop.IsNullName }}
+                                            </div>
+                                        </ng-container>
+                                    </ng-container>
+
+                                    
+
+                                </ng-container>
+                            </div>
+                        </div>
+
+                        <ng-content></ng-content>
+                    </section>
+                    
+                    <ng-template
+                        [ngTemplateOutlet]="template"
+                        [ngTemplateOutletContext]="{ edit: isPropEdit }">
+                    </ng-template>                    
+
+                </section>
+            </section>
+
+            <footer class="section-footer-content" *ngIf="isPropEdit">
+                <div class="row no-gutters-2 align-items-center">
+                    <div class="col">
+                        <div class="row no-gutters col-wrappanel align-items-center">
+                            <div class="col-auto">
+                                <!-- <button-ro5 [class]="'btn-primary'" (onclick)="saveEntity()"
+                                    [disabled]="!formValidateGroup?.valid">
+                                    {{ 'Сохранить' }}
+                                </button-ro5> -->
+                                <button-ro5 [class]="'btn-primary'" (onclick)="saveEntity()">                                    
+                                    {{ 'Сохранить' }}
+                                </button-ro5>
+                            </div>
+                            <div class="col-auto">
+                                <button-ro5 [class]="'btn-outline-secondary'" (onclick)="cancel()">
+                                    Отмена
+                                </button-ro5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,37 @@
+<div>
+  <div class="row no-gutters align-items-center">
+    <div class="col-1">
+      <div>Дата начала: </div>
+    </div>
+    <div class="weekly-date-start" [ngSwitch]="isPropEdit">
+        <date-picker-ro5 [isTimeShow]="false" *ngSwitchCase="true" [isIntervalMode]="false" [(fromDate)]="startDate"></date-picker-ro5>
+      <div *ngSwitchDefault>{{startDate | dateFormat}}</div>
+    </div>
+  </div>
+  <div class="weekly-gutter"></div>
+  <div class="row no-gutters align-items-center">
+    <div class="col-1 align-items-center justify-content-center">
+      <div>Повторить: </div>
+    </div>
+    <div [ngSwitch]="isPropEdit">
+
+      <input-box *ngSwitchCase="true" [(value)]="repeatValue" [min]="1" [type]="'number'"></input-box>
+      <div *ngSwitchDefault>{{repeatValue}}</div>
+    </div>
+  </div>
+  <div class="row no-gutters align-items-center">
+    <div class="col-1 align-items-center justify-content-center">
+      <div>Дни: </div>
+    </div>
+    <div [ngSwitch]="isPropEdit">
+
+      <div *ngSwitchCase="true">
+        <rom-calendar-picker-ro5 [(values)]="selectedDays" [calendarPickerType]="calendarPickerTypes.Weeks">
+        </rom-calendar-picker-ro5>
+      </div>
+      <div *ngSwitchDefault>{{selectedDays | dateStringify : 'week'}}</div>
+    </div>
+  </div>
+  <hr>
+  <rom-settings-time-params #timeParams [data]="data?.Time" [isPropEdit]="isPropEdit"></rom-settings-time-params>
+</div>

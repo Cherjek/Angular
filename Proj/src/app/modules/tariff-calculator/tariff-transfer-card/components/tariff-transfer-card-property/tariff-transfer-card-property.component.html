@@ -1,0 +1,138 @@
+<message-popup [(messages)]="errors"></message-popup>
+<loader-ro5 [(loading)]="loadingContent"></loader-ro5>
+<div romHotkeys
+    (onCtrlSave)="save()"
+    (onEsc) = "cancel()"
+    [editMode]="isPropEdit"
+    class="main-view-content height-auto main-view-result">
+    <div class="col col-content-ro5">
+
+        <ng-container *ngIf="errorLoadEntity != null">
+            <div class="row no-gutters-2 justify-content-center message-margin__top_bottom">
+                <div class="col-auto">
+                    <h4>{{ errorLoadEntity.ShortMessage }}</h4>
+                </div>
+            </div>
+            <div class="row no-gutters-2 justify-content-center">
+                <div class="col-auto">
+                    <button-ro5 [class]="'btn-outline-secondary'" (onclick)="back2Objects()">
+                        Вернуться к предыдущей странице
+                    </button-ro5>
+                </div>
+            </div>
+        </ng-container>
+
+        <div class="col-content-flex-column" *ngIf="errorLoadEntity == null">
+            <section *ngFor="let propCat of propertyCategories; let ind=index" class="">
+                <header *ngIf="showHeaderPropertyEdit" class="section-header-grouppanel-expander row no-gutters border-bottom-1">
+                    <div class="col">
+                        <h5>{{propCat?.Name}}</h5>
+                    </div>
+                    <ng-container *appCanAccess="'TC_TRANSFER_TARIFF_EDIT'">
+                      <div class="col-auto" *ngIf="ind == 0">
+                        <div class="col-auto" [ngSwitch]="isPropEdit">
+                            <ng-container *ngSwitchCase="true">
+                                <button-ro5 *ngIf="!isNew" [class]="'btn-outline-secondary'" (onclick)="cancel()">
+                                    Отменить изменения
+                                </button-ro5>
+                            </ng-container>
+                            <ng-container *ngSwitchCase="false">
+                                <button-ro5 class="btn-primary" (onclick)="changeProperties()">
+                                    Изменить
+                                </button-ro5>
+                            </ng-container>                        
+                        </div>
+                      </div>
+                    </ng-container>                    
+                    <div class="col-auto">
+                        <button data-toggle="collapse"
+                            [attr.data-target]="'#propertySection'+ind" [attr.aria-controls]="'#propertySection'+ind" aria-expanded="false"
+                            class="btn-outline-circle transform-rotate-show btn-circle-size-32">
+                            <i class="zmdi zmdi-chevron-right"></i>
+                        </button>
+                    </div>
+                </header>
+
+                <section [attr.id]="'propertySection'+ind" class="collapse show">
+
+                    <section class="section-panel-two-columns-settings" *ngIf="propCat.Properties">
+                        <div class="row no-gutters-2 border-bottom-1" *ngFor="let prop of propCat.Properties;let i= index">
+                            <div class="col-2">
+                                <span> {{ prop.Name }} </span><span *ngIf="isPropEdit && prop.IsRequired" class="error-required-color">&nbsp;*</span>
+                            </div>
+                            <div class="col-10 word-break-all">
+                                <ng-container [ngSwitch]="isPropEdit && !prop.ReadOnly">
+
+                                    <ng-container *ngSwitchCase="true">
+                                        <ng-container [ngSwitch]="prop.Type">
+                                            <input-box *ngSwitchCase="'String'" 
+                                                [placeholder]="'Введите название'"
+                                                [(value)]="prop.Value"
+                                                [isFocus] = "i === 0" 
+                                                [maxlength]="90"></input-box>
+
+                                            <input-box *ngSwitchCase="'Float'" 
+                                                [type]="'float'"
+                                                [placeholder]="'Введите название'"
+                                                [(value)]="prop.Value"></input-box>                                          
+
+                                            <combo-box-ro5 *ngSwitchCase="'Option'"
+                                                [keyField]="'Id'"
+                                                [valueField]="'Name'"
+                                                [value]="prop.Value"
+                                                [itemsInput]="supplyOrgTypes"
+                                                (onSelected)="prop.Value = $event;"></combo-box-ro5>
+
+                                            <date-picker-ro5 *ngSwitchCase="'Date'"
+                                                [isIntervalMode]="prop.IsDateInterval"
+                                                [isTimeShow] = "false"
+                                                [(fromDate)]="prop.Value">
+                                            </date-picker-ro5>
+
+                                        </ng-container>
+                                    </ng-container>
+
+                                    <ng-container *ngSwitchCase="false">
+                                        <ng-container [ngSwitch]="prop.Type">
+                                            <div *ngSwitchCase="'Option'">
+                                                {{ prop.Value?.Name }}
+                                            </div>
+                                            <div *ngSwitchCase="'Date'">
+                                                {{ prop.Value | dateFormat }}
+                                            </div>
+                                            <div *ngSwitchDefault>
+                                                {{ prop.Value }}
+                                            </div>
+                                        </ng-container>
+                                    </ng-container>
+                                </ng-container>
+                            </div>
+                        </div>
+
+                        <ng-content></ng-content>
+                    </section>                   
+
+                </section>
+            </section>
+
+            <footer class="section-footer-content" *ngIf="isPropEdit">
+                <div class="row no-gutters-2 align-items-center">
+                    <div class="col">
+                        <div class="row no-gutters col-wrappanel align-items-center">
+                            <div class="col-auto">
+                                <button-ro5 [class]="'btn-primary'" (onclick)="save()">                                    
+                                    {{ 'Сохранить' }}
+                                </button-ro5>
+                            </div>
+                            <div class="col-auto">
+                                <button-ro5 [class]="'btn-outline-secondary'" (onclick)="cancel()">
+                                    Отмена
+                                </button-ro5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+</div>

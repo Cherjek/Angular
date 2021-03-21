@@ -1,0 +1,69 @@
+<ng-container *ngIf="dataGrid?.SelectionRow?.isItemsSelect; else defButtonAction">
+  <div class="row no-gutters col-wrappanel">
+      <div class="col-auto">
+          <button-ro5 [disabled]="!validDownload" class="btn-outline-secondary" (onclick)="downloadSelected()">
+              Скачать выбранные
+          </button-ro5>
+      </div>
+      
+      <div class="col-auto">
+          <ng-container *ngIf="permissionCancel != null; else notPermissionTemplate">
+              <ng-container *appCanAccess="permissionCancel">
+                  <ng-template [ngTemplateOutlet]="buttonTemplate"></ng-template>
+              </ng-container>                
+          </ng-container>
+          <ng-template #buttonTemplate>
+              <button-ro5 
+                  class="btn-outline-secondary btn-remove" 
+                  data-container="body" 
+                  data-placement="bottom"
+                  triggers="manual"
+                  [autoClose]="'outside'"
+                  [ngbPopover]="popFormContent" 
+                  #popUpFormActionButton="ngbPopover"
+                  (onclick)="popUpFormActionButton.open({ p: popUpFormActionButton }); checkValidForCancel()">
+                  Отменить
+              </button-ro5>
+          </ng-template>
+          <ng-template #notPermissionTemplate>
+              <ng-template [ngTemplateOutlet]="buttonTemplate"></ng-template>
+          </ng-template>
+          <ng-template #popFormContent let-p="p">
+              <div *ngIf="validForCancelList.length" class="popover-body">
+                  <div class="row no-gutters popup-body__margin">
+                      <div class="col">
+                          Вы уверены, что хотите отменить <span class="valid-number">{{validForCancelList.length}}</span> выбранные отчеты?
+                      </div>
+                  </div>
+                  <div class="row no-gutters col-wrappanel">
+                      <div class="col-auto">
+                          <button-ro5 class="btn-primary" (onclick)="deleteRows();p.close()">
+                              Отменить
+                          </button-ro5>
+                      </div>
+                      <div class="col-auto">
+                          <button-ro5 class="btn-outline-secondary" (onclick)="p.close()">
+                              Закрить
+                          </button-ro5>
+                      </div>
+                  </div>
+              </div>
+              <div class="popover-body">
+                <div *ngIf="!validForCancelList.length">
+                  <div class="row no-gutters popup-body__margin">
+                    <div class="col">
+                      Ни один из выбранных отчетов не может быть отменен.
+                    </div>
+                </div>
+                </div>
+              </div>
+          </ng-template>
+      </div>
+  </div>
+</ng-container>
+<ng-template #defButtonAction>
+  <div class="row no-gutters justify-content-end">
+      <div class="col-auto">
+      </div>
+  </div>
+</ng-template>

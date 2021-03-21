@@ -1,0 +1,15 @@
+﻿{
+  "host": "http://192.168.200.10:8080/api/v16/",
+  "startPage": "PersonalArea",
+  "groupPages": [
+    {
+      "Code": "Main",
+      "Name": "Главная"
+    },
+    {
+      "Code": "PersonalArea",
+      "Name": "Личный кабинет"
+    }
+  ],
+  "advertisingConfigUrl": "/test.json"
+}

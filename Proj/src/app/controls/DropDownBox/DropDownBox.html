@@ -1,0 +1,43 @@
+﻿<div class="btn-group">
+    <!--<button class="btn" [ngClass]="BttnColorClass">{{ buttonText }}</button>-->
+    <button #rightPart class="btn"
+            [ngClass]="BttnColorClass"
+            [placement]="correctPlacement()"
+            container="body"
+            #popover="ngbPopover"
+            [ngbPopover]="dropDownList"
+            [autoClose]="autoClose"
+            triggers="manual"
+            (click)="openDropDownList()"
+            (shown)="showPopover()"
+            [ngSwitch]="asyncStart"
+            popoverClass="popover-dropdown">
+        {{ buttonText }}
+        &nbsp;&nbsp;&nbsp;
+        <i *ngSwitchCase="true" class="zmdi zmdi-spinner zmdi-hc zmdi-hc-spin"></i>
+        <i *ngSwitchCase="false" class="zmdi zmdi-caret-down"></i>
+    </button>
+</div>
+<ng-template #dropDownList>
+
+    <ng-template [ngTemplateOutlet]="listViewTemplate"></ng-template>
+
+    <ng-template [ngTemplateOutlet]="footerTemplate"></ng-template>
+
+</ng-template>
+
+<ng-template #listViewTemplate>
+    <list-view-ro5 
+        #listView 
+        [autoFocusSearch]="true" 
+        [KeyField]="keyField" 
+        [DisplayField]="valueField"
+        [AdditionalField]="additionalField"
+        [IsSelected]="isSelected"
+        [DataSource]="itemsInput" 
+        [IsRemoved]="false" 
+        [IsHeaderCompact]="true" 
+        [Height]="250"
+        (OnItemClick)="itemClick($event)">
+    </list-view-ro5>
+</ng-template>

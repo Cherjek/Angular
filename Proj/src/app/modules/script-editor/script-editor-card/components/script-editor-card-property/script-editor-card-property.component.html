@@ -1,0 +1,145 @@
+<message-popup [(messages)]="errors"></message-popup>
+<loader-ro5 [(loading)]="loadingContent"></loader-ro5>
+<div 
+  romHotkeys
+  (onEsc)="cancel()"
+  (onCtrlSave)="save()"
+  [editMode]="isPropEdit"
+  class="main-view-content height-auto">
+  <div class="col col-content-ro5 logic-parent">
+    <div class="col-content-flex-column">
+      
+      <section class="section-body-content">
+      
+        <ng-container *ngFor="let header of headers; let i=index;">
+          <header *ngIf="(header.Code == 'Property') || (isPropEdit || editorData[header.Code]?.length) "
+            data-toggle="collapse" [attr.data-target]="'#groupSection' + i" [attr.aria-controls]="'#groupSection' + i"
+            class="section-header-grouppanel-expander row no-gutters border-bottom-1 tags-header">
+            <div class="col">
+              <h5> {{ header?.Name }} </h5>
+            </div>
+            <div class="col"></div>
+            <div class="col-auto d-flex">
+              <div *ngIf="headers[i]?.Code === 'Property'" class="col-auto" [ngSwitch]="isPropEdit">
+                <ng-container *ngSwitchCase="true">
+                  <button-ro5 *ngIf="!isNew" [class]="'btn-outline-secondary'" (onclick)="cancel()">
+                    Отменить изменения
+                  </button-ro5>
+                </ng-container>
+                <ng-container *ngSwitchCase="false">
+                  <button-ro5 class="btn-primary" (onclick)="isPropEdit = true;" *appCanAccess="'REF_EDIT_SCRIPTS'">
+                    Изменить
+                  </button-ro5>
+                </ng-container>
+              </div>
+              <ng-container *ngIf="isPropEdit">
+                <div *ngIf="headers[i]?.Code === 'Parameters' || headers[i]?.Code === 'Results'" class="col-auto">
+                  <button-ro5 [class]="'btn-outline-secondary'"
+                    (click)="addResultParameter(headers[i]); $event.stopPropagation();">
+                    Добавить строку
+                  </button-ro5>
+                </div>
+              </ng-container>
+              <button data-toggle="collapse" [attr.data-target]="'#groupSection' + i"
+                [attr.aria-controls]="'#groupSection' + i"
+                class="section-header-grouppanel-expander row no-gutters border-bottom-1 tags-header transform-rotate-show"
+                class="btn-outline-circle   btn-circle-size-32">
+                <i class="zmdi zmdi-chevron-right"></i>
+              </button>
+            </div>
+          </header>
+      
+          <section #parentScroll [attr.id]="'groupSection' + i" [ngClass]="true ? 'show': 'collapse'"
+            class="list-view-container section-body-content section-panel-two-columns-settings">
+      
+            <ng-container [attr.id]="'groupSection' + i">
+              <ng-container [ngSwitch]="headers[i].Code">
+                <ng-container *ngSwitchCase="'Property'">
+                  <div class="row no-gutters-2 border-bottom-1">
+                    <div class="col-2">
+                      <h6>Название</h6>
+                    </div>
+                    <div class="col">
+                      <div *ngIf="!isPropEdit">
+                        {{editorData?.Name}}
+                      </div>
+                      <div *ngIf="isPropEdit">
+                        <input-box [placeholder]="'Название'" [(value)]="editorData.Name"></input-box>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row no-gutters-2 border-bottom-1">
+                    <div class="col-2">
+                      <h6>Текст</h6>
+                    </div>
+                    <div class="col">
+                      <div class="se-textarea-view" *ngIf="!isPropEdit">
+                        {{editorData?.Text}}
+                      </div>
+                      <textarea [placeholder]="'Текст'" *ngIf="isPropEdit" maxlength="300" class="form-control se-textarea"
+                        [(ngModel)]="editorData.Text"></textarea>
+                    </div>
+                  </div>
+                </ng-container>
+                <ng-container *ngSwitchCase="'Parameters'">
+                  <ng-template
+                    *ngTemplateOutlet="resultParameter; context: {item:editorData?.Parameters, name: 'Parameters'}">
+                  </ng-template>
+                </ng-container>
+                <ng-container *ngSwitchCase="'Results'">
+                  <ng-template *ngTemplateOutlet="resultParameter; context: {item:editorData?.Results, name: 'Results'}">
+                  </ng-template>
+                </ng-container>
+                <ng-template #resultParameter let-item="item" let-name="name">
+                  <div *ngFor="let val of item" class="row no-gutters-2 border-bottom-1">
+                    <div *ngIf="!isPropEdit" class="col-2">
+                      <h6>{{val?.Name}}</h6>
+                    </div>
+                    <div class="col-2" *ngIf="isPropEdit">
+                      <input-box [placeholder]="'Название'" [(value)]="val.Name"></input-box>
+                    </div>
+                    <div class="col align-self-center">
+                      <div *ngIf="!isPropEdit">
+                        {{val?.ValueType?.Name}}
+                      </div>
+                      <div *ngIf="isPropEdit" class="d-flex">
+                        <combo-box-ro5 [keyField]="'Id'" [valueField]="'Name'" [value]="val.ValueType"
+                          [itemsInput]="valueTypes" (onSelected)="val.ValueType = $event;"></combo-box-ro5>
+                        <div class="ml-4 align-self-center">
+                          <button type="button" class="btn-outline-circle btn-circle-size-32" placement="top" container="body"
+                            (click)="deleteInput(name, val)" ngbTooltip="Удалить">
+                            <i class="zmdi zmdi-delete"></i>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </ng-template>
+              </ng-container>
+            </ng-container>
+          </section>
+        </ng-container>
+      </section>
+          
+      <footer class="section-footer-content" *ngIf="isPropEdit">
+            <div class="row no-gutters-2 align-items-center">
+                <div class="col">
+                    <div class="row no-gutters col-wrappanel align-items-center">
+                        <div class="col-auto">
+                            <button-ro5 [class]="'btn-primary'" (onclick)="save()">                                    
+                                Сохранить
+                            </button-ro5>
+                        </div>
+                        <div class="col-auto">
+                            <button-ro5 [class]="'btn-outline-secondary'" (onclick)="cancel()">
+                                Отмена
+                            </button-ro5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+      </footer>
+    </div>
+  </div>
+</div>
+

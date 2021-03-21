@@ -1,0 +1,44 @@
+﻿<message-popup [messages]="errors"></message-popup>
+
+<div style="/*margin: 25px 10px*/">
+    <div class="row no-gutters border-bottom-1 align-items-center" *ngFor="let item of data;">
+        <div class="col">
+            <div class="row no-gutters-2 align-items-center" style="height: 50px;">
+                <div class="col">
+                    <span class="title"> Название оборудования </span>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="row no-gutters-2 align-items-center" style="height: 50px;">
+                <div class="col">
+                    <!--<span class="title"> Тип оборудования </span>-->
+                </div>
+            </div>
+        </div>
+    </div>
+    <header class="row border-bottom-1">
+        <div class="col">
+            <h6>Название оборудования</h6>
+        </div>
+    </header>
+    <div class="row no-gutters border-bottom-1 align-items-center" *ngFor="let item of dataSource; let i=index;">
+        <div class="col">
+            <div class="row no-gutters-2 align-items-center" style="height: 50px;">
+                <div class="col">
+                    <ng-template #disabledLink>
+                        <a [innerHTML]="item.LogicDeviceDisplayText | pipeNoName"></a>
+                    </ng-template>
+                    <a *appCanAccess="'OC_VIEW_EQUIPMENT_CARD'; else disabledLink"
+                       [routerLink]="['/ld-editor/' + item['IdLogicDevice'] + '/properties']"
+                       [innerHTML]="item.LogicDeviceDisplayText | pipeNoName"></a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row no-gutters align-items-center justify-content-center" *ngIf="(dataSource || []).length === 0" style="height: 50px;">
+        <div class="col-auto">
+            Нет данных
+        </div>
+    </div>
+</div>

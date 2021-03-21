@@ -1,0 +1,17 @@
+﻿<div class="message-popup" *ngIf="messages.length">
+    <div *ngIf="messages.length > 1">
+        <button placement="top auto" container="body" ngbTooltip="удалить все" class="message-clear-all" (click)="messages = []">
+                    <i class="zmdi zmdi-close message-clear-all__icon"></i>
+        </button>
+    </div>
+    <div class="row no-gutters-2 message-error" *ngFor="let message of messages; index as i">
+        <div class="col align-items-center">
+            <span class="message-list-item__msg">{{getMessage(message)}}</span>
+        </div>
+        <div class="col-auto">
+            <button class="btn-outline-circle btn-circle-size-24 " (click)="onClose(i)">
+                <i class="zmdi zmdi-close"></i>
+            </button>
+        </div>
+    </div>
+</div>

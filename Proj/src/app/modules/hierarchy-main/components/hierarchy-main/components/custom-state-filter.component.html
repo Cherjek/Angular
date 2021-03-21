@@ -1,0 +1,98 @@
+<div class="row no-gutters align-items-center">
+  <div class="col-auto min-width__filtercol">
+    <div class="row no-gutters" placement="top" ngbTooltip="Сбросить" container="body"
+      (click)="clearAllFilter()">
+      <i class="zmdi zmdi-block" style="margin: 0;font-weight: bold;font-size: 1.8em;"></i>
+    </div>
+  </div>
+  <div class="col-auto min-width__filtercol">
+    <ng-template [ngTemplateOutlet]="filterDropDownButton" [ngTemplateOutletContext]="{ items: subSystems, field: 'IdSubSystem', tooltip: 'Фильтр по подсистеме', icon: 'zmdi-city' }">
+    </ng-template>
+  </div>
+  <div class="col-auto min-width__filtercol">
+    <ng-template [ngTemplateOutlet]="filterDropDownButton" [ngTemplateOutletContext]="{ items: stateType, field: 'IdStateType', tooltip: 'Фильтр по состоянию', icon: 'zmdi-layers' }">
+    </ng-template>
+  </div>
+  <div class="col-auto min-width__filtercol">
+    <ng-template [ngTemplateOutlet]="filterDropDownButton" [ngTemplateOutletContext]="{ items: rottenItems, field: 'IsDataRotten', tooltip: 'Фильтр по актуальности', icon: 'zmdi-shield-check' }">
+    </ng-template>
+  </div>
+  <div class="col-auto min-width__filtercol">
+    <ng-template [ngTemplateOutlet]="filterDropDownButton" [ngTemplateOutletContext]="{ items: acknowledgedItems, field: 'Acknowledged', tooltip: 'Фильтр по квитированию', icon: 'zmdi-portable-wifi-off' }">
+    </ng-template>
+  </div>
+  <ng-template #filterDropDownButton let-items="items" let-field="field" let-tooltip="tooltip" let-icon="icon">                                  
+    
+      <div 
+        [ngClass]="{ 'active' : false }" 
+        placement="top" 
+        [ngbTooltip]="tooltip"
+        container="body">
+
+        <div 
+          class="dropdown-button-status" 
+          style="display: flex; flex-direction: column; align-items: center; height: 50px"
+          [ngClass]="{ 'button-filter-active' : filter[field] != null }">
+          <div style="flex: 1 1 100%; display: flex; align-items: flex-end;">
+            <i
+              (click)="checkAllFieldItems(field, items); $event.stopPropagation()"
+              class="{{'zmdi ' + icon}}" 
+              style="font-size: 1.8em;">
+            </i>
+          </div>
+          <div 
+            class="button-menu-show"
+            placement="bottom" 
+            container="body" 
+            #pStatus="ngbPopover"
+            [autoClose]="'outside'" 
+            [ngbPopover]="contextMenuStatus">
+            <i
+              class="zmdi zmdi-caret-down"></i>
+          </div>          
+        </div>
+        <ng-template #contextMenuStatus>
+          <ul class="nav list-box-vertical" style="width: 170px">
+            <ng-container *ngFor="let item of items">
+              <li class="background-gray" 
+                style="background-image: none; font-size: 14px;color: #4f4f4f;" 
+                (click)="item.IsCheck = !item.IsCheck; $event.stopPropagation()">
+                <div class="row no-gutters col-wrappanel" style="flex-wrap: nowrap;">
+                  <!-- <div class="col-auto">
+                    <i class="{{'zmdi ' + icon}}" 
+                      style="font-size: 1.8em;">
+                    </i>
+                  </div> -->
+                  <div class="col-auto">
+                    <check-box-ro5 [checked]="item.IsCheck">
+                    </check-box-ro5>
+                  </div>
+                  <div class="col">
+                    <a class="nav-link" style="padding: 0;">{{item.Name || item.Code}}</a>
+                  </div>
+                </div>
+              </li>
+            </ng-container>
+            <li style="background-image: none;padding-top: 10px">
+              <div class="row no-gutters col-wrappanel" 
+                style="flex-wrap: nowrap">
+                <div class="col-auto">
+                  <button class="btn btn-primary"
+                    (click)="checkFieldItem(field, items); pStatus.close()">Показать</button>
+                </div>
+                <div class="col-auto" *ngIf="filter != null && filter[field] == null">
+                  <button class="btn btn-outline-secondary"
+                    (click)="pStatus.close()">Отмена</button>
+                </div>
+                <div class="col-auto" *ngIf="filter != null && filter[field] != null">
+                  <button class="btn btn-outline-secondary"
+                    (click)="clearFilter(field, items); pStatus.close()">Сбросить</button>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </ng-template>
+      </div>
+
+  </ng-template>
+</div>

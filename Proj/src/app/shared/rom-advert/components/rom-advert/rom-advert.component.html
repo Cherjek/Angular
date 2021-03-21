@@ -1,0 +1,13 @@
+<div [style.display]="display" class="rom-advert-container" [class.rom-advert-close]="close">
+  <div (click)="advertClick.emit(true);" class="rom-advert-content">
+    <!-- <header class="rom-advert-content-header">
+      <h6>{{header}}</h6>
+      <i (click)="onClose(); $event.stopPropagation()" class="zmdi zmdi-close rom-advert-content-header__close"></i>
+      <div></div>
+    </header> -->
+    <span>
+      <button class="btn btn-secondary" [ngStyle]="banner?.button?.style" >{{banner?.button?.text || 'Реклама'}}</button>
+    </span>
+    <ng-content></ng-content>
+  </div>
+</div>

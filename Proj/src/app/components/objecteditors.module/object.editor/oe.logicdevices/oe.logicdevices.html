@@ -1,0 +1,207 @@
+<div class="main-view-content height-auto">
+  <div class="col-filter-ro5 border-right-1">
+    <frame-filters-custompanel #ObjRo5FiltersPanel
+                               [isAsyncCallbackStart]="loadingContentPanel"
+                               [service]="filterContainerService"
+                               (onApplyFilter)="onApplyFilter($event)"></frame-filters-custompanel>
+  </div>
+  <div class="col col-content-ro5 border-right-1">
+      <header class="section-header-content row">
+          <div class="col-auto"> <h5>Оборудование</h5> </div>
+          <div class="col"></div>
+          <div class="col-auto" *appCanAccess="{ keySource: unitId, source: 'Units', value: 'OE_CREATE_EQUIPMENT' }">
+              <button type="button" class="btn btn-primary" (click)="createLogicDevice()">
+                  Добавить оборудование
+              </button>
+          </div>
+      </header>
+
+        <message-popup [(messages)]="errors"></message-popup>
+        <loader-ro5 [(loading)]="loadingContentPanel"></loader-ro5>
+
+        <data-grid-ro5 #Ro5DataGrid
+                   [HeaderTemplate]="GridHeaderTemplate"
+                   [RowsTemplate]="GridRowTemplate"
+
+                   [SelectionRowMode]="DGSelectionRowMode.Multiple"
+                   [DetailRow]="{ components: DetailsRowComponents }"
+                   (onStatusMouseEnter)="onGridStatusMouseEnter($event)"
+                   (onActionButtonClicked)="onDGRowActionBttnClick($event)">
+            <ng-template #GridRowTemplate let-item>
+                <div class="row">
+                    <div class="col" style="text-align: left;">
+                        <ng-template #disabledLink>
+                            <a [innerHTML]="item.LogicDeviceDisplayText | pipeNoName | markerText:dataGrid.SearchFilter"></a>
+                        </ng-template>
+                        <a *appCanAccess="'OC_VIEW_EQUIPMENT_CARD'; else disabledLink"
+                           [routerLink]="['/ld-editor/' + item['IdLogicDevice'] + '/properties']"
+                           [innerHTML]="item.LogicDeviceDisplayText | pipeNoName | markerText:dataGrid.SearchFilter"></a>
+
+                        <div class="row align-items-center action-panel">
+                            <div class="col text-info-additional">
+                                <div class="row no-gutters">
+                                    <ng-container *appCanAccess="'DA_ALLOW'">
+                                        <ng-container *appCanAccess="{ keySource: item['IdLogicDevice'], source: 'LogicDevices', value: 'DA_START' }">
+                                            <div class="col-auto">
+                                                <div class="btn-action-panel" (click)="setAnalyze(item);$event.stopPropagation();">
+                                                    <a> Анализ </a>
+                                                </div>
+                                            </div>
+                                        </ng-container>
+                                    </ng-container>
+                                    <ng-container *appCanAccess="'DR_ALLOW'">
+                                        <ng-container *appCanAccess="{ keySource: item['IdLogicDevice'], source: 'LogicDevices', value: 'DR_START' }">
+                                            <div class="col-auto">
+                                                <div class="btn-action-panel" (click)="setReport(item);$event.stopPropagation();">
+                                                    <a> Отчет </a>
+                                                </div>
+                                            </div>
+                                        </ng-container>
+                                    </ng-container>
+                                    <div class="col-auto" *appCanAccess="{ keySource: item['IdLogicDevice'], source: 'LogicDevices', value: 'DP_ALLOW' }">
+                                        <div class="btn-action-panel" (click)="setDataCreate(item);$event.stopPropagation();">
+                                            <a> Данные </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ng-template>
+
+            <ng-template #GridHeaderTemplate>
+                <header>
+                    <div class="row no-gutters align-items-center">
+                        <div class="col-auto" *ngIf="Ro5DataGrid.SelectionRow.isItemsSelect">
+                            <button type="button" class="btn btn-orange" (click)="toBasketLV()">
+                                В корзину
+                            </button>
+                        </div>
+                        <div class="col"></div>
+                        <div class="col-auto">
+                            <div class="row no-gutters filter-status">
+                                <div class="col-auto">
+                                    <label style="font-weight: 100; line-height: 50px; margin-bottom: 0"> Статусы:&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="row no-gutters" placement="top" ngbTooltip="Сбросить" container="body"
+                                         (click)="clearAllStatusCategoryCheck()">
+                                            <i class="zmdi zmdi-block" style="margin: 0; font-weight: bold; font-size: 1.1em; color: #bbbec4"></i>
+                                    </div>
+                                </div>
+                                <div class="col-auto" *ngFor="let item of AllStatusesObjects | ObjNgFor">
+                                    <div class="row no-gutters" placement="top" container="body"
+                                       [ngbTooltip]="item.Name + ': ' + getStatusLengthCategory(item)"
+                                       [ngClass]="{ 'active' : item.isOneCheck }"
+                                       (click)="setStatusCategoryCheck(item, !item.IsCheck)">
+                                        <i class="zmdi zmdi-circle-o" style="margin: 0; font-weight: bold; font-size: 1.1em;"
+                                            [style.color]="item.color"></i>
+                                        <div class="dropdown-button-status" style="margin: 0"
+                                            placement="bottom"
+                                            container="body"
+                                            #pStatus="ngbPopover"
+                                            [autoClose]="'outside'"
+                                            [ngbPopover]="contextMenuStatus"
+                                            [ngClass]="{ 'active' : statusIdShowPopup == item.Id }"
+                                            (click)="statusIdShowPopup && statusIdShowPopup == item.Id ? statusIdShowPopup = null : statusIdShowPopup = item.Id;$event.stopPropagation()">
+                                          <i class="zmdi zmdi-caret-down"></i>
+                                        </div>
+                                        <ng-template #contextMenuStatus>
+                                            <ul class="nav list-box-vertical" style="width: 170px">
+                                                <ng-container *ngFor="let category of item[nameStatusCategoryField] | ObjNgFor">
+                                                    <li class="background-gray" style="background-image: none; font-size: 14px;">
+                                                        <div class="row no-gutters">
+                                                            <div class="col-auto">
+                                                                <i class="zmdi zmdi-circle-o" style="margin: 0; font-weight: bold; font-size: 1.1em; padding-right: 10px"
+                                                                    [style.color]="category.color"></i>
+                                                            </div>
+                                                            <div class="col-auto">
+                                                                <check-box-ro5 [checked]="category.IsCheck" (onClick)="categoryCheck(item, category, $event)"></check-box-ro5>
+                                                            </div>
+                                                            <div class="col">
+                                                                <a class="nav-link" style="padding: 0;" (click)="categoryCheck(item, category, $event)">{{category.name}}</a>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                </ng-container>
+                                                <li style="background-image: none; padding-top: 10px">
+                                                    <div class="row no-gutters col-wrappanel" style="flex-wrap: nowrap">
+                                                        <div class="col-auto">
+                                                            <button class="btn btn-primary" (click)="filterClientDataGrid(item, category, pStatus)">Показать</button>
+                                                        </div>
+                                                        <div class="col-auto" *ngIf="!item.isOneCheck">
+                                                            <button class="btn btn-outline-secondary" (click)="this.statusIdShowPopup = null;pStatus.close()">Отмена</button>
+                                                        </div>
+                                                        <div class="col-auto" *ngIf="item.isOneCheck">
+                                                            <button class="btn btn-outline-secondary" (click)="clearStatusCategoryCheck(item, pStatus)">Сбросить</button>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </ng-template>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+            </ng-template>
+        </data-grid-ro5>
+    </div>
+    <div class="col-auto col-content-ro5">
+        <div class="basket" [ngClass]="{'show' : (basketLV.DataSource || []).length }">
+            <header class="section-header-content row">
+                <div class="col">
+                    <h5 class="no-show" [ngClass]="{'show': (basketLV.DataSource || []).length}">Корзина</h5>
+                </div>
+            </header>
+            <list-view-ro5 #basketLV
+                           [KeyField]="'IdLogicDevice'"
+                           [DisplayField]="'LogicDeviceDisplayText'"
+                           [IsSelected]="true"
+                           [IsRemoved]="true"
+                           [OffsetBottom]="50"
+                           (OnRemoveListItem)="fromBasketLV($event)">
+                <ng-template #basketRowTemplate let-item="item">
+                    <div class="row">
+                        <div class="col">
+                            <a [innerHtml]="item.Data[basketLV.DisplayField] | markerText:basketLV.SearchFilter"></a>
+                        </div>
+                        <div class="col-auto">
+                            <i class="zmdi zmdi-chevron-right zmdi-hc-2x"></i>
+                        </div>
+                    </div>
+                </ng-template>
+            </list-view-ro5>
+            <footer class="section-footer-content">
+                
+                <!--<loader-ro5 [(loading)]="loadingCheckAccessCommand"></loader-ro5>-->
+
+                <div class="row no-gutters col-wrappanel align-items-center" style="margin-left: 5px;">
+                    <div class="col-auto col-button-apply" [ngClass]="{'show': (basketLV.DataSource || []).length}" *appCanAccess="['DA_ALLOW']" ngbTooltip="{{ isBasketAnalyzeNotAccess ? 'У одного или нескольких оборудований недостаточно прав' : null }}">
+                        <button-ro5 [class]="'button-apply'"
+                                    [disabled]="isBasketAnalyzeNotAccess"
+                                    (onclick)="setNewAnalyze()">
+                            Анализ
+                        </button-ro5>
+                    </div>
+                    <div class="col-auto col-button-apply" [ngClass]="{'show': (basketLV.DataSource || []).length}" *appCanAccess="['DR_ALLOW']" ngbTooltip="{{ isBasketReportNotAccess ? 'У одного или нескольких оборудований недостаточно прав' : null }}">
+                        <button-ro5 [class]="'button-apply'"
+                                    [disabled]="isBasketReportNotAccess"
+                                    (onclick)="setNewReport()">
+                            Отчет
+                        </button-ro5>
+                    </div>
+                    <div class="col-auto col-button-apply" [ngClass]="{'show': (basketLV.DataSource || []).length}" ngbTooltip="{{ isBasketDataNotAccess ? 'У одного или нескольких оборудований недостаточно прав' : null }}">
+                        <button-ro5 [class]="'button-apply'" 
+                                    [disabled]="isBasketDataNotAccess"
+                                    (onclick)="setNewDataCreate()">
+                            Данные
+                        </button-ro5>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+</div>

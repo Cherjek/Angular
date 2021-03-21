@@ -1,0 +1,23 @@
+<div class="form-control time-picker">
+  <input #timeInput placeholder="час" min="0" max="23" maxlength="2" 
+      (click)="checkReset()" 
+      
+      (keyup)="manualInput('hour', $event)"
+      [value] = "hour"
+      (input) = "hour = $event.target.value" 
+      class="time-input" type="number">
+  <input #timeInput placeholder="мин" min="0" max="59" maxlength="2" 
+      (click)="checkReset()"
+       
+      (keyup)="manualInput('minute', $event)" 
+      [value] = "minute"
+      (input) = "minute = $event.target.value" 
+      class="time-input" type="number">
+  <input #timeInput placeholder="сек" min="0" max="59" maxlength="2" 
+      (click)="checkReset()"
+      
+      (keyup)="manualInput('second', $event)"
+      [value] = "second"
+      (input) = "second = $event.target.value"  
+      class="time-input" type="number">
+</div>

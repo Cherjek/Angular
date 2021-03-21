@@ -1,0 +1,210 @@
+<div class="main-view-component">
+
+    <div class="col border-right-1">
+
+        <header class="main-content-header row">
+            <div class="col-auto">
+                <backward-button></backward-button>
+            </div>
+            <div class="col">
+                <h3 *ngIf="isNew">Новый шаг для "Отчетов"</h3>
+                <h3 *ngIf="!isNew">Шаг для "Отчетов"</h3>
+            </div>
+        </header>
+
+        <div class="main-view-content">
+            <div class="col col-content-ro5">
+                <message-popup [(messages)]="errors"></message-popup>
+                <loader-ro5 [(loading)]="loadingContentPanel"></loader-ro5>
+
+                <div class="col-content-flex-column">
+
+                    <section class="section-body-content section-panel-two-columns-settings"
+                        *ngIf="scheduleStep != null">
+
+                        <header class="row no-gutters-2 section-header-grouppanel-expander">
+                            <div class="col">
+                                <h5>Параметры отчета</h5>
+                            </div>
+                        </header>
+                        <div class="row no-gutters-2 border-bottom-1">
+                            <div class="col-2">
+                                <h6>Название отчета</h6>
+                            </div>
+                            <div class="col">
+                                <input-box [placeholder]="'Название'" [maxlength]="128" [(value)]="scheduleStep.Name">
+                                </input-box>
+                            </div>
+                        </div>
+                        <div class="row no-gutters-2 border-bottom-1">
+                            <div class="col-2">
+                                <h6>Глубина построения отчета</h6>
+                            </div>
+                            <div class="col input-depth-panel">
+                                <div class="row no-gutters col-wrappanel">
+                                    <div class="col-auto">
+                                        <combo-box-ro5 
+                                            [keyField]="'Id'" 
+                                            [valueField]="'Name'"
+                                            [itemsInput]="typesDateRange"
+                                            [value]="typeDateRange"
+                                            [placeholder]="'Тип...'"
+                                            (onSelected)="scheduleStep.BuildReport.DateRange.DateRangeType = $event?.Id">
+                                        </combo-box-ro5>
+                                    </div>
+                                </div>
+                                <div *ngIf="scheduleStep.BuildReport.DateRange.DateRangeType === 'Dynamic'"
+                                    class="row no-gutters col-wrappanel align-items-center">
+                                    <div class="col-auto">Последние</div>
+                                    <div class="col-auto input">
+                                        <input-box 
+                                            [isFocus]="true" 
+                                            [type]="'number'"
+                                            [(value)]="scheduleStep.BuildReport.DateRange.DateTimeDepth.DepthValue"
+                                            [min]="1" 
+                                            [max]="31">
+                                        </input-box>
+                                    </div>
+                                    <div class="col-auto">
+                                        <combo-box-ro5 
+                                            [keyField]="'Code'" 
+                                            [valueField]="'Name'"
+                                            [itemsInput]="datetimeDepthTypes"
+                                            [value]="scheduleStep.BuildReport.DateRange.DateTimeDepth.Type"
+                                            [placeholder]="'Интервал...'"
+                                            (onSelected)="scheduleStep.BuildReport.DateRange.DateTimeDepth.Type = $event">
+                                        </combo-box-ro5>
+                                    </div>
+                                </div>
+                                <div *ngIf="scheduleStep.BuildReport.DateRange.DateRangeType === 'Static'"
+                                    class="row no-gutters col-wrappanel">
+                                    <div class="col-auto">
+                                        <date-picker-ro5 #calendarSettings
+                                            [(fromDate)]="scheduleStep.BuildReport.DateRange.StartDate"
+                                            [(toDate)]="scheduleStep.BuildReport.DateRange.EndDate" [fastPanel]="false">
+                                        </date-picker-ro5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!--Report types-->
+                        <div class="row no-gutters-2 border-bottom-1">
+                            <div class="col-2">
+                                <h6>Список формируемых отчетов</h6>
+                            </div>
+                            <div class="col">
+                                <chips-ro5 #reportsChips
+                                    [itemsInput]="reportsView"
+                                    (removeAllChips)="scheduleStep.BuildReport.ReportTypes = [];"></chips-ro5>
+                            </div>
+                        </div>
+
+                        <div class="row no-gutters-2 border-bottom-1">
+                            <div class="col-2">
+                                <h6>Отдельный отчет для каждого узла иерархии</h6>
+                            </div>
+                            <div class="col">
+                                <toggle-switch
+                                    [checked]="scheduleStep.BuildReport.OnePerHierarchyNode"
+                                    [checkedRunnerColorClass]="'runner-color-checked-green'"
+                                    [checkedSliderColorClass]="'slider-color-checked-green'"
+                                    (onCheck)="scheduleStep.BuildReport.OnePerHierarchyNode = $event"></toggle-switch>
+                            </div>
+                        </div>
+                        <div class="row no-gutters-2 border-bottom-1">
+                            <div class="col-2">
+                                <h6>Отправлять отчет(ы) по почте</h6>
+                            </div>
+                            <div class="col">
+                                <toggle-switch
+                                    [checked]="scheduleStep.BuildReport.SendByEMail"
+                                    [checkedRunnerColorClass]="'runner-color-checked-green'"
+                                    [checkedSliderColorClass]="'slider-color-checked-green'"
+                                    (onCheck)="scheduleStep.BuildReport.SendByEMail = $event"></toggle-switch>
+                            </div>
+                        </div>
+                        <div class="row no-gutters-2 border-bottom-1">
+                            <div class="col-2">
+                                <h6>Настройка почты</h6>
+                            </div>
+                            <div class="col padding-row__settings" [ngStyle]="{ 'cursor': !scheduleStep.BuildReport.SendByEMail ? 'not-allowed' : 'default' }">
+                                <div [ngClass]="{ 'item-display-disabled' : !scheduleStep.BuildReport.SendByEMail }">
+                                    <div class="row no-gutters-2 border-bottom-1">
+                                        <div class="col-2">
+                                            <span>Каждый отчет отдельным письмом:</span>
+                                        </div>
+                                        <div class="col">
+                                            <toggle-switch [checked]="scheduleStep.BuildReport.OneEMailPerReportFile"
+                                                [checkedRunnerColorClass]="'runner-color-checked-green'"
+                                                [checkedSliderColorClass]="'slider-color-checked-green'"
+                                                (onCheck)="scheduleStep.BuildReport.OneEMailPerReportFile = $event"></toggle-switch>
+                                        </div>
+                                    </div>
+                                    <div class="row no-gutters-2 border-bottom-1">
+                                        <div class="col-2">
+                                            <span>Архивировать перед отправкой:</span>
+                                        </div>
+                                        <div class="col">
+                                            <toggle-switch [checked]="scheduleStep.BuildReport.Compress"
+                                                [checkedRunnerColorClass]="'runner-color-checked-green'"
+                                                [checkedSliderColorClass]="'slider-color-checked-green'"
+                                                (onCheck)="scheduleStep.BuildReport.Compress = $event"></toggle-switch>
+                                        </div>
+                                    </div>
+                                    <div class="row no-gutters-2 border-bottom-1">
+                                        <div class="col-2">
+                                            <span>Тема письма:</span>
+                                        </div>
+                                        <div class="col">
+                                            <textarea class="form-control" [(ngModel)]="scheduleStep.BuildReport.EMailSubjectPattern"
+                                                [placeholder]="'Тема письма ...'"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="row no-gutters-2 border-bottom-1">
+                                        <div class="col-2">
+                                            <span>Тело письма:</span>
+                                        </div>
+                                        <div class="col">
+                                            <textarea class="form-control" [(ngModel)]="scheduleStep.BuildReport.EMailBodyPattern"
+                                                [placeholder]="'Тело письма ...'"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="row no-gutters-2">
+                                        <div class="col-2">
+                                            <span>Список адресов для рассылки:</span>
+                                        </div>
+                                        <div class="col">
+                                            <chips-ro5 #emailsChips [itemEnterPush]="true" [itemsInput]="emailsView"
+                                                [validPatternItemEnterPush]="validEmailPattern"
+                                                (removeAllChips)="scheduleStep.BuildReport.EMailRecipients = [];"></chips-ro5>
+                                        </div>
+                                    </div>
+                                </div>                                
+                            </div>
+                        </div>
+
+                    </section>
+
+                    <footer class="section-footer-content" *ngIf="scheduleStep != null">
+                        <div class="row no-gutters col-wrappanel align-items-center margin-left-5">
+                            <div class="col-auto" *appCanAccess="isNew ? 'SDL_STEP_CREATE' : 'SDL_STEP_EDIT'">
+                                <button-ro5 [class]="'btn-primary'" (onclick)="save()" [disabled]="loadingBasket">
+                                    Сохранить
+                                </button-ro5>
+                            </div>
+                            <div class="col-auto">
+                                <button-ro5 [class]="'btn-outline-secondary'" (onclick)="cancel()"
+                                    [disabled]="loadingBasket">
+                                    Отмeна
+                                </button-ro5>
+                            </div>
+                        </div>
+                    </footer>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>

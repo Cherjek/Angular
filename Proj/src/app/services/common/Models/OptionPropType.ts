@@ -1,0 +1,1 @@
+﻿export enum OptionPropertyType { Float = 1, Integer = 2, Bool = 3, String = 4, Interval = 5, Datetime = 7, Option = 15, OptionTree = 16 }

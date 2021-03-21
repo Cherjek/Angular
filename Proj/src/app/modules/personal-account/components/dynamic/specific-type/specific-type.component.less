@@ -1,0 +1,107 @@
+/********** Общие свойства не зависящие от ориентации и ширины экрана - START **********/
+.date-picker {
+  background-color: #edf2f8;
+}
+
+.timestamp-type-list {
+    margin-right: 1.5rem;
+    margin-top: 0.4vh;
+}
+
+.table-full {
+    width: 100%;
+    max-width: 100%;
+}
+
+:host {
+    display: flex;
+    height: 100%;
+}
+
+.container-main {
+    //display: flex;
+    //flex-direction: column;
+    height: 100%;
+    width: 100%;
+}
+
+.container-body {
+    //flex: 1 1 auto;
+}
+
+/********** Общие свойства не зависящие от ориентации и ширины экрана - END **********/
+/********** Cвойства зависящие от ориентации - START **********/
+@media screen and (orientation:landscape) {
+}
+
+@media screen and (orientation:portrait) {
+    
+}
+/********** Cвойства зависящие от ориентации - END **********/
+
+
+
+/********** Cвойства зависящие от ширины экрана - START **********/
+
+// точно так же задавать ширину, высоту, шрифт других ключевых тегов в зависитости ширины экрана и
+// раздел 'Cвойства зависящие от ориентации' скорее всего уже не понадобится
+
+@small-0: 200px;
+@medium-0: 650px;
+@small: 1000px;
+@medium: 1500px;
+@large: 1900px;
+
+@media screen and (min-width: @small-0) and (max-width: @medium-0) {
+    //col-12
+    .date-picker .pick-dates {
+        -ms-flex: 0 0 100%;
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+    //col-12
+    .date-picker .pick-dates-menu {
+        -ms-flex: 0 0 100%;
+        flex: 0 0 100%;
+        max-width: 100%;
+        margin-bottom: 1vh;
+    }
+}
+@media screen and (max-width: @small) {
+  .date-picker .pick-dates {
+    width: 100%;
+  }
+}
+@media screen and (min-width: @small + 1px) and (max-width: @medium) {
+  .date-picker .pick-dates {
+    max-width: 70%;
+  }
+}
+@media screen and (min-width: @medium + 1px) and (max-width: @large) {
+  .date-picker .pick-dates {
+    max-width: 55%;
+  }
+}
+@media screen and (min-width: @large + 1px) {
+  .date-picker .pick-dates {
+    max-width: 40%;
+  }
+}
+
+/********** Cвойства зависящие от ширины экрана - END **********/
+
+
+
+/********** Косвенные классы - START **********/
+.outline-none {
+  outline: none;
+}
+.h-padding {
+  padding-left: .5rem;
+  padding-right: .5rem;
+}
+.v-padding {
+  padding-top: .5rem;
+  padding-bottom: .5rem;
+}
+/********** Косвенные классы - END **********/

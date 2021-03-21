@@ -1,0 +1,12 @@
+﻿.confirm-remove-panel {
+    width: 300px;
+    font-size: 14px;
+}
+.confirm-remove-panel > div:first-child {
+    margin-bottom: 15px;
+}
+.splitter__grid-panel-div {
+    min-height: -webkit-calc(25vh);
+    min-height: calc(25vh);
+    flex: 1 1 100%;
+}

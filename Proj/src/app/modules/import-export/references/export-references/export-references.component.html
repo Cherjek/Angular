@@ -1,0 +1,127 @@
+<message-popup [(messages)]="errors"></message-popup>
+<loader-ro5 [(loading)]="loadingContentPanel"></loader-ro5>
+<div class="main-view-content height-auto">
+  <div class="col col-content-ro5 logic-parent">
+    <header class="section-header-content row">
+      <div class="col-auto">
+          <h5>Экспорт справочников</h5>
+      </div>
+      <div class="col"></div>
+      <div class="col-auto ">
+          <button-ro5 [disabled]="(exportObject | json) == ({} | json)" [class]="'btn btn-outline-secondary'" (onclick)="exportIds()">
+              Экспорт
+          </button-ro5>
+      </div>
+    </header>
+    <ng-container *ngFor="let group of groups; let i=index;">
+      <header data-toggle="collapse" [attr.data-target]="'#logicDeviceGroupSection' + i"
+        [attr.aria-controls]="'#logicDeviceGroupSection' + i"
+        class="section-header-grouppanel-expander row no-gutters border-bottom-1 tags-header">
+        <div class="col-auto">
+          <h5> {{ group.Name }} </h5>
+        </div>
+        <div class="col"></div>
+        <ng-container>
+          <span *ngIf="group?.undoData?.length" class="delete-undo" (click)="undoItemDelete(group); $event.stopPropagation();">
+            <i class="col-auto zmdi zmdi-undo zmdi-hc-2x"></i>
+          </span>
+          <div (click)="$event.stopPropagation();" *ngIf="listView.isItemsSelectMoreThenOne" class="col-auto">
+            <button-ro5 class="btn-outline-secondary btn-remove" data-container="body" data-placement="bottom"
+              triggers="manual" [autoClose]="true" [ngbPopover]="removeItems" #popUpFormActionButton="ngbPopover"
+              (onclick)="popUpFormActionButton.open({ p: popUpFormActionButton });">
+              Удалить
+            </button-ro5>
+            <ng-template #removeItems let-p="p">
+              <div class="row no-gutters confirm-remove">
+                <div class="col confirm-remove-panel">
+                  <div class="row no-gutters confirm-remove-text">
+                    <div class="col">
+                      Вы уверены, что хотите удалить?
+                    </div>
+                  </div>
+                  <div class="row no-gutters col-wrappanel align-items-center">
+                    <div class="col-auto">
+                      <button type="button" class="btn btn-primary" (click)="removeAllGroupItems(group, listView)">
+                        Удалить </button>
+                    </div>
+                    <div class="col-auto">
+                      <button type="button" class="btn btn-outline-secondary confirm-revove-cancel"> Отмена </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-template>
+          </div>
+        </ng-container>
+        <ng-container>
+          <div (click)="$event.stopPropagation();" class="tags-container">
+            <dropdown-box-ro5 #dropdownBoxTags 
+              [keyField]="'Id'"
+              [valueField]="group.valueField"
+              [additionalField]="group.additionalField" 
+              [isSelected]="true" 
+              [itemsInput]="group.references" 
+              [buttonText]="'Добавить значения'" 
+              [footerTemplate]="footerTemplate"
+              (cacheCallback)="cacheCallback(group, dropdownBoxTags)"
+              (event)="loadDropdownData(group, dropdownBoxTags)"
+              [BttnColorClass]="'btn-primary'">
+              <ng-template #footerTemplate>
+                <footer class="section-footer-content">
+                  <div class="row no-gutters-2 align-items-center">
+                    <div class="col">
+                      <div class="row no-gutters align-items-center col-wrappanel" style="flex-wrap: nowrap">
+                        <div class="col-auto">
+                          <button-ro5 [disabled]="!(dropdownBoxTags?.getSelectedRows().length)"
+                            [class]="'btn btn-primary'"
+                            (onclick)="addSelectedTags(group, dropdownBoxTags.getSelectedRows()); dropdownBoxTags.close()">
+                            Добавить
+                          </button-ro5>
+                        </div>
+                        <div class="col-auto">
+                          <button-ro5 [class]="'btn btn-outline-secondary'" (onclick)="dropdownBoxTags.close()">
+                            Отмена
+                          </button-ro5>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </footer>
+              </ng-template>
+            </dropdown-box-ro5>
+          </div>
+        </ng-container>
+
+        <div class="col-auto">
+          <button data-toggle="collapse" [attr.data-target]="'#logicDeviceGroupSection' + i"
+            [attr.aria-controls]="'#logicDeviceGroupSection' + i"
+            class="section-header-grouppanel-expander row no-gutters border-bottom-1 tags-header"
+            [ngClass]="group.data?.length ? 'transform-rotate-show': 'transform-rotate-collapsed'"
+            class="btn-outline-circle   btn-circle-size-32">
+            <i class="zmdi zmdi-chevron-right"></i>
+          </button>
+        </div>
+      </header>
+
+      <section #parentScroll [attr.id]="'logicDeviceGroupSection' + i" [ngClass]="group.data?.length ? 'show': 'collapse'" class="list-view-container">
+        <list-view-ro5 #listView [KeyField]="'Id'" [DisplayField]="'Name'" [IsSelected]="true"
+          [RowTemplate]="stepRowTemplate" [DataSource]="group.data" [parentScroll]="parentScroll">
+          <ng-template #stepRowTemplate let-item="item" let-listView="listView">
+            <div class="row">
+              <div class="col">
+                <a [innerHtml]="item?.Data?.Name"></a>
+              </div>
+              <div class="col-auto" (click)="$event.stopPropagation()">
+                <button type="button" data-placement="left auto" container="body"
+                  (click)="removeGroupItem(item, group)" 
+                   class="btn-outline-circle btn-circle-size-24">
+                  <i class="zmdi zmdi-delete"></i>
+                </button>
+              </div>
+            </div>
+          </ng-template>
+        </list-view-ro5>
+      </section>
+    </ng-container>
+  </div>
+</div>

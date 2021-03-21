@@ -1,0 +1,135 @@
+<!-- <p>
+  {{ 'Requests' | transloco }}
+</p>
+<ng-container *transloco="let t">
+  <h1>{{ t('Requests') }}</h1>
+</ng-container> -->
+
+<header class="main-content-header row">
+    <div class="col">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3>{{ 'Requests' | transloco }}</h3>
+            </div>            
+        </div>
+    </div>
+</header>
+<div class="main-view-content">
+  <message-popup [(messages)]="errors"></message-popup>
+  <loader-ro5 [(loading)]="loadingContent"></loader-ro5>
+    <div class="col-filter-ro5 border-right-1">
+        <frame-filters-custompanel
+            (onApplyFilter)="onApplyFilter($event)"
+            [service]="requestsFilterContainerService"
+            [isAsyncCallbackStart]="loadingContent">
+        </frame-filters-custompanel>
+    </div>
+
+    <div class="col col-content-ro5 border-right-1">
+        <header class="section-header-content row">
+            <div class="col">
+                <h5>{{ 'Requests' | transloco }}</h5>
+            </div>
+            <div class="col-auto">
+              <button-ro5 class="btn-outline-secondary" (onclick)="Ro5DataGrid.exportToExcel()">
+                  {{ Ro5DataGrid.SelectionRow?.isItemsSelect ? ('ExportSelectedToExcel' | transloco) : ('ExportToExcel' | transloco) }}
+              </button-ro5>
+            </div>
+        </header>
+
+        <data-grid-ro5
+          #Ro5DataGrid
+          [HeaderActionTemplate]="headerActionTemplate"
+          (onActionButtonClicked)="onActionButtonClicked($event)"
+        >
+          <ng-template #headerActionTemplate>
+            <div class="row no-gutters-2" *ngIf="Ro5DataGrid.SelectionRow?.isItemsSelect">     
+              
+              <ng-template #popFormContent let-p="p" let-type="type">
+                <div class="popover-body">
+                    <div class="row no-gutters popup-body">
+                        <div class="col">
+                          {{ (type === 0 ? 'QuestionDeny' : 'QuestionConfirm') | transloco }}
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row no-gutters col-wrappanel">
+                        <div class="col-auto">
+                            <button-ro5 class="btn-primary" (onclick)="type === 0 ? deny() : confirm();p.close()">
+                              {{ (type === 0 ? 'Deny' : 'Confirm') | transloco }}
+                            </button-ro5>
+                        </div>
+                        <div class="col-auto">
+                            <button-ro5 class="btn-outline-secondary" (onclick)="p.close()">
+                              {{ 'Cancel' | transloco }}
+                            </button-ro5>
+                        </div>
+                    </div>
+                </div>
+              </ng-template>
+              
+              <div class="col-auto" *ngIf="groupConfirm">                
+                <button-ro5 
+                  [ngbPopover]="popFormContent"
+                  #popUpDenyFormActionButton="ngbPopover"
+                  data-container="body" 
+                  data-placement="bottom auto"
+                  triggers="manual"
+                  [autoClose]="true"
+                  (click)="popUpDenyFormActionButton.open({ p: popUpDenyFormActionButton, type: 0 });" 
+                  class="btn-outline-secondary">
+                  {{ 'Deny' | transloco }}
+                </button-ro5>
+              </div>
+              <div class="col-auto" *ngIf="groupDeny">
+                <button-ro5 
+                  [ngbPopover]="popFormContent"
+                  #popUpConfirmFormActionButton="ngbPopover"
+                  data-container="body" 
+                  data-placement="bottom auto"
+                  triggers="manual"
+                  [autoClose]="true"
+                  (click)="popUpConfirmFormActionButton.open({ p: popUpConfirmFormActionButton, type: 1 });" 
+                  class="btn-outline-secondary">
+                  {{ 'Confirm' | transloco }}
+                </button-ro5>
+              </div>
+              <!-- <div class="col-auto">
+                <button-ro5 class="btn-outline-secondary" (onclick)="export()">              
+                  {{ 'Export' | transloco }}
+                </button-ro5>
+              </div> -->
+            </div>
+          </ng-template>
+          <ng-template #linkTemplate let-item="item">
+            <a [routerLink]="[
+              '/sub-personal-account/apps/' + item?.Application?.Id
+              ]" 
+              [innerHTML]="item?.Application?.Name | pipeNoName | markerText: dataGrid.SearchFilter">
+            </a>
+          </ng-template>
+          <ng-template #statusTemplate let-item="item">
+            <a *appCanAccess="'CPA_VIEW_REQUEST'; else disabledUnitLink"
+              [routerLink]="['/sub-personal-account/request/' + item.Id]"
+              [innerHTML]="item?.Status?.Name | markerText: dataGrid.SearchFilter"
+            >
+            </a>
+            <ng-template #disabledUnitLink>
+              <a [innerHTML]="item?.Status?.Name | markerText:dataGrid.SearchFilter"></a>
+            </ng-template>
+          </ng-template>
+          <ng-template #fioTemplate let-item="item">
+            <span [innerHTML]="item?.Customer?.FIO | markerText: dataGrid.SearchFilter"></span>
+          </ng-template>
+          <ng-template #customPhoneTemplate let-item="item">
+            <span [innerHTML]="item?.Customer?.PhoneNumber | markerText: dataGrid.SearchFilter"></span>
+          </ng-template>
+          <ng-template #customEmailTemplate let-item="item">
+            <span [innerHTML]="item?.Customer?.Email | markerText: dataGrid.SearchFilter"></span>
+          </ng-template>
+          <ng-template #customStatusTemplate let-item="item">
+            <span [innerHTML]="item?.Customer?.Status?.Name | markerText: dataGrid.SearchFilter"></span>
+          </ng-template>
+        </data-grid-ro5>
+    </div>
+</div>

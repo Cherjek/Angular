@@ -1,0 +1,103 @@
+﻿<message-popup [(messages)]="errors"></message-popup>
+<loader-ro5 [(loading)]="subscrsLoading"></loader-ro5>
+
+<div class="main-view-content height-auto main-view-result col-content-ro5">
+    <div class="col">
+        <div class="col-content-flex-column">
+            <section class="section-body-content settings-container" style="overflow-y: hidden;">
+                    <div class="row no-gutters">
+                        <div class="col border-right-1 max-width-450">
+                            <header class="section-header-content row">
+                                <div class="col-auto">
+                                    <h5> ЭСО </h5>
+                                </div>
+                            </header>
+
+                            <div class="row no-gutters-2 align-items-center border-bottom-1 hover-list-row all-subscrs-bttn"
+                                 [ngClass]="{'selected-list-row': allSubscrsClick}"
+                                 (click)="onAllSubscrsClick()">
+                                <div class="col">
+                                    <h6> Все ЭСО </h6>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="zmdi zmdi-chevron-right zmdi-hc-2x"></i>
+                                </div>
+                            </div>
+
+                            <list-view-ro5 #subscribersLV
+                                           [KeyField]="'Id'"
+                                           [RowTemplate]="subscribersLVRowTemplate"
+                                           [DataSource]="subscribers"
+                                           [DisplayField]="'Name'"
+                                           [AdditionalField]="'GeoPath'"
+                                           [IsFocused]="true"
+                                           (OnItemClick)="onSubscrClick($event)">
+                                <ng-template #subscribersLVRowTemplate let-item="item">
+                                    <div class="row align-items-center">
+                                        <div class="col">
+                                            <a [innerHtml]="item.Data[subscribersLV.DisplayField] | markerText:subscribersLV.SearchFilter"></a>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="zmdi zmdi-chevron-right zmdi-hc-2x"></i>
+                                        </div>
+                                    </div>
+                                </ng-template>
+                            </list-view-ro5>
+                        </div>
+
+                        <div class="col">
+                            <header class="section-header-content row">
+                                <div class="col-auto">
+                                    <h5> Доступ разрешен: </h5>
+                                </div>
+                                <div class="col-auto">
+                                    <navigate-menu-ro5 #NavigateMenu
+                                                       [items]="navItems"
+                                                       [isTabView]="true"
+                                                       (onNavSelectChanged)="onNavClick($event)"></navigate-menu-ro5>
+                                </div>
+                                <div class="col"></div>
+                                <div class="col-auto" *appCanAccess="'ADM_EDIT_GROUP_EQUIPMENT'">
+                                    <button-ro5 [class]="'btn btn-primary'" (onclick)="changeSubscrsUnitLDs()">
+                                        Изменить
+                                    </button-ro5>
+                                </div>
+                            </header>
+
+                            <data-grid-ro5 #unitLDsDG
+                                           [KeyField]="'Id'"
+                                           [DataSource]="currDGSource || (subscribersLV.focusedListItem || { Data: { Units: [] } })['Data']['Units']"
+                                           [HeaderTemplate]="GridHeaderTemplate"
+                                           [DetailRow]="{ components: DetailsRowComponents }"
+                                           [RowsTemplate]="unitLDsDGlTemplate">
+                                <ng-template #unitLDsDGlTemplate let-item>
+                                    <div class="row">
+                                        <div class="col" style="text-align: left;">
+                                            
+                                            <ng-container [ngSwitch]="isUnit">
+                                                <a *ngSwitchCase="true"
+                                                [routerLink]="['/object-editor/' + item.Id]"
+                                                [innerHTML]="item['DisplayName'] | markerText:unitLDsDG.SearchFilter"></a>
+                                                
+                                                <a *ngSwitchCase="false"
+                                                   [routerLink]="['/ld-editor/' + item.Id + '/properties']"
+                                                   [queryParams]="{ unitId: item.IdUnit }"
+                                                   [innerHTML]="item['DisplayName'] | markerText:unitLDsDG.SearchFilter"></a>
+                                            </ng-container>                                                
+
+                                            <br>
+                                            <span [innerHTML]="item['AdditionalInfo'] | markerText:unitLDsDG.SearchFilter"></span>
+                                        </div>
+                                    </div>
+                                </ng-template>
+
+                                <ng-template #GridHeaderTemplate>
+                                    <!-- технически для этой формы данный шаблон нужен чтобы заголовок грида не состоял из столбцов-заголовков -->
+                                </ng-template>
+                            </data-grid-ro5>
+                        </div>
+                    </div>
+            </section>
+        </div>
+    </div>
+</div>

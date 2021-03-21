@@ -1,0 +1,14 @@
+<message-popup [(messages)]="errors"></message-popup>
+<loader-ro5 [(loading)]="loadingContentPanel"></loader-ro5>
+<div class="main-view-content height-auto">
+  <div class="col col-content-ro5">
+    <div class="rom-upload-ref" romDragDrop (onFileDropped)="draggedFile = $event">
+      <p class="rom-upload-ref__title">Нажмите, чтобы загрузить файл или перетащите файл</p>
+      <div class="rom-upload-ref__button">
+        <rom-uploader [draggedFile]="draggedFile" (onFileUpload)="onFileUpload($event)"
+          (onWrongFileUpload)="onError($event)" acceptType=".json">
+        </rom-uploader>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,224 @@
+<div #mainContainer tabindex="0" class="main-view-content height-auto main-view-result main-container"
+     (keyup)="keySaveOrCancel($event)">
+    <loader-ro5 [(loading)]="loadingContentPanel"></loader-ro5>
+
+    <div class="col col-content-ro5">
+        <div *ngIf="!userError" class="col-content-flex-column">
+            <header class="section-header-content row no-gutters" *ngIf="!newUser">
+                <div class="col">
+                    <h5> Cвойства </h5>
+                </div>
+                <div class="col-auto" *appCanAccess="'ADM_EDIT_USER_PROPERTIES'">
+                    <button-ro5 *ngIf="isPropEdit"
+                                [class]="'btn btn-outline-secondary'"
+                                (onclick)="cancelChanges()">
+                        Отменить изменения
+                    </button-ro5>
+                    <button-ro5 *ngIf="!isPropEdit"
+                                [class]="'btn btn-primary'"
+                                (onclick)="changeUserProperties()">
+                        Изменить свойства
+                    </button-ro5>
+                </div>
+            </header>
+
+            <header class="section-header-grouppanel-expander row no-gutters">
+                <div class="col">
+                    <h5> Пользователь </h5>
+                </div>
+            </header>
+
+            <message-popup [messages]="errors"></message-popup>
+
+            <section class="section-body-content settings-container">
+                <section class="section-body-content section-panel-two-columns-settings">
+                    <ng-container *ngFor="let prop of userProps" [ngSwitch]="prop.name">
+                            <ng-container *ngSwitchCase="'UserGroups'">
+                                <div class="row no-gutters-2 border-bottom-1">
+                                    <div class="col-2">
+                                        <span [innerHTML]="getName(prop.name)"></span><span class="error-required-color">&nbsp;*</span>
+                                    </div>
+                                    <div class="col-10" style="padding: 0">
+                                        <div class="row no-gutters-2 margin-bottom-10" [ngClass]="{'ct-state-invisible': !isPropEdit}">
+                                            <div class="col">
+                                                <div class="d-flex flex-wrap align-items-center">
+                                                    <div *ngIf="groupChips != null" class="chips-item chips-item-active">
+                                                        <div class="row p-2">
+                                                            <div class="col-auto">
+                                                                {{ 'Основная группа: ' + (groupChips.chips.length && groupChips.selectIndexCursor !== null ? groupChips.chips[groupChips.selectIndexCursor] : getMainGroupUndefined) }}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <chips-ro5 #groupChips
+                                                           [itemsInput]="getLeftGroups"
+                                                           [singleCheck]="true"
+                                                           (removeAllChips)="prop.value = [];"></chips-ro5>
+                                            </div>
+                                        </div>
+
+                                        <div *ngIf="!isPropEdit" class="d-flex flex-wrap align-items-center">
+                                            <div class="p-3 word-break-all" [ngSwitch]="prop.main_group.Name !== getMainGroupUndefined">
+                                                <a *ngSwitchCase="true" [routerLink]="['/admin/group/' + prop.main_group_id]"> {{ prop.main_group.Name }} </a>
+                                                <a *ngSwitchCase="false" href="javascript:void(0)"> {{ getMainGroupUndefined }} </a>
+                                                &nbsp;<span>(Основная)</span>
+                                            </div>
+                                            <ng-container *ngFor="let group of prop.value, let ind = index;">
+                                                <div class="p-3 word-break-all" *ngIf="group.Id != prop.main_group_id">
+                                                    <a [routerLink]="['/admin/group/' + group.Id]"> {{ group.Name }} </a>
+                                                </div>
+                                            </ng-container>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ng-container>
+
+                            <ng-container *ngSwitchCase="'IdAuthenticityType'">
+                                <div class="row no-gutters-2 border-bottom-1">
+                                    <div class="col-2">
+                                        <span [innerHTML]="getName(prop.name)"></span><span class="error-required-color">&nbsp;*</span>
+                                    </div>
+                                    <div class="col-10">
+                                        <combo-box-ro5 *ngIf="isPropEdit" #cbAuthTypeProp
+                                                       [keyField]="'code'"
+                                                       [valueField]="'type'"
+                                                       [itemsInput]="prop.psb_vals"
+                                                       [value]="prop.value"
+                                                       [placeholder]="'Возможные типы аутентификации ...'"
+                                                       (onSelected)="prop.value = $event; codeAuthType = $event.type">
+                                        </combo-box-ro5>
+                                        <span *ngIf="!isPropEdit"> {{ prop.value['type'] }} </span>
+                                    </div>
+                                </div>
+                            </ng-container>
+                            <ng-container *ngSwitchCase="'Login'">
+                                <div class="row no-gutters-2 border-bottom-1">
+                                    <div class="col-2">
+                                        <span [innerHTML]="getName(prop.name)"></span><span class="error-required-color">&nbsp;*</span>
+                                    </div>
+                                    <div class="col-10">
+                                        <input-box *ngIf="isPropEdit" [placeholder]="'Логин ...'" [(value)]="prop.value"></input-box>
+                                        <span *ngIf="!isPropEdit"> {{ prop.value }} </span>
+                                    </div>
+                                </div>
+                            </ng-container>
+                            <ng-container *ngSwitchCase="'Password'">
+                                <ng-container *ngIf="isPropEdit && codeAuthType !== 'Ldap'">
+                                    <div class="row no-gutters-2 border-bottom-1">
+                                        <div class="col-2">
+                                            <span [innerHTML]="getName(prop.name)"></span><span class="error-required-color">&nbsp;*</span>
+                                        </div>
+                                        <div class="col-10">
+                                            <div class="row no-gutters align-items-center">
+                                                <div class="col-5 margin-bottom-10">
+                                                    <input-box [placeholder]="'Пароль ...'"
+                                                               [type]="'password'"
+                                                               [(value)]="prop.value"
+                                                               [isNotValidValue] = "(prop.value || prop.admit) && prop.value != prop.admit">
+                                                    </input-box>
+                                                </div>
+                                            </div>
+                                            <div class="row no-gutters align-items-center">
+                                                <div class="col-5">
+                                                    <input-box [placeholder]="'Подтвердить пароль ...'"
+                                                               [type]="'password'"
+                                                               [(value)]="prop.admit"
+                                                               [isNotValidValue] = "(prop.value || prop.admit) && prop.value != prop.admit">
+                                                    </input-box>
+                                                </div>
+                                            </div>
+                                            <div *ngIf="(prop.value || prop.admit) && prop.value != prop.admit" class="row no-gutters align-items-center">
+                                                <div class="col">
+                                                    <span class="error-required-color"> Пароль и подтверждение не совпадают </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </ng-container>
+                            </ng-container>
+                            <ng-container *ngSwitchCase="'Status'">
+                                <div class="row no-gutters-2 border-bottom-1">
+                                    <div class="col-2">
+                                        <span [innerHTML]="getName(prop.name)"></span>
+                                    </div>
+                                    <div class="col-10">
+                                        <div class="row no-gutters align-items-center">
+                                            <div *ngIf="isPropEdit" class="col-auto" style="margin-right: 10px;">
+                                                <toggle-switch [checked]="prop.value"
+                                                               [checkedRunnerColorClass]="'runner-color-checked-green'"
+                                                               [checkedSliderColorClass]="'slider-color-checked-green'"
+                                                               (onCheck)="prop.value = $event;">
+                                                </toggle-switch>
+                                            </div>
+                                            <div *ngIf="!isPropEdit" class="col">
+                                                <span>{{ prop.value ? statusNames.active : statusNames.notActive}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ng-container>
+                            <ng-container *ngSwitchCase="'Comment'">
+                                <div class="row no-gutters-2 border-bottom-1">
+                                    <div class="col-2">
+                                        <span [innerHTML]="getName(prop.name)"></span>
+                                    </div>
+                                    <div class="col-10">
+                                        <textarea *ngIf="isPropEdit" class="form-control"
+                                                   [(ngModel)]="prop.value"
+                                                   [placeholder]="'Комментарий ...'"></textarea>
+                                        <span *ngIf="!isPropEdit"> {{ prop.value }} </span>
+                                    </div>
+                                </div>
+                            </ng-container>
+                            <ng-container *ngSwitchDefault>
+                                <div class="row no-gutters-2 border-bottom-1">
+                                    <div class="col-2">
+                                        <span [innerHTML]="getName(prop.name)"></span>
+                                    </div>
+                                    <div class="col-10">
+                                        <input-box  *ngIf="isPropEdit" [placeholder]="getName(prop.name) + ' ...'" [(value)]="prop.value"></input-box>
+                                        <span *ngIf="!isPropEdit"> {{ prop.value }} </span>
+                                    </div>
+                                </div>
+                            </ng-container>
+                    </ng-container>
+                </section>
+            </section>
+
+            <footer *ngIf="isPropEdit" class="section-footer-content">
+                <div class="row no-gutters-2 align-items-center">
+                    <div class="col">
+                        <div class="row no-gutters col-wrappanel align-items-center">
+                            <div class="col-auto">
+                                <button-ro5 [class]="'btn btn-primary'"
+                                            (onclick)="saveUser()">
+                                    {{ newUser ? 'Создать' : 'Сохранить изменения' }}
+                                </button-ro5>
+                            </div>
+                            <div class="col-auto">
+                                <button-ro5 [class]="'btn btn-outline-secondary'"
+                                            (onclick)="cancelChanges()">
+                                    Отмена
+                                </button-ro5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+
+        <ng-container *ngIf="userError">
+            <div class="row no-gutters-2 justify-content-center message-margin__top_bottom">
+                <div class="col" style="text-align: center">
+                    <h4> {{ userError }} </h4>
+                </div>
+            </div>
+            <div class="row no-gutters-2 justify-content-center">
+                <div class="col-auto">
+                    <button type="button" class="btn btn-outline-secondary" (click)="backToPrevPage()"> Вернуться к предыдущей странице </button>
+                </div>
+            </div>
+        </ng-container>
+    </div>
+</div>

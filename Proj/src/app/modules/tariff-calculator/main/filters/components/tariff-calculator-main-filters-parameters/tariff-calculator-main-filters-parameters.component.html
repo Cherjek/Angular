@@ -1,0 +1,75 @@
+<div class="main-view-content">
+  <loader-ro5 [(loading)]="loadingContentPanel"></loader-ro5>
+  <div class="col col-content-ro5 col-content-flex-column">
+
+    <section class="section-body-content section-panel-two-columns-settings validate-create"
+      *ngIf="taskParamsData as param">
+      <div class="row no-gutters-2 border-bottom-1">
+        <div class="col-2">
+          <h6>Название</h6>
+        </div>
+        <div class="col">{{param.Name | pipeNoName}}</div>
+      </div>
+      <div class="row no-gutters-2 border-bottom-1">
+        <div class="col-2">
+          <h6>Дата</h6>
+        </div>
+        <div class="col">{{param?.MonthDate | dateFormat | slice: 0:-3}}</div>
+      </div>
+      <div class="row no-gutters-2 border-bottom-1">
+        <div class="col-2">
+          <h6>Тип расчета</h6>
+        </div>
+        <div class="col">{{param?.CalculationType?.Name | pipeNoName}}</div>
+      </div>
+      <div class="row no-gutters-2 border-bottom-1">
+        <div class="col-2">
+          <h6>Отчет о типе расчета</h6>
+        </div>
+        <div class="col">{{param?.CalculationTypeReport?.Name | pipeNoName}}</div>
+      </div>
+      <div class="row no-gutters-2 border-bottom-1">
+        <div class="col-2">
+          <h6>Отдельное оборудование</h6>
+        </div>
+        <div class="col">{{param?.SeparateLogicDevices ? 'Да': 'Нет'}}</div>
+      </div>
+      <section class="section-body-content">
+        <ng-container *ngFor="let group of param.CalculationGroups; let i=index;">
+          <header data-toggle="collapse" [attr.data-target]="'#logicDeviceGroupSection' + i"
+            [attr.aria-controls]="'#logicDeviceGroupSection' + i"
+            class="section-header-grouppanel-expander row no-gutters border-bottom-1 tags-header">
+            <div class="col-auto">
+              <h5> {{ group.Name }} </h5>
+            </div>
+            <div class="col"></div>
+            <div *ngIf="param.Files && param.Files.length" class="col-auto">
+              <a href="javascript:void(0)" (click)="downloadFile(param.Files); $event.stopPropagation()">Скачать</a>
+            </div>                
+            <div class="col-auto">
+              <button data-toggle="collapse" [attr.data-target]="'#logicDeviceGroupSection' + i"
+                [attr.aria-controls]="'#logicDeviceGroupSection' + i"
+                class="section-header-grouppanel-expander row no-gutters border-bottom-1 tags-header"
+                [ngClass]="group.data?.length ? 'transform-rotate-show': 'transform-rotate-collapsed'"
+                class="btn-outline-circle btn-circle-size-32">
+                <i class="zmdi zmdi-chevron-right"></i>
+              </button>
+            </div>
+          </header>
+          <section #parentScroll [attr.id]="'logicDeviceGroupSection' + i" [ngClass]="group.HierarchyNode?.LogicDevices ? 'show': 'collapse'" class="list-view-container">
+            <div class="row no-gutters-2 border-bottom-1 height-50 align-items-center" *ngFor="let ld of group.HierarchyNode?.LogicDevices">
+              <div class="col">{{ ld.DisplayName }}</div>
+            </div>
+          </section>
+        </ng-container>
+        <ng-container *ngIf="param.CalculationGroups == null || !param.CalculationGroups.length">
+          <div class="row no-gutters align-items-center not-data-items">
+            <div class="col">
+                Нет данных
+            </div>
+          </div>
+        </ng-container>
+      </section>
+    </section>
+  </div>
+</div>

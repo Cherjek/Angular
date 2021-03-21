@@ -1,0 +1,9 @@
+.action-panel {
+    background-color: white;
+    height: 0;
+    transition: height .15s ease-out;
+}
+.action-panel.show {
+    height: 50px;
+    transition: height .15s ease-out;
+}

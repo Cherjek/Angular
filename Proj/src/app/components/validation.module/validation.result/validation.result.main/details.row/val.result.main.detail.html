@@ -1,0 +1,46 @@
+﻿<message-popup [(messages)]="errorsResponseToView"></message-popup>
+<div class="row no-gutters">
+	<div class="col details-row-view background">
+
+	    <!--<header class="row border-bottom-1">
+			<div class="col">
+				<h5>ПЕРЕХОД В ПРЕДСТАВЛЕНИЕ ДАННЫХ</h5>
+			</div>
+			<div class="col-auto">
+				<button type="button" class="btn-outline-circle btn-circle-size-32" data-toggle="collapse" [attr.data-target]="'#' + rowId"
+						(click)="onRowExpanded(item, rowId, $event)">
+					<i class="zmdi zmdi-close"></i>
+				</button>
+			</div>
+		</header>-->
+
+		<div class="row no-gutters-2 border-bottom-1">
+			<div class="col-2" style="background-color: #EFECD6; display: flex; align-items: center">Даты диапазона</div>
+			<div class="col-10" style="padding: 10px 10px">
+				<date-picker-ro5 [(fromDate)]="fromDate"
+								 [(toDate)]="toDate"
+								 [fastPanel]="true"
+								 [isDefFast]="false"></date-picker-ro5>
+			</div>
+		</div>
+
+		<div class="row no-gutters-2 border-bottom-1">
+			<div class="col-2" style="background-color: #EFECD6; display: flex; align-items: center">
+				Теги для сравнения
+			</div>
+			<div class="col-10" style="padding: 10px 10px">
+				<chips-ro5 #chipsTagsControl [itemsInput]="getItemsInput()"></chips-ro5>
+			</div>
+		</div>
+        
+	    <ng-container *ngIf="data !== null && data.LogicDevice != null">
+	        <div class="row no-gutters-2" *appCanAccess="{ keySource: data.LogicDevice.Id, source: 'LogicDevices', value: 'DP_ALLOW' }">
+	            <div class="col-2" style="background-color: #EFECD6;"></div>
+	            <div class="col-10" style="padding: 10px 10px">
+	                <button-ro5 [disabled]="!chipsTagsControl.chips.length" class="btn button-apply" (onclick)="clickResponseToView(chipsTagsControl.chips)">Перейти в представление</button-ro5>
+	            </div>
+	        </div>
+	    </ng-container>
+	    
+	</div>
+</div>

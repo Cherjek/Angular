@@ -1,0 +1,54 @@
+﻿<header class="main-content-header row">
+    <div class="col-auto">
+        <backward-button></backward-button>
+    </div>
+    <div class="col main-header-text">
+        <h3>{{JobInfo.Name}}</h3>
+        <div class="row no-gutters">
+            <div class="col-auto">
+                <div class="label-info" [innerHtml]="
+                    ((JobInfo||{}).StatusName ? ((JobInfo||{}).StatusName + '. ') : '') +
+                    ((JobInfo||{}).StartDate ? 'С ' + ((JobInfo||{}).StartDate | dateFormat) : '') +
+                    ((JobInfo||{}).EndDate ? ' По ' + ((JobInfo||{}).EndDate | dateFormat) : '') +
+                    ((JobInfo||{}).UserName ? (' Инициатор: ' + (JobInfo||{}).UserName) : '')
+                 "></div>
+            </div>
+            <ng-container *ngIf="Hierarchy != null">
+                <div class="col-auto label-info">
+                    , Иерархия: &nbsp;
+                </div>
+                <div class="col-auto label-info">
+                    <a [routerLink]="[
+                        '../../../hierarchies-module/hierarchy-card/' + Hierarchy['Id']
+                        ]" [innerHTML]="Hierarchy['Name'] | pipeNoName">
+                    </a>
+                </div>
+            </ng-container>
+        </div>
+    </div>
+    <div>
+        <ng-template #templateNavItem let-navItem="navItem">
+            <ng-container *appCanAccess="navItem.access">
+                <li *ngIf="navItem.isVisible !== false" class="nav-item"
+                    [ngStyle]="{ 'cursor': navItem.isDisabled ? 'not-allowed' : 'default' }"
+                    routerLinkActive="active">
+                    <a class="nav-link"
+                       [ngClass]="{ 'item-display-disabled' : navItem.isDisabled }"
+                       [queryParamsHandling]="'merge'"
+                       [routerLink]="navItem.url">{{ navItem.name }}</a>
+                </li>
+            </ng-container>
+        </ng-template>
+        <navigate-menu-ro5 
+            [templateNavItem]="templateNavItem"
+            [items]="getMenu()"></navigate-menu-ro5>
+    </div>
+    <context-button [items]="ContextButtonItems" (onItemClick)="contextButtonHeaderClick($event)"></context-button>
+</header>
+<div class="main-view-content">
+    <div class="col">
+        <message-popup [(messages)]="errorsContentValidationForms"></message-popup>
+        <loader-ro5 [(loading)]="loadingContentPanel"></loader-ro5>        
+        <router-outlet></router-outlet>
+    </div>
+</div>

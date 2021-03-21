@@ -1,0 +1,42 @@
+<message-popup [(messages)]="errors"></message-popup>
+<loader-ro5 [(loading)]="loadingContent"></loader-ro5>
+<div class="main-view-content height-auto">
+    <div class="col col-content-ro5 border-right-1">
+        <header class="section-header-content row">
+            <div class="col-auto">
+                <h5>Оборудование</h5>
+            </div>
+            <div class="col"></div>
+            <div class="col-auto" *appCanAccess="'HH_NODE_EQUIP_EDIT'">
+                <button-ro5 [class]="'btn btn-primary'" (onclick)="changeLogicDevices()">
+                    + Изменить состав
+                </button-ro5>
+            </div>
+        </header>
+
+        <data-grid-ro5 #Ro5DataGrid 
+            [HeaderActionTemplate]="headerActionTemplate"
+            (onActionButtonClicked)="onDGRowActionBttnClick($event)">
+            <ng-template #headerActionTemplate>
+                <div class="row no-gutters-2">                        
+                    <div class="col">
+                        <datagrid-header-temp-def 
+                            permissionDelete="HH_NODE_EQUIP_EDIT"
+                            [dataGrid]="dataGrid" 
+                            (deletedRows)="deleteDGRows()">
+                        </datagrid-header-temp-def>
+                    </div>
+                </div>
+            </ng-template>
+
+            <ng-template #logicDeviceCellTemplate let-item="item">
+                <a [routerLink]="['/ld-editor/' + item.Id + '/properties']"
+                   [innerHTML]="item.DisplayName | pipeNoName | markerText:dataGrid.SearchFilter"></a>                
+                <br>
+                <span class="text-info-additional" [innerHTML]="item.UnitDisplayName | markerText:dataGrid.SearchFilter"></span>
+                <br>
+                <span class="text-info-additional" [innerHTML]="item.UnitAdditionalInfoo | markerText:dataGrid.SearchFilter"></span>
+            </ng-template>
+        </data-grid-ro5>
+    </div>
+</div>

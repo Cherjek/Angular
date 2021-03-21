@@ -1,0 +1,40 @@
+<div class="input-group input-group-clear" [ngClass]="{ 'input-group-fullsize' : isFullSize }"
+     (mouseenter)="isInputHover = true"
+     (mouseleave)="isInputHover = false"
+     (mousedown)="onMouseInputBoxDown($event)">
+
+    <input #Input class="form-control" 
+           [attr.type]="typeDefault" 
+           [attr.maxlength]="maxlength"
+           [attr.placeholder]="placeholder"
+           [attr.readonly]="readonly"
+           [ngClass]="{ 'number-padding-right' : isNumberType, 'box-fullsize-disable' : isFullSize, 'not-valid-value' : isNotValidValue  }"           
+           (focus)="isInputFocus = true"
+           (blur)="isInputFocus = false;onBlur()"
+           (keypress)="inputChecked($event)"
+           (ngModelChange)="modelChange($event);onChange($event)"
+           (change)="inputChange($event)"    
+           [ngModel]="value" />
+
+    <!--Отображение значка поиск, для type=search-->
+    <div class="input-group-append input_button search-icon"
+         *ngIf="type === 'search' && (value == null || value == '')">
+        <span class="input-group-text">
+            <i class="zmdi zmdi-search"></i>
+        </span>
+    </div>
+    <!--Отображение значка clear, для быстрой очистки поля-->
+    <div class="input-group-append input_button clear-text"
+         *ngIf="value != null && value != ''"
+         [ngClass]="{ 'number' : isNumberType }"
+         (click)="value = null;modelChange(value);onChange(value);inputView.nativeElement.focus()">
+        <span class="input-group-text">
+            <i class="icon icon-owl-cancel"></i><!--icon-owl-cancel должен быть общим, сейчас подтягивается от контрола date-picker в node_modules_ex-->
+        </span>
+    </div>
+    <!--Спиннер, для type=number-->
+    <div *ngIf="isNumberType" class="input_button spinner">
+        <i class="zmdi zmdi-caret-up" (mousedown)="onMouseSpinnerDown($event, 1)" (mouseup)="onMouseSpinnerUp($event)" (mouseleave)="timerMouseDownValInc(0, true)"></i>
+        <i class="zmdi zmdi-caret-down" (mousedown)="onMouseSpinnerDown($event, -1)" (mouseup)="onMouseSpinnerUp($event)" (mouseleave)="timerMouseDownValInc(0, true)"></i>
+    </div>
+</div>

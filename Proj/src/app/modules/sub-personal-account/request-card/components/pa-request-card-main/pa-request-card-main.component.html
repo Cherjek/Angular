@@ -1,0 +1,64 @@
+<div class="main-view-content">
+  <message-popup [(messages)]="errors"></message-popup>
+  <loader-ro5 [(loading)]="loadingContent"></loader-ro5>
+  <div class="col col-content-ro5 col-content-flex-column">
+    <section class="section-body-content section-panel-two-columns-settings">
+      <div class="row no-gutters-2 border-bottom-1">
+        <div class="col-2">
+          <h6>{{ 'Application' | transloco }}</h6>
+        </div>
+        <div class="col">
+          {{ request?.Application?.Name }}
+        </div>
+      </div>
+      <div class="row no-gutters-2 border-bottom-1">
+        <div class="col-2">
+          <h6>{{ 'Status' | transloco }}</h6>
+        </div>
+        <div class="col">
+          {{ request?.Status?.Name }}
+        </div>
+      </div>
+      <div class="row no-gutters-2 border-bottom-1">
+        <div class="col-2">
+          <h6>{{ 'DateTime' | transloco }}</h6>
+        </div>
+        <div class="col">
+          {{ request?.DateTime | dateTimeFormat }}
+        </div>
+      </div>
+      <div class="row no-gutters-2 border-bottom-1">
+        <div class="col-2">
+          <h6>{{ 'FIO' | transloco }}</h6>
+        </div>
+        <div class="col">
+          {{ request?.Customer?.FIO }}
+        </div>
+      </div>
+      <div class="row no-gutters-2 border-bottom-1">
+        <div class="col-2">
+          <h6>{{ 'Phone' | transloco }}</h6>
+        </div>
+        <div class="col">
+          {{ request?.Customer?.PhoneNumber }}
+        </div>
+      </div>
+      <div class="row no-gutters-2 border-bottom-1">
+        <div class="col-2">
+          <h6>{{ 'Email' | transloco }}</h6>
+        </div>
+        <div class="col">
+          {{ request?.Customer?.Email }}
+        </div>
+      </div>
+      <div class="row no-gutters-2 border-bottom-1">
+        <div class="col-2">
+          <h6>{{ 'CustomerStatus' | transloco }}</h6>
+        </div>
+        <div class="col">
+          {{ request?.Customer?.Status }}
+        </div>
+      </div>
+    </section>
+  </div>
+</div>

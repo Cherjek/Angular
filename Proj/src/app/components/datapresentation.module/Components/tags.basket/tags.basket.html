@@ -1,0 +1,96 @@
+<header class="main-content-header row align-items-center" *ngIf="PropertyForm.IsShowData">
+    <div class="col">
+        <h4> Корзина тегов </h4>
+    </div>
+    <div class="col-auto justify-content-end">
+        <button type="button" class="btn btn-outline-secondary" style="border-color: #fff; color: white;" (click)="dropAllTags()">
+            Сброс
+        </button>
+    </div>
+</header>
+<header class="row align-items-center" style="background-color: #fff; color: inherit;" *ngIf="PropertyForm.IsCompareData">
+    <div class="col">
+        <h4> Корзина тегов </h4>
+    </div>
+    <div class="col-auto justify-content-end">
+        <button type="button" class="btn btn-outline-secondary" (click)="dropAllTags()">
+            Сброс
+        </button>
+    </div>
+</header>
+<div class="col-objects-ro5">
+    <message-popup [(messages)]="errorsResponseToView"></message-popup>
+    <loader-ro5 [(loading)]="loading"></loader-ro5>
+    <div>
+        <list-view-ro5 #basketLV
+                       [KeyField]="KeyField"
+                       [DisplayField]="'TagCode'"
+                       [AggregateFieldName]="['ObjName','UnitName']"
+                       [RowTemplate]="tagRowTemplate"
+                       [IsRemoved]="true"
+                       [IsSelected]="true"
+                       [IsFocused]="false"
+                       (OnRemoveListItem)="dropSomeTags($event)">
+            <ng-template #tagRowTemplate let-item="item" let-id="id">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <span [innerHtml]="item.Data['TagCode'] + ' ' | markerText:basketLV.SearchFilter"></span>
+                    </div>
+                </div>
+                <div class="row align-items-center">
+                    <div class="col">
+                        <span style="font-size: 12px; color: #999999" [innerHtml]="item.Data['UnitName'] | markerText:basketLV.SearchFilter"></span>
+                    </div>
+                </div>
+                <div class="row align-items-center">
+                    <div class="col">
+                        <span style="font-size: 12px; color: #999999" [innerHtml]="item.Data['ObjName'] | markerText:basketLV.SearchFilter"></span>
+                    </div>
+                </div>
+            </ng-template>
+        </list-view-ro5>
+    </div>
+    <div #footer class="section-footer-content">
+        <div>
+            <div class="row no-gutters col-wrappanel align-items-center" style="padding: 10px;">
+                <div class="col">
+                    <h6>Показания</h6>
+                </div>
+                <div class="col-auto" style="cursor: pointer;">
+                    <div class="row no-gutters">
+                        <div class="col-auto" *ngIf="PropertyForm.IsShowData">
+                            <check-box-ro5 [checked]="isOnlyLastValue" (onClick)="isOnlyLastValue = $event.checked"></check-box-ro5>
+                        </div>
+                        <div class="col-auto" style="font-size: 12px;" *ngIf="PropertyForm.IsShowData" (click)="isOnlyLastValue = !isOnlyLastValue">Только последние значения</div>
+                    </div>
+                </div>
+            </div>
+            <div class="row no-gutters align-items-center" style="padding: 10px;"
+                 [ngStyle]="{ 'cursor': isOnlyLastValue ? 'not-allowed' : 'default' }">
+                <div class="col" [ngClass]="{ 'item-display-disabled' : isOnlyLastValue }">
+                    <date-picker-ro5 [(fromDate)]="fromDate"
+                                     [(toDate)]="toDate"
+                                     [min]="minDate"
+                                     [max]="maxDate"
+                                     [fastButtonType]="0"
+                                     [isVertical]="true"
+                                     [fastPanel]="true"
+                                     [isDefFast]="true"
+                                     [positionCalendar]="'top'"></date-picker-ro5>
+                </div>
+            </div>
+            <div class="row no-gutters-2 align-items-center" style="padding: 10px 0;">
+                <div class="col" *ngIf="PropertyForm.IsShowData">
+                    <button type="button" style="width: 100%" class="btn button-apply" (click)="showData()">
+                        Показать данные
+                    </button>
+                </div>
+                <div class="col" *ngIf="PropertyForm.IsCompareData">
+                    <button type="button" style="width: 100%" class="btn button-apply" (click)="compareData()">
+                        Сравнить
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

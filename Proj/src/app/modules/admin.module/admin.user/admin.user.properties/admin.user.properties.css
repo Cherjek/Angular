@@ -1,0 +1,19 @@
+.margin-bottom-10 {
+    margin-bottom: 10px;
+}
+
+.padding-left-10 {
+    padding-left: 10px;
+}
+
+.main-container:focus {
+    border: none;
+    box-shadow: none;
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+    outline: none;
+}
+
+.word-break-all {
+    word-break: break-all;
+}
